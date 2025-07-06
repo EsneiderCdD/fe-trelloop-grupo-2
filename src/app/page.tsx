@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Footer from "../components/Footer/Footer";
 
 export default function Home() {
   const [messages, setMessages] = useState<{ id: number; content: string }[]>(
@@ -61,6 +62,8 @@ export default function Home() {
           ))}
         </ul>
       </div>
+
+      <Footer />
     </main>
   );
 }
