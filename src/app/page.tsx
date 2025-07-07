@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Footer from "../components/Footer/Footer";
+import Header from "../components/Header/Header";
 
 export default function Home() {
   const [messages, setMessages] = useState<{ id: number; content: string }[]>(
@@ -33,6 +34,9 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-white-100">
+      <Header />
+
+
       <h1 className="text-3xl font-bold mb-4 bg-dark-100">📡 Flask + Next.js + DB</h1>
 
 
