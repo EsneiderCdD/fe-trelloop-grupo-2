@@ -31,7 +31,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-white-100">
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-background-body">
       <h1 className="text-3xl font-bold mb-4 bg-dark-100">📡 Flask + Next.js + DB</h1>
 
 
