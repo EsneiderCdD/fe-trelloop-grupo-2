@@ -5,7 +5,7 @@ const Background = () => {
       <img
         src="/assets/images/circle2.webp"
         alt="Circle background 2"
-        className="absolute top-[100px] left-[100px] w-[1000px] h-[1000px]  transform translate-x-[-300px] translate-y-[400px]"
+        className="absolute top-[100px] left-[100px] w-[1250px] h-[1250px]  transform translate-x-[-450px] translate-y-[350px]"
       />
 
       {/* Esfera 1 ahora a la derecha */}
