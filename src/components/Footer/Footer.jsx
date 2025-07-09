@@ -3,7 +3,7 @@ import SocialIcons from './ControllerIcons';
 export default function Footer() {
   return (
     <footer style={{ backgroundColor: '#1A1A1A' }} className="text-white ">
-      <div className="container mx-auto pt-30 pl-25 pr-25">
+      <div className="container mx-auto pt-20 pl-25 pr-25">
         <div  className=" mx-auto px-6 grid grid-cols-4 gap-8 h-50 ">
           <div>
             <h4 className="font-bold mb-4">Acerca de</h4>
