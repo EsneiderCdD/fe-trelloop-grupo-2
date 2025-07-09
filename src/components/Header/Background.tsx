@@ -12,7 +12,7 @@ const Background = () => {
       <img
         src="/assets/images/circle1.webp"
         alt="Circle background 1"
-        className="absolute top-[0px] right-[100px] w-[850px] h-[850px]  transform translate-x-[350px] translate-y-[175px]"
+        className="absolute top-[0px] right-[100px] w-[850px] h-[850px]   transform translate-x-[350px] translate-y-[175px]"
       />
     </div>
   );

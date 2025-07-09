@@ -7,11 +7,11 @@ const HeaderContent = () => {
         <h1 className="text-[65px] flex items-center gap-2">
           Make it
           <span className="inline-flex items-center justify-center border border-white rounded-full px-4 py-1 ml-2">
-            <Image src="/assets/icons/img.png" alt="icon" width={20} height={20} />
+            <Image src="/assets/icons/symbol1.png" alt="icon" width={200} height={50} />
           </span>
         </h1>
         <div className="flex items-center  gap-2 mt-4">
-          <Image src="/assets/icons/img.png" alt="symbol" width={30} height={30} />
+          <Image src="/assets/icons/symbol.png" alt="symbol" width={150} height={50} />
           <span className="italic text-[70px]">Happen</span>
         </div>
         <p className="mt-4 max-w-md mx-auto text-gray-300">
