@@ -1,6 +1,9 @@
 "use client";
 
+import "../app/globals.css";
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
+
 
 export default function Home() {
   const [messages, setMessages] = useState<{ id: number; content: string }[]>(
@@ -64,3 +67,4 @@ export default function Home() {
     </main>
   );
 }
+
