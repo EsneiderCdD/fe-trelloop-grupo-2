@@ -4,7 +4,8 @@ import HeaderImages from './HeaderImages';
 
 const Header = () => {
   return (
-    <header className="w-full h-[300vh] bg-black text-white flex flex-col justify-center items-center relative overflow-hidden">
+      <header className="w-full h-[300vh] bg-background-body text-white flex flex-col justify-center items-center relative overflow-hidden">
+
 
       <div className="absolute inset-0 z-0">
         <Background />

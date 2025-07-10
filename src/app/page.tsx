@@ -6,14 +6,14 @@ import Footer from './../components/Footer/Footer';
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-white-100">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-white-100">
       <Header />
       <Footer />
     </main>
   );
 }
 
-/* ================== CÓDIGO ORIGINAL COMENTADO ==================
+/* ================== CÓDIGO ORIGINAL==================
 
 import { useState, useEffect } from "react";
 
