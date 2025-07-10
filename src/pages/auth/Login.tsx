@@ -22,31 +22,29 @@ const Login = () => {
 
     //revisar formato de correo valido
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)){
+    if (!emailRegex.test(email)) {
       setError("Formato de correo electrónico invalido.");
       return;
     }
 
     //si todo está bien, limpiar el error
     setError("");
-    console.log("todo bien al 100")
-    
+    console.log("todo bien al 100");
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate >
-
+    <form onSubmit={handleSubmit} noValidate>
       <div className="bg-[#0f0f0f] text-white">
         <h2 className="text-l font-semibold text-left p-3">LOGIN</h2>
 
         <div className="min-h-screen bg-[#0f0f0f] text-white flex">
           {/* Lado izquierdo */}
-          <div className="w-1/2 hidden md:flex items-center justify-center bg-gradient-to-br from-black via-[#111] to-[#0f0f0f] relative">
+          <div className="w-1/2 hidden md:flex items-center justify-center bg-neutral-0 from-black via-[#111] to-[#0f0f0f] relative">
             <img src="" alt="" className="w-72" />
           </div>
 
           {/* Lado derecho */}
-          <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-8">
+          <div className="w-full md:w-1/2 flex flex-col justify-center bg-neutral-0 items-center px-8">
             <div className="w-1/2 max-w-md space-y-6">
               <div className="space-y-4">
                 <div>
@@ -64,7 +62,7 @@ const Login = () => {
 
                 <div>
                   <label className="block mb-1 text-sm">
-                    Contraseña <span className="text-purple-400">*</span>
+                    Contraseña <span className="text-primary-500">*</span>
                   </label>
                   <div className="relative">
                     <input
@@ -80,7 +78,15 @@ const Login = () => {
                   </div>
                 </div>
 
-                <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-1 rounded-md transition duration-200">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    className="w-3 h-3 text-primary-0 rounded border-gray-300 focus:text-primary-0"
+                  />
+                  <span className="text-sm text-neutral-100">Recordarme</span>
+                </label>
+
+                <button className="w-full bg-primary-500 hover:bg-primary-600 text-white py-1 rounded-md transition duration-200">
                   Iniciar sesión
                 </button>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -88,7 +94,7 @@ const Login = () => {
 
               <p className="text-center text-sm text-gray-400">
                 ¿No tienes cuenta?{" "}
-                <a href="#" className="text-red-400 hover:underline">
+                <a href="#" className="text-secondary-500 hover:underline">
                   Regístrate
                 </a>
               </p>
