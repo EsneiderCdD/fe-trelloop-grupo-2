@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { registerUserService } from "@/services/authService";
 import BackHeader from "@/components/BackHeader";
 import { RegisterData } from "@/types/user";
 import { registerUserController } from "@/controllers/authController";
+import { useRouter } from "next/navigation";
 
 export default function RegisterView() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -30,9 +32,10 @@ export default function RegisterView() {
     const data: RegisterData = { firstName, lastName, email, password, confirmPassword };
 
     try {
-      await registerUserController(formData);
+      await registerUserController(data);
       //implementar el popup de registro exitoso
       alert("Registro exitoso");
+      router.push("/login");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message); 
@@ -65,6 +68,7 @@ export default function RegisterView() {
                     name="firstName"
                     placeholder="Nombres"
                     id="firstName"
+                    minLength={3}
                     value={formData.firstName}
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-2 rounded"
@@ -77,6 +81,7 @@ export default function RegisterView() {
                     type="text"
                     name="lastName"
                     id="lastName"
+                    minLength={3}
                     placeholder="Apellidos"
                     value={formData.lastName}
                     onChange={handleChange}
@@ -103,6 +108,7 @@ export default function RegisterView() {
                     type="password"
                     name="password"
                     id="password"
+                    minLength={8}
                     placeholder="Contraseña"
                     value={formData.password}
                     onChange={handleChange}
@@ -116,6 +122,7 @@ export default function RegisterView() {
                     type="password"
                     name="confirmPassword"
                     id="confirmPassword"
+                    minLength={8}
                     placeholder="Confirmar contraseña"
                     value={formData.confirmPassword}
                     onChange={handleChange}
@@ -137,11 +144,11 @@ export default function RegisterView() {
             <div className="max-w-md text-center">
               <p>
                 Al registrarme, acepto las{" "}
-                <Link href="/login" className="text-blue-600 hover:underline">
+                <Link href="/" className="text-blue-600 hover:underline">
                   Condiciones del servicio
                 </Link>
                 , de Trainit y su{" "}
-                <Link href="/login" className="text-blue-600 hover:underline">
+                <Link href="/" className="text-blue-600 hover:underline">
                   Politica de rivacidad
                 </Link>
                 .
