@@ -3,7 +3,7 @@
 export const API_BASE_URL =  process.env.NEXT_PUBLIC_API
 
 export const AUTH_ENDPOINTS = {
-    lOGIN: `${API_BASE_URL}/login`,
+    lOGIN: `${API_BASE_URL}/api/users/login`,
     //LOGOUT: `${API_BASE_URL}/logout`,
     //REFRESH_TOKEN: `${API_BASE_URL}/refresh`,
 }
