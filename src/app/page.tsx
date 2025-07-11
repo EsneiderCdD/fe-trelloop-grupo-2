@@ -34,11 +34,13 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-white-100">
-      <h1 className="text-3xl font-bold mb-4 bg-dark-100">📡 Flask + Next.js + DB</h1>
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-white-100 text-primary-500 bg-neutral-900">
+      <h1 className="text-3xl font-bold mb-4 bg-dark-100">
+        📡 Flask + Next.js + DB
+      </h1>
+      <h1 className="text-primary-300 text-4xl font-bold pb-4">hola mundo</h1>
 
-
-      <div className="flex mb-4"> 
+      <div className="flex mb-4">
         <input
           type="text"
           value={content}
