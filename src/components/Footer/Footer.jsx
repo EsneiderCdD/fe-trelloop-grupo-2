@@ -1,10 +1,10 @@
-import SocialIcons from './ControllerIcons';
+import SocialIcons from './SocialIcons';
 
 export default function Footer() {
   return (
     <footer className="bg-background-body text-text-default ">
-      <div className="container mx-auto pt-20 pl-40 pr-40">
-        <div  className=" mx-auto px-6 grid grid-cols-4 gap-8 h-50 ">
+      <div className="container mx-auto pt-20 px-40">
+        <div  className=" mx-auto px-6 grid grid-cols-4 gap-8 ">
           <div>
             <h4 className="font-bold mb-4">Acerca de</h4>
             <ul className="space-y-2">
