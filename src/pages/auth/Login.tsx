@@ -11,7 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isAuthenticated, loading } = useAuth();
+  const { login } = useAuth();
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,9 +37,7 @@ const Login = () => {
 
     // Llamar a la función de login del contexto de autenticación
     const success = await login({ email, password });
-    if (isAuthenticated) {
-      router.push("/");
-    }
+    
     if (success) {
       // Redirigir al usuario a la página principal o a donde se desee
       router.push("/");
@@ -117,4 +115,5 @@ const Login = () => {
 
 export default Login;
 
-//queda pendiente el spinner a través del loading 
+//queda pendiente el spinner a través del loading
+// y el isAuthenticated
