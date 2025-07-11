@@ -31,6 +31,6 @@ export const authService = {
             
             }
         },
-    // async logout(): Promise<void> {
-    //}
+    async logout(): Promise<void> {
+    }
     }

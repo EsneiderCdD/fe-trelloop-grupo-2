@@ -1,16 +1,20 @@
 "use client";
 
+
 import React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "app/context/AuthContext";
 
 const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPasssword] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { login, isAuthenticated, loading } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // validar que existan correo y contraseña:
@@ -30,7 +34,18 @@ const Login = () => {
     //si todo está bien, limpiar el error
     setError("");
     console.log("todo bien al 100")
-    
+
+    // Llamar a la función de login del contexto de autenticación
+    const success = await login({ email, password });
+    if (isAuthenticated) {
+      router.push("/");
+    }
+    if (success) {
+      // Redirigir al usuario a la página principal o a donde se desee
+      router.push("/");
+    } else {
+      setError("Error al iniciar sesión.");
+    }
   };
 
   return (
@@ -70,7 +85,7 @@ const Login = () => {
                     <input
                       type="password"
                       value={password}
-                      onChange={(e) => setPasssword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                       placeholder="Escriba su contraseña"
                       className="w-full px-4 py-1 rounded-md bg-[#1a1a1a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
                     />
@@ -101,3 +116,5 @@ const Login = () => {
 };
 
 export default Login;
+
+//queda pendiente el spinner a través del loading 

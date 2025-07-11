@@ -16,14 +16,28 @@ const USER_INFO_KEY = 'user_info'; // Clave para información del usuario
         localStorage.setItem(TOKEN_KEY, response.token);
         // Guardar la información del usuario en localStorage
         localStorage.setItem(USER_INFO_KEY, JSON.stringify({ email: credentials.email, id: response.id }));
-        return { success: true }//, email: credentials.email };
+        // Construir un UserProfile básico
+        const userProfile: UserProfile = { 
+            email: credentials.email, 
+            id: response.id, 
+            name: response.name || '', 
+            createdAt: response.createdAt || new Date().toISOString() 
+        };
+        return { success: true, email: userProfile };
      } catch (error: any) {
      return { success: false, message: error.message || 'Credenciales inválidas' };
     }
 }, 
-// async handleLogout(): Promise<void> {
-//     try {
-//         await authService.logout(); 
+ async handleLogout(): Promise<void> {
+     try {
+         await authService.logout(); 
+         // Eliminar el token y la información del usuario de localStorage
+         localStorage.removeItem(TOKEN_KEY);
+         localStorage.removeItem(USER_INFO_KEY);
+     } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+     }
+    },
 
     get token(): string | null {
         return localStorage.getItem(TOKEN_KEY);
@@ -38,6 +52,6 @@ const USER_INFO_KEY = 'user_info'; // Clave para información del usuario
     }, 
 }
 
-// ***************************************
+// *****************************************
 // ***************************************
 // Revisar linea 19 email ?? string ?? credentials.email ??
