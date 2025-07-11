@@ -5,6 +5,7 @@ import BackHeader from "@/components/BackHeader";
 import { RegisterData } from "@/types/user";
 import { registerUserController } from "@/controllers/authController";
 import { useRouter } from "next/navigation";
+import SuccessModal from "@/components/SuccessModal"; // Añadido
 
 export default function RegisterView() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function RegisterView() {
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Añadido: estado para el modal
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,8 +36,8 @@ export default function RegisterView() {
     try {
       await registerUserController(data);
       //implementar el popup de registro exitoso
-      alert("Registro exitoso");
-      router.push("/login");
+      setIsModalOpen(true); // Añadido: activar modal en lugar de alert
+      // La redirección se manejará al cerrar el modal
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message); 
@@ -43,6 +45,11 @@ export default function RegisterView() {
         setError("Error al registrar usuario");
       }
     }
+  };
+
+  const handleCloseModal = () => { // Añadido: función para cerrar el modal
+    setIsModalOpen(false);
+    router.push("/login");
   };
 
   return (
@@ -163,6 +170,7 @@ export default function RegisterView() {
           </div>
         </div>
       </div>
+      <SuccessModal isOpen={isModalOpen} onClose={handleCloseModal} /> {/* Añadido: componente del modal */}
     </div>
   );
 }
