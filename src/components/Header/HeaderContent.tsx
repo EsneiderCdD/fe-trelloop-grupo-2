@@ -1,6 +1,13 @@
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const HeaderContent = () => {
+  const router = useRouter(); // ✅ fix
+
+  const goToRegister = () => {
+    router.push("/register");
+  };
+
   return (
     <div className="h-[450px]">
       <div>
@@ -17,14 +24,16 @@ const HeaderContent = () => {
         <span className="italic text-[70px] ml-4">Happen</span>
       </div>
 
-      
-        <p className="translate-x-20 text-2xl max-w-md text-text-default">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </p>
-        <button className="h-14 w-64   translate-y-5 translate-x-20 bg-state-default text-text-default text-xl rounded-full">
-          Crear cuenta
-        </button>
-     
+      <p className="translate-x-20 text-2xl max-w-md text-text-default">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </p>
+
+      <button
+        onClick={goToRegister} // ✅ evento click agregado
+        className="h-14 w-64 translate-y-5 translate-x-20 bg-state-default text-text-default text-xl rounded-full"
+      >
+        Crear cuenta
+      </button>
     </div>
   );
 };

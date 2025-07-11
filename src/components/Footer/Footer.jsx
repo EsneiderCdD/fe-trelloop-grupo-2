@@ -2,8 +2,8 @@ import SocialIcons from './ControllerIcons';
 
 export default function Footer() {
   return (
-    <footer style={{ backgroundColor: '#1A1A1A' }} className="text-white ">
-      <div className="container mx-auto pt-20 pl-25 pr-25">
+    <footer className="bg-background-body text-text-default ">
+      <div className="container mx-auto pt-20 pl-40 pr-40">
         <div  className=" mx-auto px-6 grid grid-cols-4 gap-8 h-50 ">
           <div>
             <h4 className="font-bold mb-4">Acerca de</h4>
@@ -32,7 +32,7 @@ export default function Footer() {
             <SocialIcons />
           </div>
         </div>
-        <div className="flex justify-center items-center text-center h-25">
+        <div className="flex justify-center mt-20 mb-20  ">
           © 2025 Copyright | Programa TrainIT
         </div>
       </div>
