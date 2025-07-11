@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-export default function ControllerIcons() {
+export default function SocialIcons() {
   return (
     <div className="flex space-x-4">
       <a href="https://discord.com" target="_blank" rel="noopener noreferrer">
