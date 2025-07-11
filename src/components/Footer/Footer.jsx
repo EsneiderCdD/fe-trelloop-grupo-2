@@ -32,7 +32,7 @@ export default function Footer() {
             <SocialIcons />
           </div>
         </div>
-        <div className="flex justify-center mt-20 mb-20  ">
+        <div className="flex justify-center mt-20 mb-20 bg-background-body  ">
           © 2025 Copyright | Programa TrainIT
         </div>
       </div>
