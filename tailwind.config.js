@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -32,6 +34,7 @@ module.exports = {
           900: "var(--global-color-secondary-900)",
         },
         neutral: {
+          0: "var(--global-color-neutral-0)",
           100: "var(--global-color-neutral-100)",
           200: "var(--global-color-neutral-200)",
           300: "var(--global-color-neutral-300)",
@@ -111,5 +114,30 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addComponents, theme }) {
+      addComponents({
+        '.form-input-default': {
+          width: '100%',
+          borderWidth: '1px',
+          borderColor: theme('colors.neutral.600'),
+          '--tw-border-opacity': '0.7',
+          padding: theme('spacing.2'),
+          borderRadius: '10px',
+          '--tw-bg-opacity': '0.04',
+          backgroundColor: 'color-mix(in srgb, transparent, var(--global-color-neutral-0) 4%)',
+        },
+        '.bg-dual-circles': {
+          backgroundColor: '#1A1A1A',
+          backgroundImage: "url('../assets/images/ui-fondo-circulo-izquierda.webp'), url('../assets/images/ui-fondo-circulo-derecha.webp')",
+          backgroundPosition: 'left -566px top -183px, left 635px top -470px ',
+          backgroundRepeat: 'no-repeat, no-repeat',
+          backgroundSize: '1240px, 952px',
+        },
+         '.bg-header': {
+          backgroundColor: 'color-mix(in srgb, transparent, var(--global-color-neutral-1000) 7%)',
+        }
+      })
+    })
+  ],
 };

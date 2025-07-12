@@ -5,7 +5,9 @@ import BackHeader from "@/components/BackHeader";
 import { RegisterData } from "@/types/user";
 import { registerUserController } from "@/controllers/authController";
 import { useRouter } from "next/navigation";
-import SuccessModal from "@/components/SuccessModal"; // Añadido
+import SuccessModal from "@/components/SuccessModal";
+import IlustracionUsuario from "../assets/images/ilustracion-usuario.svg";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function RegisterView() {
   const router = useRouter();
@@ -19,7 +21,9 @@ export default function RegisterView() {
   });
 
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Añadido: estado para el modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,107 +39,128 @@ export default function RegisterView() {
 
     try {
       await registerUserController(data);
-      //implementar el popup de registro exitoso
-      setIsModalOpen(true); // Añadido: activar modal en lugar de alert
-      // La redirección se manejará al cerrar el modal
+      setIsModalOpen(true);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message); 
+        setError(err.message);
       } else {
         setError("Error al registrar usuario");
       }
     }
   };
 
-  const handleCloseModal = () => { // Añadido: función para cerrar el modal
+  const handleCloseModal = () => {
     setIsModalOpen(false);
     router.push("/login");
   };
 
   return (
-    <div>
-      <BackHeader title="Registrarse" />
-      <div className="min-h-screen flex flex-col lg:flex-row">
-        <div className="lg:block lg:w-1/2 flex items-center justify-center bg-gray-800">
-          {/* <img
-            src=""
+    <div className="bg-dual-circles text-text-default max-w-screen ">
+      <BackHeader title="Registro de usuario" />
+      <div className="min-h-screen flex flex-col justify-center lg:flex-row max-w-screen lg:gap-[17px]">
+        <div className="flex items-center justify-center">
+          <IlustracionUsuario
             alt="Imagen"
-            className="w-full h-full object-cover"
-          /> */}
+            className="h-[284px] w-[325px]"
+          />
         </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-          <div>
-            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 text-text-default pb-20">
+          <div className="ml-4 lg:ml-0 w-full max-w-md">
+            <form onSubmit={handleSubmit} className=" w-[595px] space-y-4 gap-[17px]">
               <div className="flex space-x-2">
-                <div>
-                  <label htmlFor="firstName">Nombres</label>
+                <div className="flex flex-col gap-2 w-full">
+                  <label htmlFor="firstName">Nombres <span className="text-primary-500">*</span></label>
                   <input
                     type="text"
                     name="firstName"
-                    placeholder="Nombres"
+                    placeholder="Escribe tus nombres"
                     id="firstName"
                     minLength={3}
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded"
+                    className="form-input-default"
                     required
                   />
                 </div>
-                <div>
-                  <label htmlFor="lastName">Apellidos</label>
+                <div className="flex flex-col gap-2 w-full">
+                  <label htmlFor="lastName">Apellidos <span className="text-primary-500">*</span></label>
                   <input
                     type="text"
                     name="lastName"
                     id="lastName"
                     minLength={3}
-                    placeholder="Apellidos"
+                    placeholder="Escribe tus apellidos"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded"
+                    className="form-input-default"
                     required
                   />
                 </div>
               </div>
-              <label htmlFor="email">Correo electrónico</label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Correo electrónico"
+              <div className="flex flex-col gap-2 min-w-[595px] w-full">
+                <label htmlFor="email">Correo electrónico <span className="text-primary-500">*</span></label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                placeholder="Escribe tu correo electrónico"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full border border-gray-300 p-2 rounded"
+                className="form-input-default"
                 required
               />
+              </div>
               <div className="flex space-x-2">
-                <div>
-                  <label htmlFor="password">Contraseña</label>
+                <div className="relative flex flex-col gap-2 min-w-[289px] w-full">
+                  <label htmlFor="password">Contraseña <span className="text-primary-500">*</span></label>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     id="password"
                     minLength={8}
-                    placeholder="Contraseña"
+                    placeholder="Escribe tu contraseña"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded"
+                    className="form-input-default pr-10"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 top-6 flex items-center pr-3 text-gray-400"
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
-                <div>
-                  <label htmlFor="confirmPassword">Confirmar contraseña</label>
+                <div className="relative flex flex-col gap-2 min-w-[289px] w-full">
+                  <label htmlFor="confirmPassword">Confirmar contraseña <span className="text-primary-500">*</span></label>
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     id="confirmPassword"
                     minLength={8}
-                    placeholder="Confirmar contraseña"
+                    placeholder="Escribe tu confirmación"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded"
+                    className="form-input-default pr-10"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 top-6 flex items-center pr-3 text-gray-400"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -143,26 +168,26 @@ export default function RegisterView() {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                className="w-full h-[40px] my-10 bg-primary-500 text-white py-2 rounded rounded-[8px]"
               >
-                Registrarse
+                Registrarme
               </button>
             </form>
-            <div className="max-w-md text-center">
+            <div className="w-[595px] pt-[17px] text-center justify-center">
               <p>
                 Al registrarme, acepto las{" "}
-                <Link href="/" className="text-blue-600 hover:underline">
+                <Link href="/" className="text-secondary-500 hover:underline">
                   Condiciones del servicio
                 </Link>
                 , de Trainit y su{" "}
-                <Link href="/" className="text-blue-600 hover:underline">
+                <Link href="/" className="text-secondary-500 hover:underline">
                   Politica de rivacidad
                 </Link>
                 .
               </p>
               <p className="text-sm text-center mt-4">
                 ¿Ya tienes cuenta?{" "}
-                <Link href="/login" className="text-blue-600 hover:underline">
+                <Link href="/login" className="text-secondary-500 hover:underline">
                   Inicia sesión
                 </Link>
               </p>
@@ -170,7 +195,7 @@ export default function RegisterView() {
           </div>
         </div>
       </div>
-      <SuccessModal isOpen={isModalOpen} onClose={handleCloseModal} /> {/* Añadido: componente del modal */}
+      <SuccessModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }
