@@ -1,4 +1,4 @@
-// Aquí va la lógica para manejo de tokens y gestión de usuarios
+// Lógica para manejo de tokens y gestión de usuarios
 
 import { authService } from "../services/authService";
 import { LoginRequest, LoginResponse, ApiError } from "../types/auth";
@@ -51,7 +51,3 @@ const USER_INFO_KEY = 'user_info'; // Clave para información del usuario
         return !!localStorage.getItem(TOKEN_KEY);
     }, 
 }
-
-// *****************************************
-// ***************************************
-// Revisar linea 19 email ?? string ?? credentials.email ??
