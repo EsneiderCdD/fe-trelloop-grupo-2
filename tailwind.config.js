@@ -132,10 +132,6 @@ module.exports = {
         },
         '.bg-dual-circles': {
           backgroundColor: '#1A1A1A',
-          backgroundImage: "url('../assets/images/ui-fondo-circulo-izquierda.webp'), url('../assets/images/ui-fondo-circulo-derecha.webp')",
-          backgroundPosition: 'left -230% top 40%, right -30% top 300%',
-          backgroundRepeat: 'no-repeat, no-repeat',
-          backgroundSize: '85vw, 65vw',
         },
          '.bg-header': {
           backgroundColor: 'color-mix(in srgb, transparent, var(--global-color-neutral-1000) 7%)',
