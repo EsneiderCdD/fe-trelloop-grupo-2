@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
-import GridOverlay from "@/utils/dev/Grid"; // Agregado
+import GridOverlay from "@/utils/dev/Grid"; 
 
 export const metadata: Metadata = {
   title: "Mi Proyecto",

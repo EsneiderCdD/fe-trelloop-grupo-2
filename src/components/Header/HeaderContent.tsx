@@ -1,10 +1,14 @@
-// components/Header/HeaderContent.tsx
-
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 const HeaderContent = () => {
-  const router = useRouter();
+
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Navigates the user to the register page.
+ */
+
+/*******  32a36646-e4b2-4c02-a282-34e99e93b835  *******/  const router = useRouter();
 
   const goToRegister = () => {
     router.push("/register");

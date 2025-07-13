@@ -1,5 +1,3 @@
-// components/Header/HeaderImages.tsx
-
 import Image from 'next/image';
 
 const HeaderImages = () => {
