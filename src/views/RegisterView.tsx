@@ -57,17 +57,20 @@ export default function RegisterView() {
   return (
     <div className="bg-dual-circles text-text-default">
       <BackHeader title="Registro de usuario" />
-      <div className="min-h-screen flex flex-row justify-center">
+      {/* 1. Apilar en móvil (flex-col), poner en fila en escritorio (lg:flex-row) */}
+      <div className="min-h-screen flex flex-col lg:flex-row justify-center">
         
-        <div className="w-1/2 flex justify-end items-center p-8">
-          <IlustracionUsuario
+        {/* Contenedor de la Ilustración */}
+        <div className="w-full lg:w-1/2 flex justify-end items-center p-8 order-last lg:order-first">         
+         <IlustracionUsuario
             alt="Imagen"
-            className="w-full h-auto max-w-md"
+            className="w-3/4 lg:w-full h-auto max-w-xs lg:max-w-md"
           />
         </div>
 
-        <div className="w-1/2 flex justify-start items-start pr-[4%] pt-[7%]">
-          <div className="w-full">
+        {/* Contenedor del Formulario */}
+        <div className="w-full lg:w-1/2 flex justify-start items-center">
+          <div className="w-full px-8 lg:px-0 lg:pr-16 max-w-4xl">
             <form noValidate onSubmit={handleSubmit} className="w-full space-y-4">
               <div className="flex space-x-2">
                 <div className="flex flex-col gap-2 w-full">
