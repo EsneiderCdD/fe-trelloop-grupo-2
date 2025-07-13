@@ -55,19 +55,20 @@ export default function RegisterView() {
   };
 
   return (
-    <div className="bg-dual-circles text-text-default max-w-screen ">
+    <div className="bg-dual-circles text-text-default">
       <BackHeader title="Registro de usuario" />
-      <div className="min-h-screen flex flex-col justify-center lg:flex-row max-w-screen lg:gap-[17px]">
-        <div className="flex items-center justify-center">
+      <div className="min-h-screen flex flex-row justify-center">
+        
+        <div className="w-1/2 flex justify-end items-center p-8">
           <IlustracionUsuario
             alt="Imagen"
-            className="h-[284px] w-[325px]"
+            className="w-full h-auto max-w-md"
           />
         </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 text-text-default pb-20">
-          <div className="ml-4 lg:ml-0 w-full max-w-md">
-            <form onSubmit={handleSubmit} className=" w-[595px] space-y-4 gap-[17px]">
+        <div className="w-1/2 flex justify-start items-start pr-[4%] pt-[7%]">
+          <div className="w-full">
+            <form noValidate onSubmit={handleSubmit} className="w-full space-y-4">
               <div className="flex space-x-2">
                 <div className="flex flex-col gap-2 w-full">
                   <label htmlFor="firstName">Nombres <span className="text-primary-500">*</span></label>
@@ -98,7 +99,7 @@ export default function RegisterView() {
                   />
                 </div>
               </div>
-              <div className="flex flex-col gap-2 min-w-[595px] w-full">
+              <div className="flex flex-col gap-2 w-full">
                 <label htmlFor="email">Correo electrónico <span className="text-primary-500">*</span></label>
                 <input
                   type="email"
@@ -112,7 +113,7 @@ export default function RegisterView() {
               />
               </div>
               <div className="flex space-x-2">
-                <div className="relative flex flex-col gap-2 min-w-[289px] w-full">
+                <div className="relative flex flex-col gap-2 w-full">
                   <label htmlFor="password">Contraseña <span className="text-primary-500">*</span></label>
                   <input
                     type={showPassword ? "text" : "password"}
@@ -128,16 +129,16 @@ export default function RegisterView() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 top-6 flex items-center pr-3 text-gray-400"
+                    className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 text-[#797676]"
                   >
                     {showPassword ? (
                       <EyeSlashIcon className="h-5 w-5" />
                     ) : (
-                      <EyeIcon className="h-5 w-5" />
+                      <EyeIcon className="h-5 w-5 " />
                     )}
                   </button>
                 </div>
-                <div className="relative flex flex-col gap-2 min-w-[289px] w-full">
+                <div className="relative flex flex-col gap-2 w-full">
                   <label htmlFor="confirmPassword">Confirmar contraseña <span className="text-primary-500">*</span></label>
                   <input
                     type={showConfirmPassword ? "text" : "password"}
@@ -153,7 +154,7 @@ export default function RegisterView() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 top-6 flex items-center pr-3 text-gray-400"
+                    className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 text-[#797676]"
                   >
                     {showConfirmPassword ? (
                       <EyeSlashIcon className="h-5 w-5" />
@@ -168,12 +169,12 @@ export default function RegisterView() {
 
               <button
                 type="submit"
-                className="w-full h-[40px] my-10 bg-primary-500 text-white py-2 rounded rounded-[8px]"
+                className="uppercase w-full h-[40px] my-10 bg-primary-500 text-white py-2 rounded rounded-[8px]"
               >
                 Registrarme
               </button>
             </form>
-            <div className="w-[595px] pt-[17px] text-center justify-center">
+            <div className="w-full px-[20%] pt-[4%] text-center justify-center">
               <p>
                 Al registrarme, acepto las{" "}
                 <Link href="/" className="text-secondary-500 hover:underline">
@@ -181,11 +182,11 @@ export default function RegisterView() {
                 </Link>
                 , de Trainit y su{" "}
                 <Link href="/" className="text-secondary-500 hover:underline">
-                  Politica de rivacidad
+                  Politica de privacidad
                 </Link>
                 .
               </p>
-              <p className="text-sm text-center mt-4">
+              <p className="text-sm text-center mt-[6%]">
                 ¿Ya tienes cuenta?{" "}
                 <Link href="/login" className="text-secondary-500 hover:underline">
                   Inicia sesión
