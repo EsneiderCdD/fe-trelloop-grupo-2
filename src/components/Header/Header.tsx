@@ -13,7 +13,7 @@ const Header = () => {
       {/* Contenido */}
       <div className="relative z-10 w-full pt-[100px]">
         <div className="max-w-[1366px] mx-auto px-6 grid grid-cols-12 gap-x-6 items-center">
-          <div className="col-span-6">
+          <div className="col-start-2 col-span-6 mt-[60px]">
             <HeaderContent />
           </div>
           {/* <div className="col-span-6">
