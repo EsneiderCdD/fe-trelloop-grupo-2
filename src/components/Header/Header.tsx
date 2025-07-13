@@ -1,24 +1,28 @@
+// components/Header/Header.tsx
+
 import Background from './Background';
 import HeaderContent from './HeaderContent';
 import HeaderImages from './HeaderImages';
 
 const Header = () => {
   return (
-      <header className="w-full h-[300vh] bg-background-body text-text-default flex flex-col justify-center items-center relative overflow-hidden">
-        
+    <header className="w-full h-[300vh] bg-background-body text-text-default relative overflow-hidden">
+      {/* Fondo */}
       <div className="absolute inset-0 z-0">
         <Background />
       </div>
 
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <div className="absolute top-[100px] left-[211px] pointer-events-auto">
-          <HeaderContent />
+      {/* Contenido */}
+      {/* <div className="relative z-10 w-full pt-[100px]">
+        <div className="max-w-[1366px] mx-auto px-6 grid grid-cols-12 gap-x-6 items-center">
+          <div className="col-span-6">
+            <HeaderContent />
+          </div>
+          <div className="col-span-6">
+            <HeaderImages />
+          </div>
         </div>
-
-        <div className="absolute top-[300px] left-[800px] pointer-events-auto">
-          <HeaderImages />
-        </div>
-      </div>
+      </div> */}
     </header>
   );
 };
