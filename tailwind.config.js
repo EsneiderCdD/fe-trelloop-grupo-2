@@ -120,16 +120,19 @@ module.exports = {
         '.form-input-default': {
           width: '100%',
           borderWidth: '1px',
-          borderColor: theme('colors.neutral.600'),
+          borderColor: '#3c3c3c',
           '--tw-border-opacity': '0.7',
           padding: theme('spacing.2'),
           borderRadius: '10px',
-          '--tw-bg-opacity': '0.04',
           backgroundColor: 'color-mix(in srgb, transparent, var(--global-color-neutral-0) 4%)',
+          backdropFilter: 'blur(3.6px)',
+          '&::placeholder': {
+            color: '#797676',
+          },
         },
         '.bg-dual-circles': {
           backgroundColor: '#1A1A1A',
-          backgroundImage: "url('../assets/images/ui-fondo-circulo-izquierda.webp'), url('../assets/images/ui-fondo-circulo-derecha.webp')",
+          backgroundImage: "url('../assets/images/circulo-izquierda.png'), url('../assets/images/ui-fondo-circulo-derecha.webp')",
           backgroundPosition: 'left -566px top -183px, left 635px top -470px ',
           backgroundRepeat: 'no-repeat, no-repeat',
           backgroundSize: '1240px, 952px',
