@@ -10,17 +10,18 @@ const Header = () => {
         <Background />
       </div>
 
-      {/* Contenido */}
+      {/* Contenido principal */}
       <div className="relative z-10 w-full pt-[100px]">
-        <div className="max-w-[1366px] mx-auto px-6 grid grid-cols-12 gap-x-6 items-center">
+        <div className="max-w-[1366px] mx-auto px-6 grid grid-cols-12 gap-x-6 items-start">
+          {/* Contenido textual */}
           <div className="col-start-2 col-span-6 mt-1">
             <HeaderContent />
           </div>
 
-          <div className="col-start-7 col-span-5">
+          {/* Imágenes: columna derecha, con espacio para creatividad */}
+          <div className="col-start-8 col-span-4 mt-[150px] relative translate-x-[-50px] ">
             <HeaderImages />
           </div>
-          
         </div>
       </div>
     </header>
