@@ -1,15 +1,15 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import BackHeader from "@/components/BackHeader";
-import { RegisterData } from "@/types/user";
-import { registerUserController } from "@/controllers/authController";
 import { useRouter } from "next/navigation";
-import SuccessModal from "@/components/SuccessModal";
+import SuccessModal from "../components/SuccessModal";
 import IlustracionUsuario from "../assets/images/ilustracion-usuario.svg";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import Background from "@/components/register/Background";
-import { ValidationError } from "@/types/validatesError";
+import Background from "../components/register/Background";
+import { ValidationError } from "../types/validatesError";
+import { RegisterData} from "types/user";
+import { registerUserController } from "controllers/authController";
+import BackHeader from "components/BackHeader";
 
 interface FormErrors {
   firstName?: string;
