@@ -1,22 +1,12 @@
 'use client';
-
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
-
 const HeaderContent = () => {
   const router = useRouter();
 
   const goToRegister = () => {
     router.push("/register");
   };
-
-
-
-
-
-
-
   return (
     <div className="">
       {/* Make it + icono */}
@@ -36,18 +26,6 @@ const HeaderContent = () => {
           />
         </div>
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
       {/* Icono inferior */}
       <div className="flex items-center w-[557px] h-[92px] ml-2.5">
         <Image className='w-[88px] h-[75px] mb-5' src="/assets/icons/symbol1.webp" alt="symbol" width={88} height={75} />
@@ -58,17 +36,7 @@ const HeaderContent = () => {
         >
           Happen
         </h2>
-
-
-
-
-
-
-
-
-
       </div>
-
       {/* Descripción */}
       <p className="font-poppins text-[20px] leading-[175%] max-w-md text-text-default mt-6 ml-12 tracking-wide ">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
