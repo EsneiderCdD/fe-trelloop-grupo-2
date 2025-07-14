@@ -25,7 +25,8 @@ export default function RootLayout({
     <html lang="en" className={poppins.variable}>
       <body>
         {children}
-        {process.env.NODE_ENV === "development" && <GridOverlay />}
+        {/* Grilla para Frontend (Borrar si no se necesita) */}
+        {/* {process.env.NODE_ENV === "development" && <GridOverlay />} */}
       </body>
     </html>
   );

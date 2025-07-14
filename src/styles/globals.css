@@ -3,10 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+/*Lineas Guia de diseño */
+/* *{
     border: rgba(255, 0, 0, 0.738) 1px dotted;
-}
-/*COLOCAR BODY PARA EL TEMA DEL RECORTE */
+} */
+
+/*Fondo para no colapsar el Footer*/
 body {
   background-color: var(--global-color-background-body);
 }
