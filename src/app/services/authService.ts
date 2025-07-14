@@ -37,7 +37,7 @@ export async function registerUserService(data: RegisterData){
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       name: data.firstName,
-      lastname: data.lastName,
+      last_name: data.lastName,
       email: data.email,
       password: data.password,
       confirm_password: data.confirmPassword,
