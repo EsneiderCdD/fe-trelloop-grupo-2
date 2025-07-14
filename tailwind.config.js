@@ -130,6 +130,9 @@ module.exports = {
             color: '#797676',
           },
         },
+        'input[type="password"]::-ms-reveal': {
+          display: 'none',
+        },
         '.bg-dual-circles': {
           backgroundColor: '#1A1A1A',
         },

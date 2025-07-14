@@ -1,50 +1,50 @@
 import { RegisterData } from "@/types/user";
 import {registerUserService} from "@/services/authService";
+import { ValidationError } from '@/types/validatesError';
 
 export async function registerUserController(data: RegisterData) {
   const { firstName, lastName, email, password, confirmPassword } = data;
 
   // Campos obligatorios
   if (!firstName || !lastName || !email || !password || !confirmPassword) {
-    throw new Error("Todos los campos son obligatorios.");
+    throw new ValidationError("Todos los campos son obligatorios.", "general"); 
   }
 
   // Validación de longitud de nombres
   if (firstName.trim().length < 3) {
-    throw new Error("El nombre debe tener al menos 3 caracteres.");
+    throw new ValidationError("El nombre debe tener al menos 3 caracteres.", "firstName");
   }
 
   if (lastName.trim().length < 3) {
-    throw new Error("El apellido debe tener al menos 3 caracteres.");
+    throw new ValidationError("El apellido debe tener al menos 3 caracteres.", "lastName");
   }
 
   // Validación de email
   const emailRegex = /^\S+@\S+\.\S+$/;
   if (!emailRegex.test(email)) {
-    throw new Error("Correo electrónico inválido.");
+    throw new ValidationError("Correo electrónico inválido.", "email");
   }
 
+  // Validación de contraseñas
   if (password !== confirmPassword) {
-    throw new Error("Las contraseñas no coinciden.");
+    throw new ValidationError("Las contraseñas no coinciden.", "confirmPassword"); 
   }
 
-  // Validación de contraseña
   if (password.length < 8) {
-    throw new Error("La contraseña debe tener al menos 8 caracteres.");
+    throw new ValidationError("La contraseña debe tener al menos 8 caracteres.", "password");
   }
 
   if (!/[A-Z]/.test(password)) {
-    throw new Error("La contraseña debe contener al menos una letra mayúscula.");
+    throw new ValidationError("La contraseña debe contener al menos una letra mayúscula.", "password");
   }
 
   if (!/[0-9]/.test(password)) {
-    throw new Error("La contraseña debe contener al menos un número.");
+    throw new ValidationError("La contraseña debe contener al menos un número.", "password");
   }
 
   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    throw new Error("La contraseña debe contener al menos un carácter especial.");
+    throw new ValidationError("La contraseña debe contener al menos un carácter especial.", "password");
   }
-
 
   return await registerUserService(data);
 }
