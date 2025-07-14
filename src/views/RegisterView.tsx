@@ -56,21 +56,18 @@ export default function RegisterView() {
   };
 
   return (
-    <div className="w-full bg-dual-circles text-text-default">
+    <div className="w-full bg-dual-circles text-text-default h-screen relative flex flex-col">
       <div className="absolute inset-0 z-0">
         <Background />
       </div>
-
-
       <BackHeader title="Registro de usuario" />
-      {/* 1. Apilar en móvil (flex-col), poner en fila en escritorio (lg:flex-row) */}
-      <div className="min-h-screen flex flex-col lg:flex-row justify-center">
-        
+      <div className="flex-grow px-8 relative flex flex-col lg:flex-row justify-center">
+
         {/* Contenedor de la Ilustración */}
-        <div className="w-full lg:w-1/2 flex justify-end items-center p-8 order-last lg:order-first">         
-         <IlustracionUsuario
+        <div className="w-full lg:w-1/2 flex justify-end items-center order-last lg:order-first">
+          <IlustracionUsuario
             alt="Imagen"
-            className="w-[325px] lg:w-full h-auto max-w-xs lg:max-w-md"
+            className="w-[325px] lg:w-full max-w-xs lg:max-w-md"
           />
         </div>
 
@@ -114,12 +111,12 @@ export default function RegisterView() {
                   type="email"
                   name="email"
                   id="email"
-                placeholder="Escribe tu correo electrónico"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-input-default"
-                required
-              />
+                  placeholder="Escribe tu correo electrónico"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="form-input-default"
+                  required
+                />
               </div>
               <div className="flex space-x-2">
                 <div className="relative flex flex-col gap-2 w-full">
