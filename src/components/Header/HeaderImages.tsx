@@ -4,7 +4,7 @@ const HeaderImages = () => {
   return (
     <div className="flex flex-col gap-2">
       {/* cubo-3 alineado abajo */}
-      <div className="translate-x-[8px] flex flex-row gap-2 items-end ">
+      <div className="translate-x-[8px] flex flex-row gap-2 items-end">
         <div className="relative">
           <Image
             src="/assets/images/cubo-3.svg"
