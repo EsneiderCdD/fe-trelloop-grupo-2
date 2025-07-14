@@ -8,6 +8,16 @@ import { useRouter } from "next/navigation";
 import SuccessModal from "@/components/SuccessModal";
 import IlustracionUsuario from "../assets/images/ilustracion-usuario.svg";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { ValidationError } from "@/types/validatesError";
+
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  general?: string;
+}
 
 export default function RegisterView() {
   const router = useRouter();
@@ -20,31 +30,55 @@ export default function RegisterView() {
     confirmPassword: "",
   });
 
-  const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(null);
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: undefined,
+      general: undefined,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setFormErrors({});
+
     const { firstName, lastName, email, password, confirmPassword } = formData;
 
-    const data: RegisterData = { firstName, lastName, email, password, confirmPassword };
+    const data: RegisterData = {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+    };
 
     try {
       await registerUserController(data);
       setIsModalOpen(true);
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+      if (err instanceof ValidationError) {
+        if (err.field) {
+          // Si el error tiene un campo específico, actualiza solo ese
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            [err.field!]: err.message,
+          }));
+        } else {
+          // Si no tiene un campo específico (ej. 'general'), es un error general
+          setFormErrors({ general: err.message });
+        }
+      } else if (err instanceof Error) {
+        // Para otros errores que no son ValidationError
+        setFormErrors({ general: "Error inesperado: " + err.message });
       } else {
-        setError("Error al registrar usuario");
+        setFormErrors({ general: "Error desconocido al registrar usuario." });
       }
     }
   };
@@ -57,24 +91,22 @@ export default function RegisterView() {
   return (
     <div className="bg-dual-circles text-text-default">
       <BackHeader title="Registro de usuario" />
-      {/* 1. Apilar en móvil (flex-col), poner en fila en escritorio (lg:flex-row) */}
       <div className="min-h-screen flex flex-col lg:flex-row justify-center">
-        
-        {/* Contenedor de la Ilustración */}
-        <div className="w-full lg:w-1/2 flex justify-end items-center p-8 order-last lg:order-first">         
-         <IlustracionUsuario
+        <div className="w-full lg:w-1/2 flex justify-end items-center p-8 order-last lg:order-first">
+          <IlustracionUsuario
             alt="Imagen"
             className="w-3/4 lg:w-full h-auto max-w-xs lg:max-w-md"
           />
         </div>
 
-        {/* Contenedor del Formulario */}
         <div className="w-full lg:w-1/2 flex justify-start items-center">
           <div className="w-full px-8 lg:px-0 lg:pr-16 max-w-4xl">
-            <form noValidate onSubmit={handleSubmit} className="w-full space-y-4">
+            <form noValidate onSubmit={handleSubmit} className="w-full">
               <div className="flex space-x-2">
-                <div className="flex flex-col gap-2 w-full">
-                  <label htmlFor="firstName">Nombres <span className="text-primary-500">*</span></label>
+                <div className="flex flex-col w-full">
+                  <label htmlFor="firstName" className="mb-2">
+                    Nombres <span className="text-primary-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="firstName"
@@ -83,12 +115,21 @@ export default function RegisterView() {
                     minLength={3}
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="form-input-default"
+                    className={`form-input-default  ${
+                      formErrors.firstName ? "" : "mb-4"
+                    }`} 
                     required
                   />
+                  {formErrors.firstName && (
+                    <p className="text-red-500 text-sm mt-1 mb-2">
+                      {formErrors.firstName}
+                    </p>
+                  )}
                 </div>
-                <div className="flex flex-col gap-2 w-full">
-                  <label htmlFor="lastName">Apellidos <span className="text-primary-500">*</span></label>
+                <div className="flex flex-col w-full">
+                  <label htmlFor="lastName" className="mb-2">
+                    Apellidos <span className="text-primary-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="lastName"
@@ -97,27 +138,45 @@ export default function RegisterView() {
                     placeholder="Escribe tus apellidos"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="form-input-default"
+                    className={`form-input-default ${
+                      formErrors.lastName ? "" : "mb-4"
+                    }`}
                     required
                   />
+                  {formErrors.lastName && (
+                    <p className="text-red-500 text-sm mt-1 mb-2">
+                      {formErrors.lastName}
+                    </p>
+                  )}
                 </div>
               </div>
-              <div className="flex flex-col gap-2 w-full">
-                <label htmlFor="email">Correo electrónico <span className="text-primary-500">*</span></label>
+              <div className="flex flex-col w-full">
+                <label htmlFor="email" className="mb-2">
+                  Correo electrónico <span className="text-primary-500">*</span>
+                </label>
                 <input
                   type="email"
                   name="email"
                   id="email"
-                placeholder="Escribe tu correo electrónico"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-input-default"
-                required
-              />
+                  placeholder="Escribe tu correo electrónico"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`form-input-default ${
+                    formErrors.email ? "" : "mb-4"
+                  }`}
+                  required
+                />
+                {formErrors.email && (
+                  <p className="text-red-500 text-sm mt-1 mb-2">
+                    {formErrors.email}
+                  </p>
+                )}
               </div>
               <div className="flex space-x-2">
-                <div className="relative flex flex-col gap-2 w-full">
-                  <label htmlFor="password">Contraseña <span className="text-primary-500">*</span></label>
+                <div className="relative flex flex-col w-full">
+                  <label htmlFor="password" className="mb-2">
+                    Contraseña <span className="text-primary-500">*</span>
+                  </label>
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
@@ -126,13 +185,13 @@ export default function RegisterView() {
                     placeholder="Escribe tu contraseña"
                     value={formData.password}
                     onChange={handleChange}
-                    className="form-input-default pr-10"
+                    className={`form-input-default pr-10 `}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 text-[#797676]"
+                    className={` absolute top-11  right-0 pr-3 text-[#797676] `}
                   >
                     {showPassword ? (
                       <EyeSlashIcon className="h-5 w-5" />
@@ -140,9 +199,17 @@ export default function RegisterView() {
                       <EyeIcon className="h-5 w-5 " />
                     )}
                   </button>
+                  {formErrors.password && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.password}
+                    </p>
+                  )}
                 </div>
-                <div className="relative flex flex-col gap-2 w-full">
-                  <label htmlFor="confirmPassword">Confirmar contraseña <span className="text-primary-500">*</span></label>
+                <div className="relative flex flex-col w-full">
+                  <label htmlFor="confirmPassword" className="mb-2">
+                    Confirmar contraseña{" "}
+                    <span className="text-primary-500">*</span>
+                  </label>
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
@@ -151,13 +218,15 @@ export default function RegisterView() {
                     placeholder="Escribe tu confirmación"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="form-input-default pr-10"
+                    className={`form-input-default pr-10 `}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 top-7 flex items-center pr-3 text-[#797676]"
+                    className={` absolute top-11 right-0 pr-3 text-[#797676] ${
+                      formErrors.confirmPassword ? "top-8" : "top-8"
+                    }`}
                   >
                     {showConfirmPassword ? (
                       <EyeSlashIcon className="h-5 w-5" />
@@ -165,33 +234,45 @@ export default function RegisterView() {
                       <EyeIcon className="h-5 w-5" />
                     )}
                   </button>
+                  {formErrors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formErrors.confirmPassword}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {formErrors.general && (
+                <p className="text-red-500 text-sm mt-1">
+                  {formErrors.general}
+                </p>
+              )}
 
               <button
                 type="submit"
-                className="uppercase w-full h-[40px] my-10 bg-primary-500 text-white py-2 rounded rounded-[8px]"
+                className="uppercase w-full h-[40px] my-6 bg-primary-500 text-white py-2  rounded-[8px]"
               >
                 Registrarme
               </button>
             </form>
-            <div className="w-full px-[20%] pt-[4%] text-center justify-center">
+            <div className="w-full px-[20%] text-center justify-center">
               <p>
                 Al registrarme, acepto las{" "}
-                <Link href="/" className="text-secondary-500 hover:underline">
+                <Link href="#" className="text-secondary-500 hover:underline">
                   Condiciones del servicio
                 </Link>
                 , de Trainit y su{" "}
-                <Link href="/" className="text-secondary-500 hover:underline">
+                <Link href="#" className="text-secondary-500 hover:underline">
                   Politica de privacidad
                 </Link>
                 .
               </p>
               <p className="text-sm text-center mt-[6%]">
                 ¿Ya tienes cuenta?{" "}
-                <Link href="/login" className="text-secondary-500 hover:underline">
+                <Link
+                  href="/login"
+                  className="text-secondary-500 hover:underline"
+                >
                   Inicia sesión
                 </Link>
               </p>
