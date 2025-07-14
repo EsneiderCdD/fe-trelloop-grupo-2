@@ -19,7 +19,7 @@ const Header = () => {
           </div>
 
           {/* Imágenes: columna derecha, con espacio para creatividad */}
-          <div className="col-start-8 col-span-4 mt-[150px] relative translate-x-[-50px] ">
+          <div className="overflow-visible col-start-8 col-span-4 mt-[150px] relative translate-x-[-125px] w-[661px] h-[661px]">
             <HeaderImages />
           </div>
         </div>

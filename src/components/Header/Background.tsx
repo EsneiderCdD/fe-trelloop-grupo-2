@@ -3,7 +3,8 @@ import Image from 'next/image';
 const Background = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      <div className="relative max-w-[1366px] mx-auto w-full h-full">
+      <div className="relative max-w-[1366px] mx-auto w-full h-full  overflow-hidden
+ ">
         {/* Izquierda */}
         <Image
           src="/assets/images/circle2.webp"

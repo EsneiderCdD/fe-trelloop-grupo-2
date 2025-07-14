@@ -22,8 +22,8 @@ const HeaderImages = () => {
           <Image
             src="/assets/images/cubo-4.svg"
             alt="Cubo 4"
-            width={330}
-            height={330}
+            width={305}
+            height={305}
             className="rounded-[30px]"
           />
           <span className="absolute inset-0 p-2 flex items-end justify-center">
@@ -33,13 +33,13 @@ const HeaderImages = () => {
       </div>
 
       {/* cubo-2 alineado arriba */}
-      <div className="translate-x-[-55px] flex flex-row gap-2 items-start">
+      <div className="translate-x-[-92px] flex flex-row gap-2 items-start">
         <div className="relative">
           <Image
             src="/assets/images/cubo-1.svg"
             alt="Cubo 1"
-            width={355}
-            height={355}
+            width={350}
+            height={350}
             className="rounded-[30px]"
           />
           <span className="absolute inset-0 p-2 flex items-end justify-center">
