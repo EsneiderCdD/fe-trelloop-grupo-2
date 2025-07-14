@@ -7,8 +7,7 @@ export async function registerUserController(data: RegisterData) {
 
   // Campos obligatorios
   if (!firstName || !lastName || !email || !password || !confirmPassword) {
-    // CAMBIO: Lanzar un error general o especificar múltiples campos si quieres
-    throw new ValidationError("Todos los campos son obligatorios.", "general"); // 'general' es un placeholder para un error no específico
+    throw new ValidationError("Todos los campos son obligatorios.", "general"); 
   }
 
   // Validación de longitud de nombres
@@ -28,7 +27,7 @@ export async function registerUserController(data: RegisterData) {
 
   // Validación de contraseñas
   if (password !== confirmPassword) {
-    throw new ValidationError("Las contraseñas no coinciden.", "confirmPassword"); // Apunta a confirmPassword, o ambos
+    throw new ValidationError("Las contraseñas no coinciden.", "confirmPassword"); 
   }
 
   if (password.length < 8) {
@@ -47,6 +46,5 @@ export async function registerUserController(data: RegisterData) {
     throw new ValidationError("La contraseña debe contener al menos un carácter especial.", "password");
   }
 
-  // Si todo está bien, llamar al servicio
   return await registerUserService(data);
 }
