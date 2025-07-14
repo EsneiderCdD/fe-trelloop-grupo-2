@@ -13,7 +13,7 @@ const Background = () => {
           className="absolute"
           style={{
             left: "-428px",
-            top: "444px",
+            top: "383px"
           }}
         />
         {/* Derecha */}
@@ -25,7 +25,7 @@ const Background = () => {
           className="absolute"
           style={{
             left: "834px", // ← posición relativa al contenedor de 1366px
-            top: "161px",
+            top: "100px",
           }}
         />
       </div>

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+
 const HeaderContent = () => {
   const router = useRouter();
 
@@ -10,49 +11,73 @@ const HeaderContent = () => {
     router.push("/register");
   };
 
+
+
+
+
+
+
   return (
-    <div className="w-[686px] h-[351px]">
+    <div className="">
       {/* Make it + icono */}
-      <div className="flex items-start gap-2 w-[580px] h-[92px]">
+      <div className="flex gap-2">
         <h1
-          className="text-[74px] leading-[117%] font-normal text-text-default"
-          style={{ fontFamily: "'Poppins' , sans-serif", letterSpacing: "4px" }}
+          className="font-poppins text-[74px] leading-[117%] font-normal text-text-default"
         >
           Make it
         </h1>
-        <span className="flex items-center justify-center translate-x-3 w-[171px] h-[100px]">
+         <div className="flex items-center justify-center translate-x-3 w-[175px] h-[100px] ">
           <Image
             src="/assets/icons/symbol.svg"
             alt="symbol"
-            width={200}
-            height={200}
+            width={175}
+            height={100}
             className="object-contain"
           />
-        </span>
+        </div>
       </div>
 
+
+
+
+
+
+
+
+
+
+
+
       {/* Icono inferior */}
-      <div className="flex items-center gap-2 mt-4">
-        <Image src="/assets/icons/symbol1.webp" alt="symbol" width={88} height={75} />
+      <div className="flex items-center w-[557px] h-[92px] ml-2.5">
+        <Image className='w-[88px] h-[75px] mb-5' src="/assets/icons/symbol1.webp" alt="symbol" width={88} height={75} />
 
         {/* Happen */}
-          <h2
-            className="italic text-[70px] leading-[117%] font-extralight text-text-default ml-5 "
-            style={{ fontFamily: "'Poppins', sans-serif", letterSpacing: "8px" }}
-          >
-            Happen
-          </h2>
+        <h2
+          className="font-poppins italic text-[70px] leading-[117%] font-extralight text-text-default ml-5 tracking-wider"
+        >
+          Happen
+        </h2>
+
+
+
+
+
+
+
+
+
       </div>
 
       {/* Descripción */}
-      <p className="text-2xl max-w-md text-text-default mt-4">
+      <p className="font-poppins text-[20px] leading-[175%] max-w-md text-text-default mt-6 ml-12 tracking-wide ">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
       </p>
 
       {/* Botón */}
       <button
         onClick={goToRegister}
-        className="h-14 w-64 bg-state-default text-text-default text-xl rounded-full mt-6"
+        className="h-[54px] w-[247px] bg-state-default text-text-default text-xl rounded-full mt-4 ml-[85px]"
       >
         Crear cuenta
       </button>

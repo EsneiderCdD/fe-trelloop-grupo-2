@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
-import GridOverlay from "@/utils/dev/Grid"; 
+import GridOverlay from "@/utils/dev/Grid";
+import { Poppins } from "next/font/google";
+import React from "react";
+
+// ✅ Importar fuente correctamente
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "Mi Proyecto",
@@ -13,10 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={poppins.variable}>
       <body>
         {children}
-        {process.env.NODE_ENV === "development" && <GridOverlay />} {/* Dev only */}
+        {process.env.NODE_ENV === "development" && <GridOverlay />}
       </body>
     </html>
   );
