@@ -94,14 +94,12 @@ export default function RegisterView() {
       <div className="absolute inset-0 z-0">
         <Background />
       </div>
-
-
       <BackHeader title="Registro de usuario" />
       <div className="flex-grow px-8 relative flex flex-col lg:flex-row justify-center">
         <div className="w-full lg:w-1/2 flex justify-end items-center p-8 order-last lg:order-first">
           <IlustracionUsuario
             alt="Imagen"
-            className="w-[325px] lg:w-full h-auto max-w-xs lg:max-w-md"
+            className="w-[325px] lg:w-full max-w-xs lg:max-w-md"
           />
         </div>
 
