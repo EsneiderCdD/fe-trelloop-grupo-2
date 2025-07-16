@@ -4,7 +4,6 @@ import GridOverlay from "@/utils/dev/Grid";
 import { Poppins } from "next/font/google";
 import React from "react";
 
-// ✅ Importar fuente correctamente
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "700"],
