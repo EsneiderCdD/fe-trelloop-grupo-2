@@ -4,7 +4,7 @@ const HeaderImages = () => {
   return (
     <div className="flex flex-col gap-2">
       {/* cubo-3 alineado abajo */}
-      <div className="translate-x-[8px] flex flex-row gap-2 items-end">
+      <div className="translate-x-[8px] flex flex-row gap-2 items-end ">
         <div className="relative">
           <Image
             src="/assets/images/cubo-3.svg"
@@ -13,7 +13,7 @@ const HeaderImages = () => {
             height={250}
             className="rounded-[30px]"
           />
-          <span className="absolute inset-0 p-2 flex items-end justify-center">
+          <span className="absolute inset-0 p-2 flex items-end justify-center text-[18px]">
             ipsum dolor sit dolor
           </span>
         </div>
@@ -26,13 +26,13 @@ const HeaderImages = () => {
             height={305}
             className="rounded-[30px]"
           />
-          <span className="absolute inset-0 p-2 flex items-end justify-center">
+          <span className="absolute inset-0 p-2 flex items-end justify-center text-[18px]">
             ipsum dolor sit dolor
           </span>
         </div>
       </div>
 
-      {/* cubo-2 alineado arriba */}
+
       <div className="translate-x-[-92px] flex flex-row gap-2 items-start">
         <div className="relative">
           <Image
@@ -42,7 +42,7 @@ const HeaderImages = () => {
             height={350}
             className="rounded-[30px]"
           />
-          <span className="absolute inset-0 p-2 flex items-end justify-center">
+          <span className="absolute inset-0 p-2 flex items-end justify-center text-[18px]">
             ipsum dolor sit dasddolor
           </span>
         </div>
@@ -55,7 +55,7 @@ const HeaderImages = () => {
             height={250}
             className="rounded-[30px]"
           />
-          <span className="absolute inset-0 p-2 flex items-end justify-center">
+          <span className="absolute inset-0 p-2 flex items-end justify-center text-[18px]">
             ipsum dolor sit dolor
           </span>
         </div>

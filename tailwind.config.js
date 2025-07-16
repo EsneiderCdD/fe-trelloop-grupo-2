@@ -9,8 +9,9 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily: {
+     fontFamily: {
         poppins: "var(--font-poppins)",
+        ppvalve: "var(--font-ppvalve)",
       },
       colors: {
         primary: {

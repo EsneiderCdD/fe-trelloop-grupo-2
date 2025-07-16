@@ -28,7 +28,7 @@ const HeaderContent = () => {
       </div>
 
       {/* Icono inferior + Happen */}
-      <div className="flex items-center w-[557px] h-[92px] ml-2.5">
+      <div className="flex items-center w-[557px] h-[92px] ml-3">
         <Image
           className="w-[88px] h-[75px] mb-5"
           src="/assets/icons/symbol1.webp"
@@ -36,9 +36,10 @@ const HeaderContent = () => {
           width={88}
           height={75}
         />
-        <h2 className="font-poppins italic text-[70px] leading-[117%] font-extralight text-text-default ml-5 tracking-wider">
+        <h2 className="font-ppvalve italic text-[70px] leading-[117%] text-text-default ml-5 tracking-wider">
           Happen
         </h2>
+
       </div>
 
       {/* Descripción */}
