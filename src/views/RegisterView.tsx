@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import BackHeader from "@/components/BackHeader";
-import { RegisterData } from "@/types/user";
-import { registerUserController } from "@/controllers/authController";
 import { useRouter } from "next/navigation";
+import { registerUserController } from "controllers/authController";
+import BackHeader from "components/BackHeader";
+import { RegisterData } from "types/user";
 
 export default function RegisterView() {
   const router = useRouter();
