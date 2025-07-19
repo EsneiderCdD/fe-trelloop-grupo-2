@@ -1,9 +1,8 @@
 
-import { registerUserService } from "services/authService";
+import { authService, registerUserService } from "services/authService";
 import { RegisterData } from "types/user";
-import { authService } from "app/services/authService";
-import { LoginRequest, LoginResponse } from "app/types/auth";
-import { UserProfile } from "app/types/user";
+import { LoginRequest, LoginResponse } from "types/auth";
+import { UserProfile } from "types/user";
 
 export async function registerUserController(data: RegisterData) {
   const { firstName, lastName, email, password, confirmPassword } = data;
