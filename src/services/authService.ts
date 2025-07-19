@@ -6,7 +6,7 @@ import { AUTH_ENDPOINTS } from "constants/apiEndpoints";
 import { ApiError, LoginRequest, LoginResponse } from "types/auth";
 import { RegisterData } from "types/user";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API || "http://localhost:5000";
 
 export async function registerUserService(data: RegisterData ){
   const response = await fetch(`${API_URL}/api/register`, {
@@ -14,7 +14,7 @@ export async function registerUserService(data: RegisterData ){
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       name: data.firstName,
-      lastname: data.lastName,
+      last_name: data.lastName,
       email: data.email,
       password: data.password,
       confirm_password: data.confirmPassword,
