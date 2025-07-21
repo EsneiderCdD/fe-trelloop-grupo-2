@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { Geist, Geist_Mono } from "next/font/google";
 import {ReactNode }from "react";
 import "../styles/globals.css";
@@ -13,6 +14,12 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
+import { ReactNode } from "react";
+import "../styles/globals.css";
+import GridOverlay from "../utils/dev/Grid";
+import { poppins, ppValveExtraLightItalic } from "../styles/typography";
+
+
 export const metadata: Metadata = {
   title: "Mi Proyecto",
   description: "Aplicación web en desarrollo",
@@ -20,14 +27,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: ReactNode;
+}) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${ppValveExtraLightItalic.variable}`}
+    >
       <body>
-        {children}
-        {/* Grilla para Frontend (Borrar si no se necesita) */}
+        {children} {/*Grilla*/}
         {/* {process.env.NODE_ENV === "development" && <GridOverlay />} */}
       </body>
     </html>
