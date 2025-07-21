@@ -13,7 +13,7 @@ const Navbar = () => {
         router.push("/")
     }
     return (
-        <div className="flex w-[1366px] mx-auto justify-between bg-[#222222] h-[72px] items-center">
+        <div className="flex max-width[1366] mx-auto justify-between bg-[#222222] h-[72px] items-center">
             <div className="ml-5">
                 <Image
                     src="/assets/logo/logo-dark-trainit.webp"

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {ReactNode }from "react";
 import "../styles/globals.css";
-import GridOverlay from "@/utils/dev/Grid";
+import GridOverlay from "utils/dev/Grid";
 import { Poppins } from "next/font/google";
 import React from "react";
 
