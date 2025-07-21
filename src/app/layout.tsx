@@ -13,11 +13,8 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "700"],
   variable: "--font-poppins",
 });
-
-import { ReactNode } from "react";
 import "../styles/globals.css";
-import GridOverlay from "../utils/dev/Grid";
-import { poppins, ppValveExtraLightItalic } from "../styles/typography";
+import { ppValveExtraLightItalic } from "../styles/typography";
 
 
 export const metadata: Metadata = {
