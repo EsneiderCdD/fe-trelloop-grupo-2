@@ -39,8 +39,7 @@ const Login = () => {
     const success = await login({ email, password });
     
     if (success) {
-      // Redirigir al usuario a la página principal o a donde se desee
-      router.push("/");
+  router.push("/home"); // ✅ Redirige correctamente
     } else {
       setError("Error al iniciar sesión.");
     }
