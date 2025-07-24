@@ -4,7 +4,7 @@
 import React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "app/context/AuthContext";
+import { useAuth } from "context/AuthContext";
 
 const Login = () => {
   const router = useRouter();

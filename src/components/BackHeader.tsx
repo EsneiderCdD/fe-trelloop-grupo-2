@@ -16,7 +16,7 @@ export default function BackHeader({title}: BackHeaderProps) {
   return (
     <div
       onClick={handleBack}
-      className="flex items-center space-x-2 cursor-pointer hover:text-blue-600 ps-7 h-15 bg-blue-950"
+      className="flex items-center space-x-2 cursor-pointer ps-7 h-[64px] bg-header border-b border-[#2B2B2B]"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

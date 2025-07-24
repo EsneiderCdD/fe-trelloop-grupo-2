@@ -1,3 +1,4 @@
+
 export interface RegisterData {
   firstName: string;
   lastName: string;
@@ -5,3 +6,10 @@ export interface RegisterData {
   password: string;
   confirmPassword: string;
 }
+export interface UserProfile {
+    id: number;
+    name: string;
+    email: string;
+    createdAt: string;
+}
+

@@ -9,21 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
+
     "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/vite": "^4.1.11",
-=======
->>>>>>> 0ba71c9fa1fecfa3b25c57b58a44318d4ba09528
+
+    "@heroicons/react": "^2.2.0",
+    "@svgr/webpack": "^8.1.0",
+
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-<<<<<<< HEAD
     "@tailwindcss/postcss": "^4",
-=======
->>>>>>> 0ba71c9fa1fecfa3b25c57b58a44318d4ba09528
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

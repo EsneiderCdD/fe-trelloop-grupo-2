@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -5,9 +7,14 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/views/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/utils/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+     fontFamily: {
+        poppins: "var(--font-poppins)",
+        ppvalve: "var(--font-ppvalve)",
+      },
       colors: {
         primary: {
           100: "var(--global-color-primary-100)",
@@ -32,6 +39,7 @@ module.exports = {
           900: "var(--global-color-secondary-900)",
         },
         neutral: {
+          0: "var(--global-color-neutral-0)",
           100: "var(--global-color-neutral-100)",
           200: "var(--global-color-neutral-200)",
           300: "var(--global-color-neutral-300)",
@@ -111,5 +119,32 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addComponents, theme }) {
+      addComponents({
+        '.form-input-default': {
+          width: '100%',
+          borderWidth: '1px',
+          borderColor: '#3c3c3c',
+          '--tw-border-opacity': '0.7',
+          padding: theme('spacing.2'),
+          borderRadius: '10px',
+          backgroundColor: 'color-mix(in srgb, transparent, var(--global-color-neutral-0) 4%)',
+          backdropFilter: 'blur(3.6px)',
+          '&::placeholder': {
+            color: '#797676',
+          },
+        },
+        'input[type="password"]::-ms-reveal': {
+          display: 'none',
+        },
+        '.bg-dual-circles': {
+          backgroundColor: '#1A1A1A',
+        },
+         '.bg-header': {
+          backgroundColor: 'color-mix(in srgb, transparent, var(--global-color-neutral-1000) 7%)',
+        }
+      })
+    })
+  ],
 };

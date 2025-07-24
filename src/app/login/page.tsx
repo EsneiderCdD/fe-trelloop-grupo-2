@@ -1,5 +1,5 @@
 import Login from "../../pages/auth/Login";
-import { AuthProvider } from "app/context/AuthContext";
+import { AuthProvider } from "context/AuthContext";
 
 
 export default function LoginPage() {
