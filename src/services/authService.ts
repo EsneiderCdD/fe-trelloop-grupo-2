@@ -6,10 +6,8 @@ import { AUTH_ENDPOINTS } from "constants/apiEndpoints";
 import { ApiError, LoginRequest, LoginResponse } from "types/auth";
 import { RegisterData } from "types/user";
 
-const API_URL = process.env.NEXT_PUBLIC_API || "http://localhost:5000";
-
 export async function registerUserService(data: RegisterData ){
-  const response = await fetch(`${API_URL}/api/register`, {
+  const response = await fetch(AUTH_ENDPOINTS.REGISTER, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
