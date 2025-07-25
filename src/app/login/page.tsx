@@ -1,15 +1,148 @@
-import Login from "../../pages/auth/Login";
-import { AuthProvider } from "context/AuthContext";
+"use client";
 
+import React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "context/AuthContext";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+// import Background from "../components/login/Background";
 
-export default function LoginPage() {
-<<<<<<< HEAD
-  return <Login />;
-=======
-    return (
-      <AuthProvider>
-        <Login />;
-      </AuthProvider>
+const Login = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const { login } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // validar que existan correo y contraseña:
+    if (!email || !password) {
+      setError("Por favor llena todos los campos.");
+      return;
+    }
+
+    //revisar formato de correo valido
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Formato de correo electrónico invalido.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    //si todo está bien, limpiar el error
+    setError("");
+    console.log("todo bien al 100");
+
+    // Llamar a la función de login del contexto de autenticación
+    const success = await login({ email, password });
+
+    if (success) {
+      // Redirigir al usuario a la página principal o a donde se desee
+      router.push("/");
+    } else {
+      setError("Error al iniciar sesión.");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} noValidate>
+      <div className="w-full bg-dual-circles text-text-default h-screen relative flex flex-col">
+        {/* <div className="absolute inset-0 z-0">
+          <Background />
+        </div> */}
+        <div className="bg-[#1A1A1A] text-white overflow-visible">
+          <h2 className="text-lg font-semibold whitespace-nowrap p-2">LOGIN</h2>
+          <hr />
+
+          <div className="min-h-screen text-white flex relative overflow-visible">
+            {/* Lado izquierdo */}
+            <div className="w-1/2 hidden md:flex items-center justify-start relative overflow-x-hidden overflow-y-clip">
+              <img
+                src="/deco-formas(1).png"
+                alt="deco-formas-1"
+                className="a"
+              />
+            </div>
+
+            {/* Lado derecho */}
+            <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-8">
+              <div className="w-1/2 max-w-md space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block mb-1 text-sm">
+                      Correo electrónico
+                    </label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Escribe tu correo electrónico..."
+                      className="w-full px-4 py-1 rounded-md bg-[#1a1a1a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 text-sm">
+                      Contraseña <span className="text-primary-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Escriba su contraseña"
+                        className="w-full px-4 py-1 rounded-md bg-[#1a1a1a] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute top-1/2 right-3 -translate-y-1/2 text-[#797676]"
+                      >
+                        {showPassword ? (
+                          <EyeSlashIcon className="h-5 w-5" />
+                        ) : (
+                          <EyeIcon className="h-5 w-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      className="w-3 h-3 text-primary-0 rounded border-gray-300 focus:text-primary-0"
+                    />
+                    <span className="text-sm text-neutral-100">Recordarme</span>
+                  </label>
+
+                  <button className="w-full bg-primary-500 hover:bg-primary-600 text-white py-1 rounded-md transition duration-200">
+                    Iniciar sesión
+                  </button>
+                  {error && <p className="text-red-500 text-sm">{error}</p>}
+                </div>
+
+                <p className="text-center text-sm text-gray-400">
+                  ¿No tienes cuenta?{" "}
+                  <a href="#" className="text-secondary-500 hover:underline">
+                    Regístrate
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
   );
->>>>>>> 0ba71c9fa1fecfa3b25c57b58a44318d4ba09528
-}
+};
+
+export default Login;
+
+//queda pendiente el spinner a través del loading
+// y el isAuthenticated
