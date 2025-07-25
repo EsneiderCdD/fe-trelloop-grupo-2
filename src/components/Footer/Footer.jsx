@@ -2,8 +2,8 @@ import SocialIcons from './SocialIcons';
 
 export default function Footer() {
   return (
-    <footer className="bg-background-body text-text-default">
-      <div className="max-w-[1366px] mx-auto pt-20 px-6">
+    <footer className="bg-transparent text-text-default">
+      <div className="max-w-[1366px] mx-auto pt-20 px-6 mb-20">
         {/* Grid principal */}
         <div className="grid grid-cols-12 gap-8">
           {/* Acerca de*/}
