@@ -42,7 +42,7 @@ export default function Footer() {
         </div>
 
         {/* Créditos */}
-        <div className="flex justify-center mt-20 mb-20 text-[14px]">
+        <div className="flex justify-center mt-20  text-[14px]">
           © 2025 Copyright | Programa TrainIT
         </div>
       </div>
