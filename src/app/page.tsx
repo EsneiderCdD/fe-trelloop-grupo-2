@@ -1,11 +1,9 @@
 "use client";
 
-import Header from 'components/Header/Header';
-import Footer from 'components/Footer/Footer';
-import Navbar from 'components/Navbar/Navbar';
-
-
-
+import Header from "components/Header/Header";
+import Footer from "components/Footer/Footer";
+import Navbar from "components/Navbar/Navbar";
+import Edit from "components/Edit/Edit";
 
 export default function Home() {
   return (
@@ -14,8 +12,8 @@ export default function Home() {
       <main className="flex flex-col items-center justify-center min-h-screen w-full">
         <Header />
       </main>
-      <Footer />
 
+      <Footer />
     </>
   );
 }
