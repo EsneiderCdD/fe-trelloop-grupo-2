@@ -3,8 +3,8 @@
 import React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "context/AuthContext";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { useAuthStore } from "store/authStore";
 // import Background from "../components/login/Background";
 
 const Login = () => {
@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, loading, user, isAuthenticated } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
