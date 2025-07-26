@@ -142,28 +142,28 @@ const isFirstBoard = index === 0;
             : board.description || "Descripción breve del tablero..."}
         </p>
 
-        {/* Avatares */}
-<div className="flex space-x-[-8px] mb-3">
-  {(isFirstBoard
-    ? [
-        { id: "m1", avatar: "/assets/icons/avatar1.png" },
-        { id: "m2", avatar: "/assets/icons/avatar2.png" },
-        { id: "m3", avatar: "/assets/icons/avatar3.png" },
-        { id: "m4", avatar: "/assets/icons/avatar1.png" },
-      ]
-    : memberAvatars
-  ).map((member) => (
-    <img
-      key={member.id}
-      src={member.avatar}
-      alt="Miembro"
-      className="w-6 h-6 rounded-full border border-black"
-    />
-  ))}
-  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
-    7
-  </div>
-</div>
+              {/* Avatares */}
+      <div className="flex space-x-[-8px] mb-3">
+        {(isFirstBoard
+          ? [
+              { id: "m1", avatar: "/assets/icons/avatar1.png" },
+              { id: "m2", avatar: "/assets/icons/avatar2.png" },
+              { id: "m3", avatar: "/assets/icons/avatar3.png" },
+              { id: "m4", avatar: "/assets/icons/avatar1.png" },
+            ]
+          : memberAvatars
+        ).map((member) => (
+          <img
+            key={member.id}
+            src={member.avatar}
+            alt="Miembro"
+            className="w-6 h-6 rounded-full border border-black"
+          />
+        ))}
+        <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+          7
+        </div>
+      </div>
 
         {/* Botones */}
         <div className="absolute bottom-6 left-4 right-4 flex items-center gap-2 justify-start">
