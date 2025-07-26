@@ -45,7 +45,7 @@ const Login = () => {
 
     if (success) {
       // Redirigir al usuario a la página principal o a donde se desee
-      router.push("/");
+      router.push("/home");
     } else {
       setError("Error al iniciar sesión.");
     }
@@ -63,7 +63,9 @@ const Login = () => {
       <form onSubmit={handleSubmit} noValidate className="flex-1 flex flex-col">
         {/* Header */}
         <div>
-          <h2 className="text-lg font-semibold whitespace-nowrap p-2 text-white">LOGIN</h2>
+          <h2 className="text-lg font-semibold whitespace-nowrap p-2 text-white">
+            LOGIN
+          </h2>
           <hr className="border-gray-600" />
         </div>
 
@@ -137,7 +139,10 @@ const Login = () => {
 
               <p className="text-center text-sm text-gray-400">
                 ¿No tienes cuenta?{" "}
-                <Link href="/register" className="text-secondary-500 hover:underline">
+                <Link
+                  href="/register"
+                  className="text-secondary-500 hover:underline"
+                >
                   Regístrate
                 </Link>
               </p>
