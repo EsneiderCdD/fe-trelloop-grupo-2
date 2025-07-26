@@ -1,10 +1,11 @@
 import Background from './Background';
 import HeaderContent from './HeaderContent';
 import HeaderImages from './HeaderImages';
+import Footer from 'components/Footer/Footer';
 
 const Header = () => {
   return (
-    <header className="w-full h-[300vh] bg-background-body text-text-default relative overflow-hidden">
+    <header className="w-full h-[4212px] bg-background-body text-text-default relative overflow-hidden">
       {/* Fondo */}
       <div className="absolute inset-0 z-0">
         <Background />
@@ -24,6 +25,11 @@ const Header = () => {
           </div>
         </div>
       </div>
+      {/* Footer */}
+      <div className="absolute bottom-0 w-full z-10">
+        <Footer />
+      </div>
+
     </header>
   );
 };
