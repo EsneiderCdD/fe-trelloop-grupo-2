@@ -1,8 +1,15 @@
 "use client";
 
+import { useRouter } from 'next/navigation'; 
 import React from "react";
 
 const UserNavbar = () => {
+  const router = useRouter();
+
+  const goTonewBoard = () => {
+    router.push("/newBoard");
+  };
+
   return (
     <div className="flex flex-col justify-start items-end w-full bg-[#1A1A1A] px-6 pt-4 pb-6">
       {/* Línea superior: buscador + iconos */} 
@@ -57,7 +64,7 @@ const UserNavbar = () => {
 
       {/* Botón Crear tablero */}
       <div className="mt-4">
-        <button className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium">
+        <button className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium" onClick={goTonewBoard}>
           <img
             src="/assets/icons/plus.svg"
             alt="Crear"
