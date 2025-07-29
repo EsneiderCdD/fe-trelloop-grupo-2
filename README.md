@@ -12,6 +12,10 @@
 
 `git clone https://github.com/Programa-TrainIT-Ar/fe-trelloop-grupo-2 .`
 
+#### 4 Muevete a la rama QA
+
+`git checkout -b QA origin/QA`
+
 ### 4 Crea un archivo .env
 
 ### 5 Copia al archivo .env el contenido de .env.example
