@@ -1,8 +1,8 @@
 export const mockBoards = [
   {
     id: "1",
-    title: "Marketing Creativo",
-    description: "Plan de campañas para nuevos productos",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/img1.jpg",
     updatedAt: "2025-07-24T10:00:00Z",
     isFavorite: true, // ✅ FAVORITO ORIGINAL
@@ -14,8 +14,8 @@ export const mockBoards = [
   },
   {
     id: "nuevo1", // 🆕 Nuevo primer tablero de "creados"
-    title: "Campaña Internacional",
-    description: "Ideas para el lanzamiento global",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/img4.jpg", // ✅ Imagen nueva
     updatedAt: "2025-07-25T09:00:00Z",
     isFavorite: false,
@@ -29,8 +29,8 @@ export const mockBoards = [
   },
   {
     id: "2",
-    title: "Sprint Frontend",
-    description: "Implementación de vistas responsivas",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/img2.jpg",
     updatedAt: "2025-07-23T14:30:00Z",
     isFavorite: false,
@@ -44,8 +44,8 @@ export const mockBoards = [
   },
   {
     id: "3",
-    title: "Tablero de Diseño",
-    description: "Exploración de nuevas interfaces",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/img3.jpg",
     updatedAt: "2025-07-22T10:00:00Z",
     isFavorite: false,
@@ -59,8 +59,8 @@ export const mockBoards = [
   },
   {
     id: "4", // ✅ Duplicado del favorito en la fila creada
-    title: "Marketing Creativo",
-    description: "Plan de campañas para nuevos productos",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/img1.jpg",
     updatedAt: "2025-07-24T10:00:00Z",
     isFavorite: false, // ⚠️ Este se muestra como no favorito pero el frontend lo marca con corazón fucsia por el index === 3
@@ -74,8 +74,8 @@ export const mockBoards = [
   },
   {
     id: "5",
-    title: "Eventos Corporativos",
-    description: "Organización de ferias y conferencias",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/default-board.jpg",
     updatedAt: "2025-07-20T08:15:00Z",
     isFavorite: false,
@@ -89,8 +89,8 @@ export const mockBoards = [
   },
   {
     id: "6",
-    title: "Estrategia Comercial",
-    description: "Planes de expansión y ventas",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/default-board.jpg",
     updatedAt: "2025-07-20T09:30:00Z",
     isFavorite: false,
@@ -104,8 +104,8 @@ export const mockBoards = [
   },
   {
     id: "7",
-    title: "Backlog de bugs",
-    description: "Seguimiento de errores pendientes",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/default-board.jpg",
     updatedAt: "2025-07-19T12:00:00Z",
     isFavorite: false,
@@ -119,8 +119,8 @@ export const mockBoards = [
   },
   {
     id: "8",
-    title: "Reclutamiento",
-    description: "Seguimiento de candidatos y vacantes",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/default-board.jpg",
     updatedAt: "2025-07-18T16:00:00Z",
     isFavorite: false,
@@ -134,8 +134,8 @@ export const mockBoards = [
   },
   {
     id: "9",
-    title: "Contabilidad",
-    description: "Balances y reportes mensuales",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/default-board.jpg",
     updatedAt: "2025-07-17T18:45:00Z",
     isFavorite: false,
@@ -149,8 +149,8 @@ export const mockBoards = [
   },
   {
     id: "10",
-    title: "Capacitación Interna",
-    description: "Formación del equipo técnico",
+    title: "Título tablero",
+    description: "Descripción breve del tablero...",
     coverImage: "/assets/images/default-board.jpg",
     updatedAt: "2025-07-16T09:15:00Z",
     isFavorite: false,
