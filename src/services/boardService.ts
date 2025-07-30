@@ -23,9 +23,9 @@ export const getUserBoards = async () => {
     }
 
     const data = await response.json();
-    return data;
+    return data.boards;
   } catch (error) {
     console.error("Error al obtener tableros del backend:", error);
-    return []; // Devuelve vacío para fallback a mockBoards
+    return [];
   }
 };

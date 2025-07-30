@@ -37,21 +37,30 @@ const UserBoards = () => {
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    async function fetchBoards() {
-      const result = await getUserBoards();
-      const data = result.length > 0 ? result : mockBoards;
+  async function fetchBoards() {
+    const userBoards = await getUserBoards();
 
-      const loadedBoards: Board[] = data.map((b: Board, index: number) => ({
-        ...b,
-        coverImage: assignedImages[index] || b.coverImage,
-      }));
+    const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
+      id: b.id.toString(),
+      name: b.name,
+      title: b.name,
+      description: b.description || "",
+      board_image_url: b.boardImageUrl || "",
+      coverImage: assignedImages[index] || "/assets/images/default-board.jpg",
+      isFavorite: false,
+      members: (b.members || []).map((m: any, i: number) => ({
+        id: m.id?.toString() || `${i}`,
+        name: m.name,
+        avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
+      })),
+      tags: b.tags || [],
+    }));
 
-      setBoards(loadedBoards);
-    }
+    setBoards(loadedBoards);
+  }
 
-    fetchBoards();
-  }, []);
-
+  fetchBoards();
+}, []);
   const toggleFavorite = (boardId: string) => {
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
