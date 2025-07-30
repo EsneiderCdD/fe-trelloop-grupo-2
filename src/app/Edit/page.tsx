@@ -6,7 +6,7 @@ import EditBoardView from "../../components/Edit/EditBoardView";
 export default function EditPage() {
   return (
     <div>
-      <Edit></Edit>
+      {/* <Edit></Edit> */}
       <EditBoardView></EditBoardView>
     </div>
   )
