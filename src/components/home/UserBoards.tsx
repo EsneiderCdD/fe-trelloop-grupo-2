@@ -22,19 +22,16 @@ const assignedImages = [
   "/assets/images/img4.jpg",
   "/assets/images/img2.jpg",
   "/assets/images/img3.jpg",
-  "/assets/images/img1.jpg", // favorito fijo
+  "/assets/images/img1.jpg",
   "/assets/images/img5.jpg",
   "/assets/images/img6.jpg",
   "/assets/images/img7.jpg",
   "/assets/images/img8.jpg",
 ];
 
-const FAVORITE_FIXED_INDEX = 3;
-const FAVORITE_FIXED_IMAGE = "/assets/images/img1.jpg";
-
 const UserBoards = () => {
-  const [menuVisible, setMenuVisible] = useState<string | null>(null); // ID del tablero cuyo menú está abierto
-const router = useRouter();
+  const [menuVisible, setMenuVisible] = useState<string | null>(null);
+  const router = useRouter();
 
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
@@ -45,28 +42,17 @@ const router = useRouter();
       const data = result.length > 0 ? result : mockBoards;
 
       const loadedBoards: Board[] = data.map((b: Board, index: number) => ({
-
         ...b,
         coverImage: assignedImages[index] || b.coverImage,
       }));
 
-      const favoriteFixed = loadedBoards[FAVORITE_FIXED_INDEX];
-      favoriteFixed.coverImage = FAVORITE_FIXED_IMAGE;
-      favoriteFixed.isFavorite = true;
-
-      const initialFavorites = new Set<string>();
-      initialFavorites.add(favoriteFixed.id);
-
       setBoards(loadedBoards);
-      setFavoriteIds(initialFavorites);
     }
 
     fetchBoards();
   }, []);
 
   const toggleFavorite = (boardId: string) => {
-    if (boardId === boards[FAVORITE_FIXED_INDEX]?.id) return;
-
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
       updated.delete(boardId);
@@ -76,19 +62,8 @@ const router = useRouter();
     setFavoriteIds(updated);
   };
 
-  const favoriteFixed = boards[FAVORITE_FIXED_INDEX];
-
-  const favoriteBoards = [
-    ...(favoriteFixed ? [favoriteFixed] : []),
-    ...boards.filter(
-      (b, i) => i !== FAVORITE_FIXED_INDEX && favoriteIds.has(b.id)
-    ),
-  ];
-
-  const createdBoards = [...boards.filter((_, i) => i !== FAVORITE_FIXED_INDEX)];
-  if (favoriteFixed) {
-    createdBoards.splice(3, 0, favoriteFixed);
-  }
+  const favoriteBoards = boards.filter((b) => favoriteIds.has(b.id));
+  const createdBoards = boards;
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] px-8 pt-2 pb-20 space-y-14 text-white font-poppins">
@@ -115,10 +90,7 @@ const router = useRouter();
                   </h3>
                   <button
                     className="w-10 h-10 rounded-full bg-[#161616] flex items-center justify-center"
-                    onClick={() => {
-                      if (board.id !== boards[FAVORITE_FIXED_INDEX]?.id)
-                        toggleFavorite(board.id);
-                    }}
+                    onClick={() => toggleFavorite(board.id)}
                   >
                     <img
                       src="/assets/icons/heart-pink.svg"
@@ -178,7 +150,7 @@ const router = useRouter();
       </div>
 
       <div className="grid grid-cols-4 gap-x-6 gap-y-20 mt-4">
-        {createdBoards.slice(0, 8).map((board, index) => {
+        {createdBoards.slice(0, 8).map((board) => {
           const memberAvatars = [
             "/assets/icons/avatar1.png",
             "/assets/icons/avatar2.png",
@@ -201,10 +173,7 @@ const router = useRouter();
                 </h3>
                 <button
                   className="w-10 h-10 rounded-full bg-[#161616] flex items-center justify-center"
-                  onClick={() => {
-                    if (board.id !== boards[FAVORITE_FIXED_INDEX]?.id)
-                      toggleFavorite(board.id);
-                  }}
+                  onClick={() => toggleFavorite(board.id)}
                 >
                   <img
                     src={
