@@ -22,51 +22,53 @@ const assignedImages = [
   "/assets/images/img4.jpg",
   "/assets/images/img2.jpg",
   "/assets/images/img3.jpg",
-  "/assets/images/img1.jpg", // favorito fijo
+  "/assets/images/img1.jpg",
   "/assets/images/img5.jpg",
   "/assets/images/img6.jpg",
   "/assets/images/img7.jpg",
   "/assets/images/img8.jpg",
 ];
 
-const FAVORITE_FIXED_INDEX = 3;
-const FAVORITE_FIXED_IMAGE = "/assets/images/img1.jpg";
-
 const UserBoards = () => {
-  const [menuVisible, setMenuVisible] = useState<string | null>(null); // ID del tablero cuyo menú está abierto
-const router = useRouter();
+  const [menuVisible, setMenuVisible] = useState<string | null>(null);
+  const router = useRouter();
 
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    async function fetchBoards() {
-      const result = await getUserBoards();
-      const data = result.length > 0 ? result : mockBoards;
+  async function fetchBoards() {
+    const userBoards = await getUserBoards();
+    console.log("🔍 Datos crudos de tableros:", userBoards); 
 
-      const loadedBoards: Board[] = data.map((b: Board, index: number) => ({
+    const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
+      id: b.id.toString(),
+      name: b.name,
+      title: b.name,
+      description: b.description || "",
+      board_image_url: b.boardImageUrl || "",
+      coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
+      isFavorite: false,
+      members: Array.isArray(b.members)
+      ? b.members.filter((m: any, i: number, self: any[]) =>
+          self.findIndex((x) => (typeof x === 'object' ? x.id : x) === (typeof m === 'object' ? m.id : m)) === i
+        ).map((m: any, i: number) => {
+          const id = typeof m === "object" ? m.id : m;
+          return {
+            id: id.toString(),
+            name: `Miembro ${i + 1}`,
+            avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
+          };
+        })
+      : [],
+    }));
 
-        ...b,
-        coverImage: assignedImages[index] || b.coverImage,
-      }));
+    setBoards(loadedBoards);
+  }
 
-      const favoriteFixed = loadedBoards[FAVORITE_FIXED_INDEX];
-      favoriteFixed.coverImage = FAVORITE_FIXED_IMAGE;
-      favoriteFixed.isFavorite = true;
-
-      const initialFavorites = new Set<string>();
-      initialFavorites.add(favoriteFixed.id);
-
-      setBoards(loadedBoards);
-      setFavoriteIds(initialFavorites);
-    }
-
-    fetchBoards();
-  }, []);
-
+  fetchBoards();
+}, []);
   const toggleFavorite = (boardId: string) => {
-    if (boardId === boards[FAVORITE_FIXED_INDEX]?.id) return;
-
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
       updated.delete(boardId);
@@ -76,19 +78,8 @@ const router = useRouter();
     setFavoriteIds(updated);
   };
 
-  const favoriteFixed = boards[FAVORITE_FIXED_INDEX];
-
-  const favoriteBoards = [
-    ...(favoriteFixed ? [favoriteFixed] : []),
-    ...boards.filter(
-      (b, i) => i !== FAVORITE_FIXED_INDEX && favoriteIds.has(b.id)
-    ),
-  ];
-
-  const createdBoards = [...boards.filter((_, i) => i !== FAVORITE_FIXED_INDEX)];
-  if (favoriteFixed) {
-    createdBoards.splice(3, 0, favoriteFixed);
-  }
+  const favoriteBoards = boards.filter((b) => favoriteIds.has(b.id));
+  const createdBoards = boards;
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] px-8 pt-2 pb-20 space-y-14 text-white font-poppins">
@@ -102,11 +93,11 @@ const router = useRouter();
             <hr className="border-[#2B2B2B] flex-1" />
           </div>
 
-          <div className="grid grid-cols-4 gap-6 mt-4">
+          <div className="grid grid-cols-4 gap-x-6 gap-y-10 mt-4">
             {favoriteBoards.map((board) => (
               <div
                 key={board.id}
-                className="w-[250px] h-[240px] rounded-[16px] bg-cover bg-center relative flex flex-col justify-start p-4"
+                className="w-[250px] h-[240px] rounded-[16px] bg-cover bg-center relative flex flex-col justify-start p-4 mb-10"
                 style={{ backgroundImage: `url(${board.coverImage})` }}
               >
                 <div className="flex justify-between items-start mb-1">
@@ -114,17 +105,14 @@ const router = useRouter();
                     {board.name || board.title}
                   </h3>
                   <button
-                    className="w-10 h-10 rounded-full bg-[#161616] flex items-center justify-center"
-                    onClick={() => {
-                      if (board.id !== boards[FAVORITE_FIXED_INDEX]?.id)
-                        toggleFavorite(board.id);
-                    }}
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    onClick={() => toggleFavorite(board.id)}
                   >
                     <img
-                      src="/assets/icons/heart-pink.svg"
-                      alt="Favorito"
-                      className="w-5 h-5"
-                    />
+                    src="/assets/icons/heart-pink.svg"
+                    alt="Favorito"
+                    className="w-[20px] h-[20px] object-contain"
+                  />
                   </button>
                 </div>
 
@@ -133,7 +121,7 @@ const router = useRouter();
                 </p>
 
                 <div className="flex space-x-[-8px] mb-3">
-                  {board.members.slice(0, 2).map((member, i) => (
+                  {board.members.slice(0, 4).map((member, i) => (
                     <img
                       key={i}
                       src={member.avatar}
@@ -141,6 +129,11 @@ const router = useRouter();
                       className="w-6 h-6 rounded-full border border-black"
                     />
                   ))}
+                  {board.members.length > 4 && (
+                  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+                    +{board.members.length - 4}
+                  </div>
+)}
                 </div>
 
                 <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between">
@@ -178,7 +171,7 @@ const router = useRouter();
       </div>
 
       <div className="grid grid-cols-4 gap-x-6 gap-y-20 mt-4">
-        {createdBoards.slice(0, 8).map((board, index) => {
+        {createdBoards.map((board) => {
           const memberAvatars = [
             "/assets/icons/avatar1.png",
             "/assets/icons/avatar2.png",
@@ -200,20 +193,17 @@ const router = useRouter();
                   {board.name || board.title}
                 </h3>
                 <button
-                  className="w-10 h-10 rounded-full bg-[#161616] flex items-center justify-center"
-                  onClick={() => {
-                    if (board.id !== boards[FAVORITE_FIXED_INDEX]?.id)
-                      toggleFavorite(board.id);
-                  }}
+                  className="w-10 h-10 rounded-full flex items-center justify-center"
+                  onClick={() => toggleFavorite(board.id)}
                 >
                   <img
-                    src={
-                      isFavorite
-                        ? "/assets/icons/heart-pink.svg"
-                        : "/assets/icons/heart.svg"
-                    }
-                    alt="Favorito"
-                    className="w-5 h-5"
+                      src={
+                        isFavorite
+                          ? "/assets/icons/heart-pink.svg"
+                          : "/assets/icons/heart.svg"
+                      }
+                      alt="Favorito"
+                      className="w-[20px] h-[20px] object-contain"
                   />
                 </button>
               </div>
@@ -223,17 +213,19 @@ const router = useRouter();
               </p>
 
               <div className="flex space-x-[-8px] mb-3">
-                {memberAvatars.map((avatar, i) => (
+                {board.members.slice(0, 4).map((member, i) => (
                   <img
                     key={i}
-                    src={avatar}
-                    alt="Miembro"
+                    src={member.avatar}
+                    alt={member.name}
                     className="w-6 h-6 rounded-full border border-black"
                   />
                 ))}
-                <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
-                  7
-                </div>
+                {board.members.length > 4 && (
+                  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+                    +{board.members.length - 4}
+                  </div>
+                )}
               </div>
 
               <div className="absolute bottom-6 left-4 right-4 flex items-center gap-2 justify-start">

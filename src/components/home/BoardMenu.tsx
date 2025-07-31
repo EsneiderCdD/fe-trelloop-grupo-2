@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
+import { deleteBoardById } from "../../services/boardService";
 
 interface Props {
   onClose: () => void;
@@ -14,9 +15,15 @@ const BoardMenu: React.FC<Props> = ({ onClose, boardId }) => {
     onClose();
   };
 
-  const handleDelete = () => {
-    alert(`Eliminar tablero con ID: ${boardId}`);
-    onClose();
+  const handleDelete = async () => {
+    try {
+      await deleteBoardById(boardId);
+      onClose();
+      router.refresh(); // para actualizar los datos
+    } catch (error) {
+      alert("Error al eliminar el tablero");
+      console.error(error);
+    }
   };
 
   return (
