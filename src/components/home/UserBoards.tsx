@@ -39,6 +39,7 @@ const UserBoards = () => {
   useEffect(() => {
   async function fetchBoards() {
     const userBoards = await getUserBoards();
+    console.log("🔍 Datos crudos de tableros:", userBoards); 
 
     const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
       id: b.id.toString(),
@@ -46,14 +47,20 @@ const UserBoards = () => {
       title: b.name,
       description: b.description || "",
       board_image_url: b.boardImageUrl || "",
-      coverImage: assignedImages[index] || "/assets/images/default-board.jpg",
+      coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
       isFavorite: false,
-      members: (b.members || []).map((m: any, i: number) => ({
-        id: m.id?.toString() || `${i}`,
-        name: m.name,
-        avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
-      })),
-      tags: b.tags || [],
+      members: Array.isArray(b.members)
+      ? b.members.filter((m: any, i: number, self: any[]) =>
+          self.findIndex((x) => (typeof x === 'object' ? x.id : x) === (typeof m === 'object' ? m.id : m)) === i
+        ).map((m: any, i: number) => {
+          const id = typeof m === "object" ? m.id : m;
+          return {
+            id: id.toString(),
+            name: `Miembro ${i + 1}`,
+            avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
+          };
+        })
+      : [],
     }));
 
     setBoards(loadedBoards);
@@ -86,11 +93,11 @@ const UserBoards = () => {
             <hr className="border-[#2B2B2B] flex-1" />
           </div>
 
-          <div className="grid grid-cols-4 gap-6 mt-4">
+          <div className="grid grid-cols-4 gap-x-6 gap-y-10 mt-4">
             {favoriteBoards.map((board) => (
               <div
                 key={board.id}
-                className="w-[250px] h-[240px] rounded-[16px] bg-cover bg-center relative flex flex-col justify-start p-4"
+                className="w-[250px] h-[240px] rounded-[16px] bg-cover bg-center relative flex flex-col justify-start p-4 mb-10"
                 style={{ backgroundImage: `url(${board.coverImage})` }}
               >
                 <div className="flex justify-between items-start mb-1">
@@ -98,14 +105,14 @@ const UserBoards = () => {
                     {board.name || board.title}
                   </h3>
                   <button
-                    className="w-10 h-10 rounded-full bg-[#161616] flex items-center justify-center"
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
                     onClick={() => toggleFavorite(board.id)}
                   >
                     <img
-                      src="/assets/icons/heart-pink.svg"
-                      alt="Favorito"
-                      className="w-5 h-5"
-                    />
+                    src="/assets/icons/heart-pink.svg"
+                    alt="Favorito"
+                    className="w-[20px] h-[20px] object-contain"
+                  />
                   </button>
                 </div>
 
@@ -114,7 +121,7 @@ const UserBoards = () => {
                 </p>
 
                 <div className="flex space-x-[-8px] mb-3">
-                  {board.members.slice(0, 2).map((member, i) => (
+                  {board.members.slice(0, 4).map((member, i) => (
                     <img
                       key={i}
                       src={member.avatar}
@@ -122,6 +129,11 @@ const UserBoards = () => {
                       className="w-6 h-6 rounded-full border border-black"
                     />
                   ))}
+                  {board.members.length > 4 && (
+                  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+                    +{board.members.length - 4}
+                  </div>
+)}
                 </div>
 
                 <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between">
@@ -159,7 +171,7 @@ const UserBoards = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-x-6 gap-y-20 mt-4">
-        {createdBoards.slice(0, 8).map((board) => {
+        {createdBoards.map((board) => {
           const memberAvatars = [
             "/assets/icons/avatar1.png",
             "/assets/icons/avatar2.png",
@@ -181,17 +193,17 @@ const UserBoards = () => {
                   {board.name || board.title}
                 </h3>
                 <button
-                  className="w-10 h-10 rounded-full bg-[#161616] flex items-center justify-center"
+                  className="w-10 h-10 rounded-full flex items-center justify-center"
                   onClick={() => toggleFavorite(board.id)}
                 >
                   <img
-                    src={
-                      isFavorite
-                        ? "/assets/icons/heart-pink.svg"
-                        : "/assets/icons/heart.svg"
-                    }
-                    alt="Favorito"
-                    className="w-5 h-5"
+                      src={
+                        isFavorite
+                          ? "/assets/icons/heart-pink.svg"
+                          : "/assets/icons/heart.svg"
+                      }
+                      alt="Favorito"
+                      className="w-[20px] h-[20px] object-contain"
                   />
                 </button>
               </div>
@@ -201,17 +213,19 @@ const UserBoards = () => {
               </p>
 
               <div className="flex space-x-[-8px] mb-3">
-                {memberAvatars.map((avatar, i) => (
+                {board.members.slice(0, 4).map((member, i) => (
                   <img
                     key={i}
-                    src={avatar}
-                    alt="Miembro"
+                    src={member.avatar}
+                    alt={member.name}
                     className="w-6 h-6 rounded-full border border-black"
                   />
                 ))}
-                <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
-                  7
-                </div>
+                {board.members.length > 4 && (
+                  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+                    +{board.members.length - 4}
+                  </div>
+                )}
               </div>
 
               <div className="absolute bottom-6 left-4 right-4 flex items-center gap-2 justify-start">
