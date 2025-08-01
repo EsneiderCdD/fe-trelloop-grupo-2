@@ -1,4 +1,8 @@
 import { authController } from "../controllers/authController";
+import { ValidationError } from "../types/validatesError";
+import { CreateBoardPayload } from "types/board";
+
+
 
 export const getUserBoards = async () => {
   const token = authController.token;
@@ -27,5 +31,38 @@ export const getUserBoards = async () => {
   } catch (error) {
     console.error("Error al obtener tableros del backend:", error);
     return []; // Devuelve vacío para fallback a mockBoards
+  }
+};
+
+export const createBoardService = async (
+  data: CreateBoardPayload
+): Promise<void> => {
+  const token = authController.token;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!token) {
+    throw new ValidationError("No hay token de autenticación.", "general");
+  }
+
+  if (!apiUrl) {
+    throw new ValidationError("No se ha definido la URL de la API.", "general");
+  }
+
+  const response = await fetch(`${apiUrl}/api/board`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    throw new ValidationError(
+      responseData.message || "Error al crear el tablero",
+      "general"
+    );
   }
 };
