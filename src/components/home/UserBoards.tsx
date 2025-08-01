@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { getUserBoards } from "../../services/boardService";
-import { mockBoards } from "../../services/mockBoards";
 import { useRouter } from 'next/navigation';
 import BoardMenu from "./BoardMenu";
 
@@ -36,6 +35,7 @@ const UserBoards = () => {
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
+<<<<<<< HEAD
   useEffect(() => {
     async function fetchBoards() {
       const userBoards = await getUserBoards();
@@ -52,6 +52,25 @@ const UserBoards = () => {
         members: Array.isArray(b.members)
           ? b.members.filter((m: any, i: number, self: any[]) =>
             self.findIndex((x) => (typeof x === 'object' ? x.id : x) === (typeof m === 'object' ? m.id : m)) === i
+=======
+ useEffect(() => {
+  let intervalId: NodeJS.Timeout;
+
+  async function fetchBoards() {
+    const userBoards = await getUserBoards();
+
+    const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
+      id: b.id.toString(),
+      name: b.name,
+      title: b.name,
+      description: b.description || "",
+      board_image_url: b.boardImageUrl || "",
+      coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
+      isFavorite: favoriteIds.has(b.id.toString()),
+      members: Array.isArray(b.members)
+        ? b.members.filter((m: any, i: number, self: any[]) =>
+            self.findIndex((x) => (typeof x === "object" ? x.id : x) === (typeof m === "object" ? m.id : m)) === i
+>>>>>>> grupo-2
           ).map((m: any, i: number) => {
             const id = typeof m === "object" ? m.id : m;
             return {
@@ -60,14 +79,33 @@ const UserBoards = () => {
               avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
             };
           })
+<<<<<<< HEAD
           : [],
       }));
+=======
+        : [],
+    }));
+>>>>>>> grupo-2
 
       setBoards(loadedBoards);
     }
 
+<<<<<<< HEAD
     fetchBoards();
   }, []);
+=======
+  // Ejecutar la primera vez
+  fetchBoards();
+
+  // 🔁 Auto-actualizar cada 5 segundos
+  intervalId = setInterval(() => {
+    fetchBoards();
+  }, 3000);
+
+  // Limpiar el intervalo al desmontar
+  return () => clearInterval(intervalId);
+}, [Array.from(favoriteIds).sort().join(",")]);
+>>>>>>> grupo-2
   const toggleFavorite = (boardId: string) => {
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
