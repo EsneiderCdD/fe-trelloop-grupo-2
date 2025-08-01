@@ -1,10 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "../../store/authStore";
 import React, { useState, useRef, useEffect } from "react";
 
 const UserNavbar = () => {
   const router = useRouter();
+  const logout = useAuthStore((state) => state.logout);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -22,8 +24,9 @@ const UserNavbar = () => {
     setShowProfileMenu(false);
   };
 
-  const logout = () => {
-    // Agrega lógica de logout
+  const handleLogout = async () => {
+    await logout();   //Limpia Zustand y borra el token
+    router.push("/login"); // Redirige al login
     console.log("Cerrando sesión...");
     setShowProfileMenu(false);
   };
@@ -112,7 +115,7 @@ const UserNavbar = () => {
                 <hr className="border-[#444]" />
 
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="flex items-center gap-3 px-4 py-2 rounded-md hover:bg-[#3A3A3A] transition"
                 >
                   <img src="/assets/icons/log-out.png" alt="Salir" className="w-5 h-5" />
