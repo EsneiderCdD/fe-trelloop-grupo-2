@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import React from "react";
 
-const UserNavbar = () => {
+const UserNavbar = ({ showCreateBoardButton = true }) => {
   const router = useRouter();
 
   const goTonewBoard = () => {
@@ -12,7 +12,7 @@ const UserNavbar = () => {
 
   return (
     <div className="flex flex-col justify-start items-end w-full bg-[#1A1A1A] px-6 pt-4 pb-6">
-      {/* Línea superior: buscador + iconos */} 
+      {/* Línea superior: buscador + iconos */}
       <div className="flex justify-between items-center w-full">
         {/* Buscador + Filtro juntos */}
         <div className="flex items-center gap-2">
@@ -63,16 +63,18 @@ const UserNavbar = () => {
       </div>
 
       {/* Botón Crear tablero */}
-      <div className="mt-4">
-        <button className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium" onClick={goTonewBoard}>
-          <img
-            src="/assets/icons/plus.svg"
-            alt="Crear"
-            className="w-4 h-4"
-          />
-          Crear tablero
-        </button>
-      </div>
+      {showCreateBoardButton && (
+        <div className="mt-4">
+          <button className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium" onClick={goTonewBoard}>
+            <img
+              src="/assets/icons/plus.svg"
+              alt="Crear"
+              className="w-4 h-4"
+            />
+            Crear tablero
+          </button>
+        </div>
+      )}
     </div>
   );
 };
