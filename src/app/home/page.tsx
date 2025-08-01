@@ -1,8 +1,10 @@
 "use client";
 
+import UserNavbar from "components/home/UserNavbar";
 import DashboardSidebar from "../../components/home/DashboardSidebar";
-import UserNavbar from "../../components/home/UserNavbar";
-import UserBoards from "../../components/home/UserBoards";
+import UserBoards from "components/home/UserBoards";
+//import UserNavbar from "../../components/home/UserNavbar";
+//import UserBoards from "../../components/home/UserBoards";
 
 export default function HomePage() {
   return (

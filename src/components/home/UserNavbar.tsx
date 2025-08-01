@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 
-const UserNavbar = () => {
+const UserNavbar = ({ showCreateBoardButton = true }) => {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -124,16 +124,18 @@ const UserNavbar = () => {
         </div>
       </div>
 
-      {/* Botón Crear tablero */}
-      <div className="mt-4">
-        <button
-          className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium"
-          onClick={goTonewBoard}
-        >
-          <img src="/assets/icons/plus.svg" alt="Crear" className="w-4 h-4" />
-          Crear tablero
-        </button>
-      </div>
+      {/* Botón Crear tablero - Se renderiza solo si showCreateBoardButton es true */}
+      {showCreateBoardButton && (
+        <div className="mt-4">
+          <button
+            className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium"
+            onClick={goTonewBoard}
+          >
+            <img src="/assets/icons/plus.svg" alt="Crear" className="w-4 h-4" />
+            Crear tablero
+          </button>
+        </div>
+      )}
     </div>
   );
 };
