@@ -35,24 +35,6 @@ const UserBoards = () => {
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
-<<<<<<< HEAD
-  useEffect(() => {
-    async function fetchBoards() {
-      const userBoards = await getUserBoards();
-      console.log("🔍 Datos crudos de tableros:", userBoards);
-
-      const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
-        id: b.id.toString(),
-        name: b.name,
-        title: b.name,
-        description: b.description || "",
-        board_image_url: b.boardImageUrl || "",
-        coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
-        isFavorite: false,
-        members: Array.isArray(b.members)
-          ? b.members.filter((m: any, i: number, self: any[]) =>
-            self.findIndex((x) => (typeof x === 'object' ? x.id : x) === (typeof m === 'object' ? m.id : m)) === i
-=======
  useEffect(() => {
   let intervalId: NodeJS.Timeout;
 
@@ -70,7 +52,6 @@ const UserBoards = () => {
       members: Array.isArray(b.members)
         ? b.members.filter((m: any, i: number, self: any[]) =>
             self.findIndex((x) => (typeof x === "object" ? x.id : x) === (typeof m === "object" ? m.id : m)) === i
->>>>>>> grupo-2
           ).map((m: any, i: number) => {
             const id = typeof m === "object" ? m.id : m;
             return {
@@ -79,21 +60,12 @@ const UserBoards = () => {
               avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
             };
           })
-<<<<<<< HEAD
-          : [],
-      }));
-=======
         : [],
     }));
->>>>>>> grupo-2
 
-      setBoards(loadedBoards);
-    }
+    setBoards(loadedBoards);
+  }
 
-<<<<<<< HEAD
-    fetchBoards();
-  }, []);
-=======
   // Ejecutar la primera vez
   fetchBoards();
 
@@ -105,7 +77,6 @@ const UserBoards = () => {
   // Limpiar el intervalo al desmontar
   return () => clearInterval(intervalId);
 }, [Array.from(favoriteIds).sort().join(",")]);
->>>>>>> grupo-2
   const toggleFavorite = (boardId: string) => {
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
@@ -118,10 +89,6 @@ const UserBoards = () => {
 
   const favoriteBoards = boards.filter((b) => favoriteIds.has(b.id));
   const createdBoards = boards;
-
-  const goToBoardList = (boardId: string) => {
-    router.push(`/boardList/${boardId}`);
-  };
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] px-8 pt-2 pb-20 space-y-14 text-white font-poppins">
@@ -151,10 +118,10 @@ const UserBoards = () => {
                     onClick={() => toggleFavorite(board.id)}
                   >
                     <img
-                      src="/assets/icons/heart-pink.svg"
-                      alt="Favorito"
-                      className="w-[20px] h-[20px] object-contain"
-                    />
+                    src="/assets/icons/heart-pink.svg"
+                    alt="Favorito"
+                    className="w-[20px] h-[20px] object-contain"
+                  />
                   </button>
                 </div>
 
@@ -172,17 +139,17 @@ const UserBoards = () => {
                     />
                   ))}
                   {board.members.length > 4 && (
-                    <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
-                      +{board.members.length - 4}
-                    </div>
-                  )}
+                  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+                    +{board.members.length - 4}
+                  </div>
+)}
                 </div>
 
                 <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between">
                   <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                     <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
                   </button>
-                  <button onClick={() => goToBoardList(board.id)} className="flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
+                  <button className="flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
                     <span className="text-white text-[12px] font-medium">Ingresar</span>
                   </button>
                 </div>
@@ -239,13 +206,13 @@ const UserBoards = () => {
                   onClick={() => toggleFavorite(board.id)}
                 >
                   <img
-                    src={
-                      isFavorite
-                        ? "/assets/icons/heart-pink.svg"
-                        : "/assets/icons/heart.svg"
-                    }
-                    alt="Favorito"
-                    className="w-[20px] h-[20px] object-contain"
+                      src={
+                        isFavorite
+                          ? "/assets/icons/heart-pink.svg"
+                          : "/assets/icons/heart.svg"
+                      }
+                      alt="Favorito"
+                      className="w-[20px] h-[20px] object-contain"
                   />
                 </button>
               </div>
@@ -295,7 +262,7 @@ const UserBoards = () => {
                 <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                   <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
                 </button>
-                <button onClick={() => goToBoardList(board.id)} className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
+                <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
                   <span className="text-white text-[12px] font-medium">Ingresar</span>
                 </button>
               </div>

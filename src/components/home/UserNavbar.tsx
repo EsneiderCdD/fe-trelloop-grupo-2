@@ -1,14 +1,9 @@
 "use client";
 
-<<<<<<< HEAD
-import { useRouter } from 'next/navigation';
-import React from "react";
-=======
 import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
->>>>>>> grupo-2
 
-const UserNavbar = ({ showCreateBoardButton = true }) => {
+const UserNavbar = () => {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -45,13 +40,8 @@ const UserNavbar = ({ showCreateBoardButton = true }) => {
   }, []);
 
   return (
-<<<<<<< HEAD
-    <div className="flex flex-col justify-start items-end w-full bg-[#1A1A1A] px-6 pt-4 pb-6">
-      {/* Línea superior: buscador + iconos */}
-=======
     <div className="flex flex-col justify-start items-end w-full bg-[#1A1A1A] px-6 pt-4 pb-6 relative">
       {/* Línea superior */}
->>>>>>> grupo-2
       <div className="flex justify-between items-center w-full">
         {/* Buscador + Filtro */}
         <div className="flex items-center gap-2">
@@ -135,20 +125,6 @@ const UserNavbar = ({ showCreateBoardButton = true }) => {
       </div>
 
       {/* Botón Crear tablero */}
-<<<<<<< HEAD
-      {showCreateBoardButton && (
-        <div className="mt-4">
-          <button className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium" onClick={goTonewBoard}>
-            <img
-              src="/assets/icons/plus.svg"
-              alt="Crear"
-              className="w-4 h-4"
-            />
-            Crear tablero
-          </button>
-        </div>
-      )}
-=======
       <div className="mt-4">
         <button
           className="flex items-center gap-2 bg-[#6A5FFF] text-white px-4 py-2 rounded-md text-sm font-medium"
@@ -158,7 +134,6 @@ const UserNavbar = ({ showCreateBoardButton = true }) => {
           Crear tablero
         </button>
       </div>
->>>>>>> grupo-2
     </div>
   );
 };
