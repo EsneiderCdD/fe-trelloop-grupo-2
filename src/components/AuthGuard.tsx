@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/authStore";
 import useInactivityLogout from "utils/useInactivityLogout";
+import LoadingSkeleton from "./LoadingSkeleton";
 
 interface Props {
     children: React.ReactNode;
@@ -44,7 +45,7 @@ const AuthGuard = ({ children }: Props) => {
     }, [stopInactivityTimer]);
 
     // Mientras se hidrata
-    if (loading) return <div className="text-center p-4">Cargando...</div>;
+    if (loading) return <LoadingSkeleton message="Verificando sesión..."/>;
 
     // Mostrar contenido si está autenticado
     return <>{children}</>;
