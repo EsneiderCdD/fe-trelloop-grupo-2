@@ -1,5 +1,5 @@
 import DashboardSidebar from "components/home/DashboardSidebar";
-import Form from "./form"; // Importa el formulario completo
+import Form from "./form"; 
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -42,7 +42,7 @@ export default function EditBoardView({ boardId }: Props) {
         </div>
         <div className="flex-1 px-8 py-4 text-white">
           <h1 className="text-2xl font-semibold mb-4">Editar Tablero</h1>
-          <Form boardId={boardId} /> {/* Puedes pasarlo al formulario si lo necesitas */}
+          <Form boardId={boardId} /> {/* pasarlo al formulario por si se necesita*/}
         </div>
       </div>
 
