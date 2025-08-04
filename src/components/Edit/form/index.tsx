@@ -6,7 +6,6 @@ import Visibility from './view/Visibility';
 import Actions from './view/Actions';
 import { getToken } from '../../../store/authStore';
 
-
 type Props = {
   boardId: string;
 };
@@ -16,12 +15,11 @@ const Form = ({ boardId }: Props) => {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [members, setMembers] = useState<any[]>([]);
-  const [tags, setTags] = useState<any[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch del tablero al cargar
   useEffect(() => {
     const fetchBoard = async () => {
       const token = getToken();
@@ -44,7 +42,6 @@ const Form = ({ boardId }: Props) => {
 
         const data = await res.json();
 
-        // Setear los estados con los datos reales del backend
         setName(data.name || '');
         setDescription(data.description || '');
         setImageUrl(data.board_image_url || '');
@@ -61,13 +58,20 @@ const Form = ({ boardId }: Props) => {
     fetchBoard();
   }, [boardId]);
 
-  // Handlers internos
   const handleDeleteMember = (id: string) => {
     setMembers((prev) => prev.filter((m) => m.id !== id));
   };
 
-  const handleDeleteTag = (id: string) => {
-    setTags((prev) => prev.filter((tag) => tag.id !== id));
+  const handleDeleteTag = (tagToRemove: string) => {
+    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleAddMember = (user: any) => {
+    setMembers((prev) => {
+      const exists = prev.some((m) => m.id === user.id);
+      if (exists) return prev;
+      return [...prev, user];
+    });
   };
 
   const handleVisibilityChange = (value: 'private' | 'public') => {
@@ -76,16 +80,7 @@ const Form = ({ boardId }: Props) => {
 
   const handleCancel = () => {
     console.log('Cancelando edición...');
-    // Puedes redirigir o mostrar un modal de confirmación
   };
-  const handleAddMember = (user: any) => {
-  setMembers((prev) => {
-    const exists = prev.some((m) => m.id === user.id);
-    if (exists) return prev;
-    return [...prev, user];
-  });
-};
-
 
   const handleSave = async () => {
     const token = getToken();
@@ -145,12 +140,20 @@ const Form = ({ boardId }: Props) => {
         onAdd={handleAddMember}
       />
 
+      <Tags
+        tags={tags}
+        onDelete={handleDeleteTag}
+      />
 
-      <Tags tags={tags} onDelete={handleDeleteTag} />
+      <Visibility
+        value={visibility}
+        onChange={handleVisibilityChange}
+      />
 
-      <Visibility value={visibility} onChange={handleVisibilityChange} />
-
-      <Actions onCancel={handleCancel} onSave={handleSave} />
+      <Actions
+        onCancel={handleCancel}
+        onSave={handleSave}
+      />
     </div>
   );
 };
