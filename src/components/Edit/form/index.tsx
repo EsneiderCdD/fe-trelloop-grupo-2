@@ -1,38 +1,67 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BoardInfo from './view/BoardInfo';
 import Members from './view/Members';
 import Tags from './view/Tags';
 import Visibility from './view/Visibility';
-import Actions from './view/Actions'; // ← nuevo import
+import Actions from './view/Actions';
+import { getToken } from '../../../store/authStore';
 
-const Form = () => {
-  const [name, setName] = useState('Ut enim ad minim');
+
+type Props = {
+  boardId: string;
+};
+
+const Form = ({ boardId }: Props) => {
+  const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const imageUrl = '/assets/images/perfil-tablero.webp';
-
-  const [members, setMembers] = useState([
-    {
-      id: '1',
-      name: 'Carlos Gómez',
-      username: '@carlos',
-      img: '/assets/images/user1.png',
-    },
-    {
-      id: '2',
-      name: 'Ana Pérez',
-      username: '@ana',
-      img: '/assets/images/user2.png',
-    },
-  ]);
-
-  const [tags, setTags] = useState([
-    { id: 'tag1', name: 'Etiqueta 1' },
-    { id: 'tag2', name: 'Etiqueta 2' },
-    { id: 'tag3', name: 'Etiqueta 3' },
-  ]);
-
+  const [imageUrl, setImageUrl] = useState('');
+  const [members, setMembers] = useState<any[]>([]);
+  const [tags, setTags] = useState<any[]>([]);
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch del tablero al cargar
+  useEffect(() => {
+    const fetchBoard = async () => {
+      const token = getToken();
+      if (!token) {
+        setError("No estás autenticado.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/boards/${boardId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("No se pudo cargar el tablero.");
+        }
+
+        const data = await res.json();
+
+        // Setear los estados con los datos reales del backend
+        setName(data.name || '');
+        setDescription(data.description || '');
+        setImageUrl(data.board_image_url || '');
+        setMembers(data.members || []);
+        setTags(data.tags || []);
+        setVisibility(data.visibility || 'private');
+      } catch (err: any) {
+        setError(err.message || 'Error desconocido.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBoard();
+  }, [boardId]);
+
+  // Handlers internos
   const handleDeleteMember = (id: string) => {
     setMembers((prev) => prev.filter((m) => m.id !== id));
   };
@@ -45,16 +74,60 @@ const Form = () => {
     setVisibility(value);
   };
 
-  // NUEVO: Acciones de botones
   const handleCancel = () => {
     console.log('Cancelando edición...');
-    // redirigir, resetear, etc.
+    // Puedes redirigir o mostrar un modal de confirmación
+  };
+  const handleAddMember = (user: any) => {
+  setMembers((prev) => {
+    const exists = prev.some((m) => m.id === user.id);
+    if (exists) return prev;
+    return [...prev, user];
+  });
+};
+
+
+  const handleSave = async () => {
+    const token = getToken();
+    if (!token) {
+      alert("No tienes permisos para guardar.");
+      return;
+    }
+
+    const payload = {
+      name,
+      description,
+      image: imageUrl,
+      members,
+      tags,
+      visibility,
+    };
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/boards/${boardId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Error al guardar los cambios");
+
+      alert("¡Cambios guardados correctamente!");
+    } catch (err: any) {
+      alert(err.message || "Ocurrió un error inesperado.");
+    }
   };
 
-  const handleSave = () => {
-    console.log('Guardando cambios...');
-    // llamada a API, etc.
-  };
+  if (loading) {
+    return <div className="text-white p-4">Cargando tablero...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 p-4">Error: {error}</div>;
+  }
 
   return (
     <div>
@@ -66,12 +139,17 @@ const Form = () => {
         onDescriptionChange={setDescription}
       />
 
-      <Members members={members} onDelete={handleDeleteMember} />
+      <Members
+        members={members}
+        onDelete={handleDeleteMember}
+        onAdd={handleAddMember}
+      />
+
 
       <Tags tags={tags} onDelete={handleDeleteTag} />
 
       <Visibility value={visibility} onChange={handleVisibilityChange} />
-      
+
       <Actions onCancel={handleCancel} onSave={handleSave} />
     </div>
   );

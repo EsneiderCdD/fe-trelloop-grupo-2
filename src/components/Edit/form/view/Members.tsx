@@ -1,5 +1,10 @@
 "use client";
 import Image from "next/image";
+import { useMemberSearch } from "../controllers/useMemberSearch";
+import MemberSearchResult from "./MemberSearchResult";
+
+const DEFAULT_IMAGE_URL =
+  "https://res.cloudinary.com/djw3lkdam/image/upload/v1754147240/samples/cloudinary-icon.png";
 
 type Member = {
   id: string;
@@ -11,20 +16,32 @@ type Member = {
 type MembersProps = {
   members: Member[];
   onDelete: (id: string) => void;
+  onAdd: (member: Member) => void;
 };
 
-const Members = ({ members, onDelete }: MembersProps) => {
+const Members = ({ members, onDelete, onAdd }: MembersProps) => {
+  const { query, setQuery, results, loading } = useMemberSearch();
+
+  const handleSelect = (member: Member) => {
+    const alreadyExists = members.some((m) => m.id === member.id);
+    if (!alreadyExists) {
+      onAdd(member);
+    }
+    setQuery("");
+  };
+
   return (
     <div className="mt-[20px]">
       <div className="text-white text-[14px] font-[500] mt-[6px] mb-[4px]">
         Miembros
       </div>
 
-      {/* Input de búsqueda */}
       <div className="relative w-[575px]">
         <input
           type="text"
           placeholder="Buscar por nombre o @usuario..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-[10px] px-4 pr-10 py-2 border border-[#3a3a3a] outline-none focus:ring-2 focus:ring-[#6a5fff] transition"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white pointer-events-none">
@@ -43,9 +60,35 @@ const Members = ({ members, onDelete }: MembersProps) => {
             />
           </svg>
         </div>
+
+        {query && results.length > 0 && (
+          <div className="absolute top-[46px] left-0 w-full bg-[#1e1e1e] border border-[#3a3a3a] rounded-[10px] mt-1 z-10">
+            {results.map((user) => {
+              const transformedUser = {
+                id: String(user.id),
+                name: `${user.name} ${user.last_name}`.trim(),
+                username: user.email?.split("@")[0] || "usuario",
+                img: user.avatar_url || DEFAULT_IMAGE_URL,
+              };
+
+              return (
+                <MemberSearchResult
+                  key={transformedUser.id}
+                  user={transformedUser}
+                  onSelect={handleSelect}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        {loading && (
+          <div className="text-sm text-white mt-1 absolute top-[46px] bg-[#1e1e1e] p-2 rounded">
+            Cargando...
+          </div>
+        )}
       </div>
 
-      {/* Listado de miembros */}
       <div className="flex mt-[5px] flex-wrap">
         {members.map((member) => (
           <div
@@ -53,7 +96,7 @@ const Members = ({ members, onDelete }: MembersProps) => {
             key={member.id}
           >
             <Image
-              src={member.img}
+              src={member.img || DEFAULT_IMAGE_URL}
               alt="member-img"
               width={28}
               height={28}
@@ -61,7 +104,7 @@ const Members = ({ members, onDelete }: MembersProps) => {
             />
             <div className="text-white text-sm">
               <div>{member.name}</div>
-              <div className="text-xs text-gray-400">{member.username}</div>
+              <div className="text-xs text-gray-400">@{member.username}</div>
             </div>
             <button
               className="text-white ml-[25px]"
@@ -90,3 +133,5 @@ const Members = ({ members, onDelete }: MembersProps) => {
 };
 
 export default Members;
+
+
