@@ -118,10 +118,10 @@ const UserBoards = () => {
                     onClick={() => toggleFavorite(board.id)}
                   >
                     <img
-                    src="/assets/icons/heart-pink.svg"
-                    alt="Favorito"
-                    className="w-[20px] h-[20px] object-contain"
-                  />
+                      src="/assets/icons/heart-pink.svg"
+                      alt="Favorito"
+                      className="w-[20px] h-[20px] object-contain"
+                    />
                   </button>
                 </div>
 
@@ -142,14 +142,35 @@ const UserBoards = () => {
                   <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
                     +{board.members.length - 4}
                   </div>
-)}
+                  )}
                 </div>
 
-                <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between">
+                <div className="absolute bottom-6 left-4 right-4 flex items-center gap-2 justify-start">
+                  <div className="relative">
+                    <button
+                      className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black"
+                      onClick={() =>
+                        setMenuVisible(menuVisible === board.id ? null : board.id)
+                      }
+                    >
+                      <img
+                        src="/assets/icons/ellipsis.svg"
+                        alt="Opciones"
+                        className="w-4 h-4"
+                      />
+                    </button>
+
+                    {menuVisible === board.id && (
+                      <BoardMenu
+                        boardId={board.id}
+                        onClose={() => setMenuVisible(null)}
+                      />
+                    )}
+                  </div>
                   <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                     <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
                   </button>
-                  <button className="flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
+                  <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
                     <span className="text-white text-[12px] font-medium">Ingresar</span>
                   </button>
                 </div>
@@ -206,14 +227,16 @@ const UserBoards = () => {
                   onClick={() => toggleFavorite(board.id)}
                 >
                   <img
-                      src={
-                        isFavorite
-                          ? "/assets/icons/heart-pink.svg"
-                          : "/assets/icons/heart.svg"
-                      }
-                      alt="Favorito"
-                      className="w-[20px] h-[20px] object-contain"
-                  />
+                    src={
+                      isFavorite
+                        ? "/assets/icons/heart-pink.svg"
+                        : "/assets/icons/heart.png"
+                    }
+                    alt="Favorito"
+                      className={`object-contain ${
+                        isFavorite ? "w-[20px] h-[20px]" : "w-[28px] h-[28px] scale-[1.15] -m-[2px]"
+                      }`}
+                    />
                 </button>
               </div>
 
