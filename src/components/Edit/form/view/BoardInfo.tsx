@@ -9,6 +9,9 @@ type BoardInfoProps = {
   onDescriptionChange: (value: string) => void;
 };
 
+const DEFAULT_IMAGE_URL =
+  "https://res.cloudinary.com/djw3lkdam/image/upload/v1754147240/samples/cloudinary-icon.png";
+
 export default function BoardInfo({
   name,
   description,
@@ -16,11 +19,13 @@ export default function BoardInfo({
   onNameChange,
   onDescriptionChange,
 }: BoardInfoProps) {
+  const safeImageUrl = imageUrl?.trim() ? imageUrl : DEFAULT_IMAGE_URL;
+
   return (
     <div>
       <div className="mb-4">
         <Image
-          src={imageUrl}
+          src={safeImageUrl}
           alt="Imagen del tablero"
           width={130}
           height={130}
