@@ -127,12 +127,14 @@ const Form = ({ boardId }: Props) => {
   return (
     <div>
       <BoardInfo
-        name={name}
-        description={description}
-        imageUrl={imageUrl}
-        onNameChange={setName}
-        onDescriptionChange={setDescription}
+      name={name}
+      description={description}
+      imageUrl={imageUrl}
+      onNameChange={setName}
+      onDescriptionChange={setDescription}
+      onImageUrlChange={setImageUrl} // ✅ AÑADE ESTO
       />
+
 
       <Members
         members={members}
