@@ -142,8 +142,10 @@ const Form = ({ boardId }: Props) => {
 
       <Tags
         tags={tags}
+        onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
         onDelete={handleDeleteTag}
       />
+
 
       <Visibility
         value={visibility}
