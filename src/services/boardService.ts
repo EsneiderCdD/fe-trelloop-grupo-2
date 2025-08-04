@@ -1,6 +1,5 @@
 import { authController } from "../controllers/authController";
 import { ValidationError } from "../types/validatesError";
-import { CreateBoardPayload } from "types/board";
 
 
 import { getToken } from "../store/authStore";
@@ -35,9 +34,7 @@ export const getUserBoards = async () => {
   }
 };
 
-export const createBoardService = async (
-  data: CreateBoardPayload
-): Promise<void> => {
+export const createBoardService = async (data: FormData): Promise<void> => {
   const token = authController.token;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -49,13 +46,12 @@ export const createBoardService = async (
     throw new ValidationError("No se ha definido la URL de la API.", "general");
   }
 
-  const response = await fetch(`${apiUrl}/api/board`, {
+  const response = await fetch(`${apiUrl}/api/boards/`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: data, // ← FormData va directo
   });
 
   const responseData = await response.json();
@@ -67,6 +63,7 @@ export const createBoardService = async (
     );
   }
 };
+
 export const deleteBoardById = async (boardId: string) => {
   const token = getToken();
 
