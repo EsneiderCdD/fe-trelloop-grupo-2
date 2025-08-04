@@ -67,6 +67,7 @@ export const createBoardService = async (
     );
   }
 };
+
 export const deleteBoardById = async (boardId: string) => {
   const token = getToken();
 
