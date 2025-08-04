@@ -3,6 +3,7 @@ import { ValidationError } from "../types/validatesError";
 import { CreateBoardPayload } from "types/board";
 
 
+import { getToken } from "../store/authStore";
 
 export const getUserBoards = async () => {
   const token = authController.token;
@@ -27,10 +28,10 @@ export const getUserBoards = async () => {
     }
 
     const data = await response.json();
-    return data;
+    return data.boards;
   } catch (error) {
     console.error("Error al obtener tableros del backend:", error);
-    return []; // Devuelve vacío para fallback a mockBoards
+    return [];
   }
 };
 
@@ -65,4 +66,20 @@ export const createBoardService = async (
       "general"
     );
   }
+};
+export const deleteBoardById = async (boardId: string) => {
+  const token = getToken();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/boards/${boardId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al eliminar el tablero");
+  }
+
+  return res.json();
 };
