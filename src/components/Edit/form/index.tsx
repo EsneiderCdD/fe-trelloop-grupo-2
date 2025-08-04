@@ -47,7 +47,7 @@ const Form = ({ boardId }: Props) => {
         setImageUrl(data.board_image_url || '');
         setMembers(data.members || []);
         setTags(data.tags || []);
-        setVisibility(data.visibility || 'PRIVATE'); // asumimos que ya llega en mayúscula
+        setVisibility(data.status === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE');
       } catch (err: any) {
         setError(err.message || 'Error desconocido.');
       } finally {
@@ -89,11 +89,14 @@ const Form = ({ boardId }: Props) => {
       return;
     }
 
+   
+    const memberIdentifiers = members.map((m) => m.email || m.id);
+
     const payload = {
       name,
       description,
-      image: imageUrl,
-      members,
+      boardImageUrl: imageUrl, 
+      members: memberIdentifiers,
       tags,
       status: visibility,
     };
@@ -127,14 +130,13 @@ const Form = ({ boardId }: Props) => {
   return (
     <div>
       <BoardInfo
-      name={name}
-      description={description}
-      imageUrl={imageUrl}
-      onNameChange={setName}
-      onDescriptionChange={setDescription}
-      onImageUrlChange={setImageUrl} // ✅ AÑADE ESTO
+        name={name}
+        description={description}
+        imageUrl={imageUrl}
+        onNameChange={setName}
+        onDescriptionChange={setDescription}
+        onImageUrlChange={setImageUrl} 
       />
-
 
       <Members
         members={members}
@@ -162,4 +164,3 @@ const Form = ({ boardId }: Props) => {
 };
 
 export default Form;
-
