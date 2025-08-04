@@ -1,14 +1,13 @@
-// components/view/Visibility.tsx
 import { ChangeEvent } from 'react';
 
 interface VisibilityProps {
-  value: 'private' | 'public';
-  onChange: (value: 'private' | 'public') => void;
+  value: 'PRIVATE' | 'PUBLIC';
+  onChange: (value: 'PRIVATE' | 'PUBLIC') => void;
 }
 
 const Visibility = ({ value, onChange }: VisibilityProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.value as 'private' | 'public';
+    const selected = e.target.value as 'PRIVATE' | 'PUBLIC';
     onChange(selected);
   };
 
@@ -19,8 +18,8 @@ const Visibility = ({ value, onChange }: VisibilityProps) => {
           type="radio"
           name="visibility"
           id="private"
-          value="private"
-          checked={value === 'private'}
+          value="PRIVATE"
+          checked={value === 'PRIVATE'}
           onChange={handleChange}
           className="mr-[8px]"
         />
@@ -38,8 +37,8 @@ const Visibility = ({ value, onChange }: VisibilityProps) => {
           type="radio"
           name="visibility"
           id="public"
-          value="public"
-          checked={value === 'public'}
+          value="PUBLIC"
+          checked={value === 'PUBLIC'}
           onChange={handleChange}
           className="mr-[8px]"
         />

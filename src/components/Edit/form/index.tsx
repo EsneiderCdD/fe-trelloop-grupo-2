@@ -16,7 +16,7 @@ const Form = ({ boardId }: Props) => {
   const [imageUrl, setImageUrl] = useState('');
   const [members, setMembers] = useState<any[]>([]);
   const [tags, setTags] = useState<string[]>([]);
-  const [visibility, setVisibility] = useState<'private' | 'public'>('private');
+  const [visibility, setVisibility] = useState<'PRIVATE' | 'PUBLIC'>('PRIVATE');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +47,7 @@ const Form = ({ boardId }: Props) => {
         setImageUrl(data.board_image_url || '');
         setMembers(data.members || []);
         setTags(data.tags || []);
-        setVisibility(data.visibility || 'private');
+        setVisibility(data.visibility || 'PRIVATE'); // asumimos que ya llega en mayúscula
       } catch (err: any) {
         setError(err.message || 'Error desconocido.');
       } finally {
@@ -74,7 +74,7 @@ const Form = ({ boardId }: Props) => {
     });
   };
 
-  const handleVisibilityChange = (value: 'private' | 'public') => {
+  const handleVisibilityChange = (value: 'PRIVATE' | 'PUBLIC') => {
     setVisibility(value);
   };
 
@@ -95,7 +95,7 @@ const Form = ({ boardId }: Props) => {
       image: imageUrl,
       members,
       tags,
-      visibility,
+      status: visibility,
     };
 
     try {
@@ -146,7 +146,6 @@ const Form = ({ boardId }: Props) => {
         onDelete={handleDeleteTag}
       />
 
-
       <Visibility
         value={visibility}
         onChange={handleVisibilityChange}
@@ -161,3 +160,4 @@ const Form = ({ boardId }: Props) => {
 };
 
 export default Form;
+
