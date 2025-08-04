@@ -33,6 +33,9 @@ const NewBoard = () => {
     },
   ]);
 
+  const [boardImage, setBoardImage] = useState<File | null>(null);
+
+
   const [tags, setTags] = useState([
     { id: "tag1", name: "Etiqueta" },
     { id: "tag2", name: "Etiqueta" },
@@ -96,28 +99,32 @@ const NewBoard = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
-    const payload = {
-      name,
-      description,
-      status,
-      tags: selectedTags,
-      members: selectedMembers.map((m) => m.username),
-      boardImageUrl: null,
-    };
-  
-    try {
-      await createBoardController(payload);
-      router.push("/home"); // redirige si todo sale bien
-    } catch (err) {
-      if (err instanceof ValidationError) {
-        setFormErrors({ [err.field || "general"]: err.message });
-      } else {
-        setFormErrors({ general: "Error inesperado" });
-      }
+  e.preventDefault();
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("description", description);
+  formData.append("status", status);
+
+  if (boardImage) {
+    formData.append("image", boardImage);
+  }
+
+  selectedTags.forEach((tag) => formData.append("tags", tag));
+  selectedMembers.forEach((m) => formData.append("members", m.username));
+
+  try {
+    await createBoardController(formData);
+    router.push("/home");
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      setFormErrors({ [err.field || "general"]: err.message });
+    } else {
+      setFormErrors({ general: "Error inesperado" });
     }
-  };
+  }
+};
+
 
   return (
     <form onSubmit={handleSubmit} noValidate>
@@ -140,9 +147,23 @@ const NewBoard = () => {
         <div className="flex justify-center items-center">
           <div className="min-h-screen w-1/2 text-white flex flex-col gap-4 relative overflow-visible">
             
-            <button className="w-[130px] h-[130px] bg-[#1e1e1e] rounded-xl flex items-center justify-center hover:bg-[#2a2a2a] focus:outline-none">
-              <CameraIcon className="h-6 w-6 text-white" />
-            </button>
+            <label className="w-[130px] h-[130px] bg-[#1e1e1e] rounded-xl flex items-center justify-center hover:bg-[#2a2a2a] cursor-pointer">
+              {boardImage ? (
+                <img
+                  src={URL.createObjectURL(boardImage)}
+                  alt="preview"
+                  className="w-full h-full object-cover rounded-xl"
+                />
+              ) : (
+                <CameraIcon className="h-6 w-6 text-white" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => setBoardImage(e.target.files?.[0] || null)}
+              />
+            </label>
             
             <div className="flex flex-col gap-2">
               <label className="block mb-1 text-sm">Nombre de tablero</label>
