@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "../store/authStore";
+import useInactivityLogout from "utils/useInactivityLogout";
 
 interface Props {
     children: React.ReactNode;
@@ -10,7 +11,10 @@ interface Props {
 
 const AuthGuard = ({ children }: Props) => {
     const router = useRouter();
-    const { isAuthenticated, loading, hydrate } = useAuthStore();
+    const { isAuthenticated, loading, hydrate, stopInactivityTimer } = useAuthStore();
+
+    // Hook para manejar el auto-logout por inactividad
+    useInactivityLogout();
 
     // Hidratación inicial del estado
     useEffect(() => {
@@ -23,6 +27,21 @@ const AuthGuard = ({ children }: Props) => {
             router.push("/login");
         }
     }, [loading, isAuthenticated, router]);
+
+    // Limpiar temporizador cuando el componente se desmonte (usuario cierra pestaña/ventana)
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            stopInactivityTimer();
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            // También limpiamos el temporizador si el componente se desmonta
+            stopInactivityTimer();
+        };
+    }, [stopInactivityTimer]);
 
     // Mientras se hidrata
     if (loading) return <div className="text-center p-4">Cargando...</div>;
