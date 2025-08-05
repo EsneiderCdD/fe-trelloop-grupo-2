@@ -1,4 +1,4 @@
-// Tipos base
+
 export type Visibility = 'PRIVATE' | 'PUBLIC';
 
 export type Tag = string;
@@ -9,8 +9,6 @@ export interface Member {
   name?: string;
   avatarUrl?: string;
 }
-
-// Estado principal del formulario
 export interface BoardFormState {
   name: string;
   description: string;
@@ -19,9 +17,6 @@ export interface BoardFormState {
   tags: Tag[];
   status: Visibility;
 }
-
-// Props por componente de sección
-
 export interface BoardInfoProps {
   name: string;
   description: string;
@@ -52,3 +47,16 @@ export interface ActionsProps {
   onCancel: () => void;
   onSave: () => void;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  img: string;
+}
+
+export interface MemberSearchResultProps {
+  user: User;
+  onSelect: (user: User) => void;
+}
+

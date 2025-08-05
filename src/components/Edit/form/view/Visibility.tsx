@@ -1,9 +1,5 @@
 import { ChangeEvent } from 'react';
-
-interface VisibilityProps {
-  value: 'PRIVATE' | 'PUBLIC';
-  onChange: (value: 'PRIVATE' | 'PUBLIC') => void;
-}
+import { VisibilityProps } from '../types';
 
 const Visibility = ({ value, onChange }: VisibilityProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

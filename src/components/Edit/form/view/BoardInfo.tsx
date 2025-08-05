@@ -1,14 +1,7 @@
+"use client";
 import { useState } from "react";
 import Image from "next/image";
-
-type BoardInfoProps = {
-  name: string;
-  description: string;
-  imageUrl: string;
-  onNameChange: (value: string) => void;
-  onDescriptionChange: (value: string) => void;
-  onImageUrlChange: (value: string) => void;
-};
+import { BoardInfoProps } from "../types";
 
 const DEFAULT_IMAGE_URL =
   "https://res.cloudinary.com/djw3lkdam/image/upload/v1754147240/samples/cloudinary-icon.png";

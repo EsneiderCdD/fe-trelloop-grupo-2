@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
+import { TagsProps } from '../types';
 
-type TagsProps = {
-  tags: string[];
-  onAdd: (tag: string) => void;
-  onDelete: (name: string) => void;
-};
-
-const Tags: React.FC<TagsProps> = ({ tags, onAdd, onDelete }) => {
+const Tags = ({ tags, onAdd, onDelete }: TagsProps) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

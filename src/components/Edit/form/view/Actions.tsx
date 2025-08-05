@@ -1,11 +1,7 @@
 'use client';
 
 import React from 'react';
-
-interface ActionsProps {
-  onCancel: () => void;
-  onSave: () => void;
-}
+import { ActionsProps } from '../types'; 
 
 const Actions: React.FC<ActionsProps> = ({ onCancel, onSave }) => {
   return (

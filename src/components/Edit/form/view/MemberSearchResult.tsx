@@ -1,19 +1,8 @@
 "use client";
 import Image from "next/image";
+import { MemberSearchResultProps } from '../types';
 
-type User = {
-  id: string;
-  name: string;
-  username: string;
-  img: string;
-};
-
-type Props = {
-  user: User;
-  onSelect: (user: User) => void;
-};
-
-const MemberSearchResult = ({ user, onSelect }: Props) => {
+const MemberSearchResult = ({ user, onSelect }: MemberSearchResultProps) => {
   return (
     <div
       className="flex items-center px-4 py-2 hover:bg-[#2a2a2a] cursor-pointer transition"
