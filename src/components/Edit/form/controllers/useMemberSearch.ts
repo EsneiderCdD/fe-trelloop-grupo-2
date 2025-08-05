@@ -33,7 +33,7 @@ export const useMemberSearch = () => {
 
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API}/api/users/search?q=${encodeURIComponent(query)}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/users/search?q=${encodeURIComponent(query)}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
