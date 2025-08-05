@@ -149,11 +149,32 @@ const UserBoards = () => {
                   )}
                 </div>
 
-                <div className="absolute bottom-6 left-4 right-4 flex items-center justify-between">
+                <div className="absolute bottom-6 left-4 right-4 flex items-center gap-2 justify-start">
+                  <div className="relative">
+                    <button
+                      className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black"
+                      onClick={() =>
+                        setMenuVisible(menuVisible === board.id ? null : board.id)
+                      }
+                    >
+                      <img
+                        src="/assets/icons/ellipsis.svg"
+                        alt="Opciones"
+                        className="w-4 h-4"
+                      />
+                    </button>
+
+                    {menuVisible === board.id && (
+                      <BoardMenu
+                        boardId={board.id}
+                        onClose={() => setMenuVisible(null)}
+                      />
+                    )}
+                  </div>
                   <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                     <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
                   </button>
-                  <button className="flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full"
+                  <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full"
                     onClick={() => goToBoardList(board.id)}>
                     <span className="text-white text-[12px] font-medium">Ingresar</span>
                   </button>
@@ -214,10 +235,11 @@ const UserBoards = () => {
                     src={
                       isFavorite
                         ? "/assets/icons/heart-pink.svg"
-                        : "/assets/icons/heart.svg"
+                        : "/assets/icons/heart.png"
                     }
                     alt="Favorito"
-                    className="w-[20px] h-[20px] object-contain"
+                    className={`object-contain ${isFavorite ? "w-[20px] h-[20px]" : "w-[28px] h-[28px] scale-[1.15] -m-[2px]"
+                      }`}
                   />
                 </button>
               </div>
