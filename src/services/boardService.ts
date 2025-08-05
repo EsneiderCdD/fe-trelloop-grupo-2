@@ -80,3 +80,26 @@ export const deleteBoardById = async (boardId: string) => {
 
   return res.json();
 };
+
+export const toggleFavoriteBoard = async (boardId: string) => {
+  const token = getToken();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  try {
+    const response = await fetch(`${apiUrl}/api/boards/${boardId}/favorite`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error al actualizar favorito:", error);
+  }
+};
+
