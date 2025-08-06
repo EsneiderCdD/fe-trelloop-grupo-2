@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getUserBoards } from "../../services/boardService";
 import { useRouter } from 'next/navigation';
 import BoardMenu from "./BoardMenu";
+import { toggleFavoriteBoard } from "../../services/boardService";
 
 interface Board {
   id: string;
@@ -34,6 +35,7 @@ const UserBoards = () => {
 
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [initialBoardOrder, setInitialBoardOrder] = useState<string[]>([]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -48,7 +50,7 @@ const UserBoards = () => {
         description: b.description || "",
         board_image_url: b.boardImageUrl || "",
         coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
-        isFavorite: favoriteIds.has(b.id.toString()),
+        isFavorite: b.is_favorite ?? favoriteIds.has(b.id.toString()),
         members: Array.isArray(b.members)
           ? b.members.filter((m: any, i: number, self: any[]) =>
             self.findIndex((x) => (typeof x === "object" ? x.id : x) === (typeof m === "object" ? m.id : m)) === i
@@ -64,12 +66,32 @@ const UserBoards = () => {
       }));
 
       setBoards(loadedBoards);
+
+      if (userBoards.length > 0) {
+        const newIds = userBoards.map((b: any) => b.id.toString());
+        setInitialBoardOrder((prev) => {
+          // Añadir cualquier ID nuevo sin alterar el orden actual
+          const updatedOrder = [...prev];
+          for (const id of newIds) {
+            if (!updatedOrder.includes(id)) {
+              updatedOrder.push(id); // lo agrega al final
+            }
+          }
+          return updatedOrder;
+        });
+      }
+
+
+      const favoriteSet = new Set(
+        userBoards.filter((b: any) => b.is_favorite).map((b: any) => b.id.toString())
+      );
+      setFavoriteIds(favoriteSet as Set<string>);
     }
 
     // Ejecutar la primera vez
     fetchBoards();
 
-    // 🔁 Auto-actualizar cada 5 segundos
+    // 🔁 Auto-actualizar cada 3 segundos
     intervalId = setInterval(() => {
       fetchBoards();
     }, 3000);
@@ -77,7 +99,7 @@ const UserBoards = () => {
     // Limpiar el intervalo al desmontar
     return () => clearInterval(intervalId);
   }, [Array.from(favoriteIds).sort().join(",")]);
-  const toggleFavorite = (boardId: string) => {
+  const toggleFavorite = async (boardId: string) => {
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
       updated.delete(boardId);
@@ -85,14 +107,24 @@ const UserBoards = () => {
       updated.add(boardId);
     }
     setFavoriteIds(updated);
+
+    // Llamar al backend para persistir el cambio
+    try {
+      await toggleFavoriteBoard(boardId);
+    } catch (error) {
+      console.error("Error al cambiar favorito:", error);
+    }
   };
 
   const favoriteBoards = boards.filter((b) => favoriteIds.has(b.id));
-  const createdBoards = boards;
+  const createdBoards = initialBoardOrder.length > 0
+    ? initialBoardOrder.map(id => boards.find(b => b.id === id)!).filter(Boolean)
+    : boards;
 
   const goToBoardList = (boardId: string) => {
     router.push(`/boardList/${boardId}`);
   }
+
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] px-8 pt-2 pb-20 space-y-14 text-white font-poppins">
