@@ -35,6 +35,7 @@ const UserBoards = () => {
 
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [initialBoardOrder, setInitialBoardOrder] = useState<string[]>([]);
 
  useEffect(() => {
   let intervalId: NodeJS.Timeout;
@@ -65,6 +66,21 @@ const UserBoards = () => {
     }));
 
     setBoards(loadedBoards);
+
+    if (userBoards.length > 0) {
+  const newIds = userBoards.map((b: any) => b.id.toString());
+  setInitialBoardOrder((prev) => {
+    // Añadir cualquier ID nuevo sin alterar el orden actual
+    const updatedOrder = [...prev];
+    for (const id of newIds) {
+      if (!updatedOrder.includes(id)) {
+        updatedOrder.push(id); // lo agrega al final
+      }
+    }
+    return updatedOrder;
+  });
+}
+
 
     const favoriteSet = new Set(
   userBoards.filter((b: any) => b.is_favorite).map((b: any) => b.id.toString())
@@ -101,7 +117,10 @@ const UserBoards = () => {
 };
 
   const favoriteBoards = boards.filter((b) => favoriteIds.has(b.id));
-  const createdBoards = boards;
+  const createdBoards = initialBoardOrder.length > 0
+  ? initialBoardOrder.map(id => boards.find(b => b.id === id)!).filter(Boolean)
+  : boards;
+
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] px-8 pt-2 pb-20 space-y-14 text-white font-poppins">
