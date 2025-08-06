@@ -45,7 +45,15 @@ const Form = ({ boardId }: Props) => {
         setName(data.name || '');
         setDescription(data.description || '');
         setImageUrl(data.board_image_url || '');
-        setMembers(data.members || []);
+        setMembers(
+          (data.members || []).map((user: any) => ({
+            id: String(user.id),
+            name: `${user.name} ${user.last_name}`.trim(),
+            username: user.email?.split("@")[0] || "usuario",
+            img: user.avatar_url ,
+          }))
+        );
+
         setTags(data.tags || []);
         setVisibility(data.status === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE');
       } catch (err: any) {

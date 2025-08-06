@@ -13,7 +13,7 @@ const BoardMenu: React.FC<Props> = ({ onClose, boardId }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleEdit = () => {
-    router.push("/Edit");
+    router.push(`/edit/${boardId}`);
     onClose();
   };
 
