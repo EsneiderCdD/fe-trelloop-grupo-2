@@ -37,7 +37,7 @@ const NewBoard = () => {
 
   const router = useRouter();
   const goToHome = () => {
-    router.push("/");
+    router.push("/home");
   };
 
   const deleteMember = (idToRemove: string) => {

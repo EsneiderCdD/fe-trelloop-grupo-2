@@ -31,10 +31,10 @@ const Members = ({ members, onDelete, onAdd }: MembersProps) => {
   };
 
   return (
-    <div className="mt-[20px]">
-      <div className="text-white text-[14px] font-[500] mt-[6px] mb-[4px]">
+    <div className="space-y-2">
+      <label className="block text-white font-medium pt-1">
         Miembros
-      </div>
+      </label>
 
       <div className="relative w-[575px]">
         <input
@@ -42,7 +42,7 @@ const Members = ({ members, onDelete, onAdd }: MembersProps) => {
           placeholder="Buscar por nombre o @usuario..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-[10px] px-4 pr-10 py-2 border border-[#3a3a3a] outline-none focus:ring-2 focus:ring-[#6a5fff] transition"
+          className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-xl pl-2 pr-10 border border-[#3c3c3c] outline-none focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white pointer-events-none">
           <svg
