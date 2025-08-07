@@ -1,5 +1,7 @@
 import DashboardSidebar from "components/home/DashboardSidebar";
-import Form from "./form"; 
+import UserNavbarEditView from "components/ui/UserNavbarEditView";
+import CloseButton from "components/ui/CloseButton";
+import Form from "components/Edit/form";
 import { useEffect, useState } from "react";
 
 type Props = {
@@ -27,7 +29,14 @@ export default function EditBoardView({ boardId }: Props) {
   }, [boardId]);
 
   if (loading) {
-    return <div className="text-white p-6">Cargando tablero...</div>;
+    return (
+      <div className="flex min-h-screen bg-[#1A1A1A] items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#6A5FFF] mx-auto mb-4"></div>
+          <div className="text-white text-lg">Cargando tablero...</div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -36,17 +45,30 @@ export default function EditBoardView({ boardId }: Props) {
 
   return (
     <div className="flex min-h-screen bg-[#1A1A1A]">
-      <div className="flex w-full max-w-[1366px]">
-        <div className="shrink-0">
-          <DashboardSidebar />
-        </div>
-        <div className="flex-1 px-8 py-4 text-white">
-          <h1 className="text-2xl font-semibold mb-4">Editar Tablero</h1>
-          <Form boardId={boardId} /> {/* pasarlo al formulario por si se necesita*/}
-        </div>
+      {/*Dashboard lateral */}
+      <div className="shrink-0">
+        <DashboardSidebar />
       </div>
 
-      <style jsx>{`* { border: 1px dotted red; }`}</style>
+      {/*Contenido principal */}
+      <div className="flex-1 flex flex-col">
+        {/* Header con navbar */}
+        <UserNavbarEditView />
+
+        {/* Header con título y botón de cierre */}
+        <div className="flex w-full items-center justify-between px-6 mb-8">
+          <h1 className="text-white text-xl font-medium">Edición de tablero</h1>
+          <CloseButton redirectTo="/home" />
+        </div>
+
+        {/* Contenido central */}
+        <main className="flex-1 items-center w-full px-6 py-2 overflow-y-auto">
+          <div className="max-w-3xl mx-auto">
+            {/* Formulario centrado */}
+            <Form boardId={boardId} /> {/* pasarlo al formulario por si se necesita*/}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

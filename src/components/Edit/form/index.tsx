@@ -97,7 +97,6 @@ const Form = ({ boardId }: Props) => {
       return;
     }
 
-   
     const memberIdentifiers = members.map((m) => m.email || m.id);
 
     const payload = {
@@ -128,45 +127,68 @@ const Form = ({ boardId }: Props) => {
   };
 
   if (loading) {
-    return <div className="text-white p-4">Cargando tablero...</div>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-white text-lg">Cargando tablero...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500 p-4">Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-red-500 text-lg">Error: {error}</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <BoardInfo
-        name={name}
-        description={description}
-        imageUrl={imageUrl}
-        onNameChange={setName}
-        onDescriptionChange={setDescription}
-        onImageUrlChange={setImageUrl} 
-      />
+    <div className="max-w-2xl mx-auto space-y-8">
+      {/* Información básica del tablero */}
+      <section>
+        <BoardInfo
+          name={name}
+          description={description}
+          imageUrl={imageUrl}
+          onNameChange={setName}
+          onDescriptionChange={setDescription}
+          onImageUrlChange={setImageUrl} 
+        />
+      </section>
 
-      <Members
-        members={members}
-        onDelete={handleDeleteMember}
-        onAdd={handleAddMember}
-      />
+      {/* Miembros */}
+      <section>
+        <Members
+          members={members}
+          onDelete={handleDeleteMember}
+          onAdd={handleAddMember}
+        />
+      </section>
 
-      <Tags
-        tags={tags}
-        onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
-        onDelete={handleDeleteTag}
-      />
+      {/* Etiquetas */}
+      <section>
+        <Tags
+          tags={tags}
+          onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
+          onDelete={handleDeleteTag}
+        />
+      </section>
 
-      <Visibility
-        value={visibility}
-        onChange={handleVisibilityChange}
-      />
+      {/* Visibilidad */}
+      <section>
+        <Visibility
+          value={visibility}
+          onChange={handleVisibilityChange}
+        />
+      </section>
 
-      <Actions
-        onCancel={handleCancel}
-        onSave={handleSave}
-      />
+      {/* Botones de acción */}
+      <section className="pt-2">
+        <Actions
+          onCancel={handleCancel}
+          onSave={handleSave}
+        />
+      </section>
     </div>
   );
 };

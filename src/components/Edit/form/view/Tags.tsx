@@ -16,9 +16,10 @@ const Tags = ({ tags, onAdd, onDelete }: TagsProps) => {
   };
 
   return (
-    <div>
-      <div className='text-white text-[14px] font-[500] mt-[6px] mb-[4px]'>Etiquetas</div>
-
+    <div className="space-y-2">
+      <label className="block text-white font-medium pt-1">
+        Etiquetas
+      </label>
       <div className="relative w-[575px]">
         <input
           type="text"
@@ -26,7 +27,7 @@ const Tags = ({ tags, onAdd, onDelete }: TagsProps) => {
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-[10px] px-4 pr-10 py-2 border border-[#3a3a3a] outline-none focus:ring-2 focus:ring-[#6a5fff] transition"
+          className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-xl pl-2 pr-10 border border-[#3c3c3c] outline-none focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white pointer-events-none">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
