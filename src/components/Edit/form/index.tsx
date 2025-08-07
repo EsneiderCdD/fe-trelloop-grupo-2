@@ -5,6 +5,8 @@ import Tags from './view/Tags';
 import Visibility from './view/Visibility';
 import Actions from './view/Actions';
 import { getToken } from '../../../store/authStore';
+import { useRouter } from 'next/navigation';
+
 
 type Props = {
   boardId: string;
@@ -19,6 +21,8 @@ const Form = ({ boardId }: Props) => {
   const [visibility, setVisibility] = useState<'PRIVATE' | 'PUBLIC'>('PRIVATE');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBoard = async () => {
@@ -120,7 +124,7 @@ const Form = ({ boardId }: Props) => {
 
       if (!res.ok) throw new Error("Error al guardar los cambios");
 
-      alert("¡Cambios guardados correctamente!");
+      router.push('/home');
     } catch (err: any) {
       alert(err.message || "Ocurrió un error inesperado.");
     }
