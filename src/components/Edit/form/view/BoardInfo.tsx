@@ -30,7 +30,7 @@ export default function BoardInfo({
     }
   };
 
-  const safeImageUrl = imageUrl?.trim() ? imageUrl : DEFAULT_IMAGE_URL;
+  const safeImageUrl = previewImage || imageUrl?.trim() || DEFAULT_IMAGE_URL;
 
   return (
     <div className="text-white space-y-2">

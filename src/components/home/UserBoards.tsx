@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getUserBoards } from "../../services/boardService";
 import { useRouter } from 'next/navigation';
 import BoardMenu from "./BoardMenu";
+import { toggleFavoriteBoard } from "../../services/boardService";
 
 interface Board {
   id: string;
@@ -34,23 +35,24 @@ const UserBoards = () => {
 
   const [boards, setBoards] = useState<Board[]>([]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [initialBoardOrder, setInitialBoardOrder] = useState<string[]>([]);
 
- useEffect(() => {
-  let intervalId: NodeJS.Timeout;
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
 
-  async function fetchBoards() {
-    const userBoards = await getUserBoards();
+    async function fetchBoards() {
+      const userBoards = await getUserBoards();
 
-    const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
-      id: b.id.toString(),
-      name: b.name,
-      title: b.name,
-      description: b.description || "",
-      board_image_url: b.boardImageUrl || "",
-      coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
-      isFavorite: favoriteIds.has(b.id.toString()),
-      members: Array.isArray(b.members)
-        ? b.members.filter((m: any, i: number, self: any[]) =>
+      const loadedBoards: Board[] = userBoards.map((b: any, index: number) => ({
+        id: b.id.toString(),
+        name: b.name,
+        title: b.name,
+        description: b.description || "",
+        board_image_url: b.boardImageUrl || "",
+        coverImage: b.boardImageUrl || assignedImages[index] || "/assets/images/default-board.jpg",
+        isFavorite: b.is_favorite ?? favoriteIds.has(b.id.toString()),
+        members: Array.isArray(b.members)
+          ? b.members.filter((m: any, i: number, self: any[]) =>
             self.findIndex((x) => (typeof x === "object" ? x.id : x) === (typeof m === "object" ? m.id : m)) === i
           ).map((m: any, i: number) => {
             const id = typeof m === "object" ? m.id : m;
@@ -60,24 +62,44 @@ const UserBoards = () => {
               avatar: `/assets/icons/avatar${(i % 4) + 1}.png`,
             };
           })
-        : [],
-    }));
+          : [],
+      }));
 
-    setBoards(loadedBoards);
-  }
+      setBoards(loadedBoards);
 
-  // Ejecutar la primera vez
-  fetchBoards();
+      if (userBoards.length > 0) {
+        const newIds = userBoards.map((b: any) => b.id.toString());
+        setInitialBoardOrder((prev) => {
+          // Añadir cualquier ID nuevo sin alterar el orden actual
+          const updatedOrder = [...prev];
+          for (const id of newIds) {
+            if (!updatedOrder.includes(id)) {
+              updatedOrder.push(id); // lo agrega al final
+            }
+          }
+          return updatedOrder;
+        });
+      }
 
-  // 🔁 Auto-actualizar cada 5 segundos
-  intervalId = setInterval(() => {
+
+      const favoriteSet = new Set(
+        userBoards.filter((b: any) => b.is_favorite).map((b: any) => b.id.toString())
+      );
+      setFavoriteIds(favoriteSet as Set<string>);
+    }
+
+    // Ejecutar la primera vez
     fetchBoards();
-  }, 3000);
 
-  // Limpiar el intervalo al desmontar
-  return () => clearInterval(intervalId);
-}, [Array.from(favoriteIds).sort().join(",")]);
-  const toggleFavorite = (boardId: string) => {
+    // 🔁 Auto-actualizar cada 3 segundos
+    intervalId = setInterval(() => {
+      fetchBoards();
+    }, 3000);
+
+    // Limpiar el intervalo al desmontar
+    return () => clearInterval(intervalId);
+  }, [Array.from(favoriteIds).sort().join(",")]);
+  const toggleFavorite = async (boardId: string) => {
     const updated = new Set(favoriteIds);
     if (updated.has(boardId)) {
       updated.delete(boardId);
@@ -85,10 +107,24 @@ const UserBoards = () => {
       updated.add(boardId);
     }
     setFavoriteIds(updated);
+
+    // Llamar al backend para persistir el cambio
+    try {
+      await toggleFavoriteBoard(boardId);
+    } catch (error) {
+      console.error("Error al cambiar favorito:", error);
+    }
   };
 
   const favoriteBoards = boards.filter((b) => favoriteIds.has(b.id));
-  const createdBoards = boards;
+  const createdBoards = initialBoardOrder.length > 0
+    ? initialBoardOrder.map(id => boards.find(b => b.id === id)!).filter(Boolean)
+    : boards;
+
+  const goToBoardList = (boardId: string) => {
+    router.push(`/boardList/${boardId}`);
+  }
+
 
   return (
     <div className="min-h-screen bg-[#1A1A1A] px-8 pt-2 pb-20 space-y-14 text-white font-poppins">
@@ -139,9 +175,9 @@ const UserBoards = () => {
                     />
                   ))}
                   {board.members.length > 4 && (
-                  <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
-                    +{board.members.length - 4}
-                  </div>
+                    <div className="w-6 h-6 rounded-full border border-[#979797] bg-[#272727] text-white text-[12px] font-medium flex items-center justify-center">
+                      +{board.members.length - 4}
+                    </div>
                   )}
                 </div>
 
@@ -170,7 +206,8 @@ const UserBoards = () => {
                   <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                     <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
                   </button>
-                  <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
+                  <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full"
+                    onClick={() => goToBoardList(board.id)}>
                     <span className="text-white text-[12px] font-medium">Ingresar</span>
                   </button>
                 </div>
@@ -233,10 +270,9 @@ const UserBoards = () => {
                         : "/assets/icons/heart.png"
                     }
                     alt="Favorito"
-                      className={`object-contain ${
-                        isFavorite ? "w-[20px] h-[20px]" : "w-[28px] h-[28px] scale-[1.15] -m-[2px]"
+                    className={`object-contain ${isFavorite ? "w-[20px] h-[20px]" : "w-[28px] h-[28px] scale-[1.15] -m-[2px]"
                       }`}
-                    />
+                  />
                 </button>
               </div>
 
@@ -285,7 +321,8 @@ const UserBoards = () => {
                 <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                   <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
                 </button>
-                <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full">
+                <button className="ml-auto flex items-center gap-2 bg-[#161616] px-4 h-8 rounded-full"
+                  onClick={() => goToBoardList(board.id)}>
                   <span className="text-white text-[12px] font-medium">Ingresar</span>
                 </button>
               </div>
