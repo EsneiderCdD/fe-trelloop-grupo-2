@@ -1,7 +1,7 @@
 import DashboardSidebar from "components/home/DashboardSidebar";
 import UserNavbarEditView from "components/ui/UserNavbarEditView";
 import CloseButton from "components/ui/CloseButton";
-import Form from "components/Edit/form";
+import Form from "components/edit/form";
 import { useEffect, useState } from "react";
 
 type Props = {
