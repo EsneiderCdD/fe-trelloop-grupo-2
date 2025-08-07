@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { BoardInfoProps } from "../types";
 
@@ -14,7 +14,21 @@ export default function BoardInfo({
   onDescriptionChange,
   onImageUrlChange,
 }: BoardInfoProps) {
-  const [showInput, setShowInput] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewImage(objectUrl);
+      onImageUrlChange(objectUrl); // esto actualiza el estado en el padre si lo usas así
+    }
+  };
 
   const safeImageUrl = imageUrl?.trim() ? imageUrl : DEFAULT_IMAGE_URL;
 
@@ -26,7 +40,7 @@ export default function BoardInfo({
         <div className="relative">
           <div
             className="cursor-pointer group"
-            onClick={() => setShowInput(!showInput)}
+            onClick={handleImageClick}
           >
             <div className="w-[130px] h-[130px] rounded-2xl overflow-hidden border border-[#404040] hover:border-[#6A5FFF] transition-all duration-300 relative">
               <Image
@@ -49,37 +63,14 @@ export default function BoardInfo({
             </div>
           </div>
 
-          {/* Input para URL de imagen */}
-          {showInput && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[300px] bg-[#1e1e1e] border border-[#3c3c3c] rounded-xl p-4 shadow-lg z-10">
-              <label className="text-white text-sm font-medium block mb-2">
-                Agrega URL de{" "}
-                <a
-                  href="https://cloudinary.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#6a5fff] underline hover:text-[#5a4fff] transition-colors"
-                >
-                  Cloudinary
-                </a>
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => onImageUrlChange(e.target.value)}
-                  placeholder="https://res.cloudinary.com/..."
-                  className="flex-1 h-[36px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-lg px-3 border border-[#3c3c3c] outline-none focus:ring-1 focus:ring-[#6a5fff] focus:border-transparent transition-all duration-200 text-sm"
-                />
-                <button
-                  onClick={() => setShowInput(false)}
-                  className="px-3 py-1 bg-[#6a5fff] hover:bg-[#5a4fef] text-white rounded-lg transition-colors duration-200 text-sm"
-                >
-                  ✓
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Input de archivo oculto */}
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            />        
         </div>
       </div>
 
@@ -94,7 +85,7 @@ export default function BoardInfo({
             type="text"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
-            placeholder="Ut enim ad minim"
+            placeholder="Escribe aquí..."
             className="w-full h-[48px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-xl px-2 py-2 border border-[#3c3c3c] outline-none focus:ring-1 focus:ring-[#6A5FFF] focus:border-[#6A5FFF] transition-all duration-200"
           />
         </div>
@@ -109,7 +100,7 @@ export default function BoardInfo({
           <textarea
             value={description}
             onChange={(e) => onDescriptionChange(e.target.value)}
-            placeholder="Descripción del tablero..."
+            placeholder="Escribe aquí..."
             rows={4}
             className="w-full bg-[#1e1e1e] text-white placeholder-[#797676] rounded-xl px-2 py-2 border border-[#3c3c3c] outline-none focus:ring-1 focus:ring-[#6A5FFF] focus:border-[#6A5FFF] transition-all duration-200 resize-none"
           />

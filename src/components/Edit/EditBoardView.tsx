@@ -55,15 +55,15 @@ export default function EditBoardView({ boardId }: Props) {
         {/* Header con navbar */}
         <UserNavbarEditView />
 
+        {/* Header con título y botón de cierre */}
+        <div className="flex w-full items-center justify-between px-6 mb-8">
+          <h1 className="text-white text-xl font-medium">Edición de tablero</h1>
+          <CloseButton redirectTo="/home" />
+        </div>
+
         {/* Contenido central */}
         <main className="flex-1 items-center w-full px-6 py-2 overflow-y-auto">
           <div className="max-w-3xl mx-auto">
-            {/* Header con título y botón de cierre */}
-            <div className="flex w-full items-center justify-between mb-8">
-              <h1 className="text-white text-xl font-medium">Edición de tablero</h1>
-              <CloseButton redirectTo="/home" />
-            </div>
-
             {/* Formulario centrado */}
             <Form boardId={boardId} /> {/* pasarlo al formulario por si se necesita*/}
           </div>
