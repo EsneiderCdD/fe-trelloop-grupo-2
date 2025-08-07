@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import BoardInfo from './view/BoardInfo';
 import Members from './view/Members';
@@ -7,7 +9,6 @@ import Actions from './view/Actions';
 import { getToken } from '../../../store/authStore';
 import { useRouter } from 'next/navigation';
 
-
 type Props = {
   boardId: string;
 };
@@ -15,7 +16,7 @@ type Props = {
 const Form = ({ boardId }: Props) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | File>('');
   const [members, setMembers] = useState<any[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<'PRIVATE' | 'PUBLIC'>('PRIVATE');
@@ -54,7 +55,8 @@ const Form = ({ boardId }: Props) => {
             id: String(user.id),
             name: `${user.name} ${user.last_name}`.trim(),
             username: user.email?.split("@")[0] || "usuario",
-            img: user.avatar_url ,
+            email: user.email,
+            img: user.avatar_url,
           }))
         );
 
@@ -101,25 +103,32 @@ const Form = ({ boardId }: Props) => {
       return;
     }
 
-    const memberIdentifiers = members.map((m) => m.email || m.id);
+    const formData = new FormData();
 
-    const payload = {
-      name,
-      description,
-      boardImageUrl: imageUrl, 
-      members: memberIdentifiers,
-      tags,
-      status: visibility,
-    };
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("status", visibility);
+
+    // 👇 Añadir imagen solo si es un archivo nuevo
+    if (imageUrl instanceof File) {
+      formData.append("image", imageUrl); // 👈 este es el campo que espera el backend
+    }
+
+    members.forEach((m) => {
+      formData.append("members", m.email || m.id); // usa email si existe
+    });
+
+    tags.forEach((tag) => {
+      formData.append("tags", tag);
+    });
 
     try {
       const res = await fetch(`http://localhost:5000/api/boards/${boardId}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: formData,
       });
 
       if (!res.ok) throw new Error("Error al guardar los cambios");
@@ -148,7 +157,6 @@ const Form = ({ boardId }: Props) => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      {/* Información básica del tablero */}
       <section>
         <BoardInfo
           name={name}
@@ -156,11 +164,10 @@ const Form = ({ boardId }: Props) => {
           imageUrl={imageUrl}
           onNameChange={setName}
           onDescriptionChange={setDescription}
-          onImageUrlChange={setImageUrl} 
+          onImageUrlChange={setImageUrl}
         />
       </section>
 
-      {/* Miembros */}
       <section>
         <Members
           members={members}
@@ -169,7 +176,6 @@ const Form = ({ boardId }: Props) => {
         />
       </section>
 
-      {/* Etiquetas */}
       <section>
         <Tags
           tags={tags}
@@ -178,7 +184,6 @@ const Form = ({ boardId }: Props) => {
         />
       </section>
 
-      {/* Visibilidad */}
       <section>
         <Visibility
           value={visibility}
@@ -186,7 +191,6 @@ const Form = ({ boardId }: Props) => {
         />
       </section>
 
-      {/* Botones de acción */}
       <section className="pt-2">
         <Actions
           onCancel={handleCancel}

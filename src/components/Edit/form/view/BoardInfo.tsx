@@ -26,22 +26,19 @@ export default function BoardInfo({
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewImage(objectUrl);
-      onImageUrlChange(objectUrl); // esto actualiza el estado en el padre si lo usas así
+      onImageUrlChange(file);
     }
   };
 
-  const safeImageUrl = previewImage || imageUrl?.trim() || DEFAULT_IMAGE_URL;
+  const safeImageUrl =
+    previewImage ||
+    (typeof imageUrl === "string" ? imageUrl.trim() : DEFAULT_IMAGE_URL);
 
   return (
     <div className="text-white space-y-2">
-      {/* Imagen centrada arriba */}
       <div className="flex justify-start">
-        {/* Imagen del tablero */}
         <div className="relative">
-          <div
-            className="cursor-pointer group"
-            onClick={handleImageClick}
-          >
+          <div className="cursor-pointer group" onClick={handleImageClick}>
             <div className="w-[130px] h-[130px] rounded-2xl overflow-hidden border border-[#404040] hover:border-[#6A5FFF] transition-all duration-300 relative">
               <Image
                 src={safeImageUrl}
@@ -50,12 +47,21 @@ export default function BoardInfo({
                 height={130}
                 className="w-full h-full object-cover"
               />
-              {/* Icono de edición superpuesto */}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition-all duration-200">
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    <svg
+                      className="w-4 h-4 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -70,13 +76,12 @@ export default function BoardInfo({
             ref={fileInputRef}
             onChange={handleFileChange}
             className="hidden"
-            />        
+          />
         </div>
       </div>
 
-      {/* Campos de texto */}
+      {/* Nombre del tablero */}
       <div className="space-y-2">
-        {/* Nombre del tablero */}
         <label className="block text-white font-medium pt-4">
           Nombre de tablero
         </label>

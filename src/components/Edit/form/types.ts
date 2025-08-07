@@ -20,10 +20,10 @@ export interface BoardFormState {
 export interface BoardInfoProps {
   name: string;
   description: string;
-  imageUrl: string;
+  imageUrl: string | File; 
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
-  onImageUrlChange: (value: string) => void;
+  onImageUrlChange: (value: string | File) => void; 
 }
 
 export interface MembersProps {
