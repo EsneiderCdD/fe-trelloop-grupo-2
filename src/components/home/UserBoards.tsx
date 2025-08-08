@@ -185,9 +185,10 @@ const UserBoards = () => {
                   <div className="relative">
                     <button
                       className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black"
-                      onClick={() =>
-                        setMenuVisible(menuVisible === board.id ? null : board.id)
-                      }
+                      onClick={() => {
+                        const key = `fav-${board.id}`;
+                        setMenuVisible(menuVisible === key ? null : key);
+                      }}
                     >
                       <img
                         src="/assets/icons/ellipsis.svg"
@@ -196,12 +197,13 @@ const UserBoards = () => {
                       />
                     </button>
 
-                    {menuVisible === board.id && (
+                    {menuVisible === `fav-${board.id}` && (
                       <BoardMenu
                         boardId={board.id}
                         onClose={() => setMenuVisible(null)}
                       />
                     )}
+
                   </div>
                   <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                     <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
@@ -300,9 +302,10 @@ const UserBoards = () => {
                 <div className="relative">
                   <button
                     className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black"
-                    onClick={() =>
-                      setMenuVisible(menuVisible === board.id ? null : board.id)
-                    }
+                    onClick={() => {
+                      const key = `created-${board.id}`;
+                      setMenuVisible(menuVisible === key ? null : key);
+                    }}
                   >
                     <img
                       src="/assets/icons/ellipsis.svg"
@@ -311,12 +314,13 @@ const UserBoards = () => {
                     />
                   </button>
 
-                  {menuVisible === board.id && (
+                  {menuVisible === `created-${board.id}` && (
                     <BoardMenu
                       boardId={board.id}
                       onClose={() => setMenuVisible(null)}
                     />
                   )}
+                  
                 </div>
                 <button className="w-8 h-8 rounded-full bg-[#161616] flex items-center justify-center border border-black">
                   <img src="/assets/icons/eye.svg" alt="Ver" className="w-4 h-4" />
