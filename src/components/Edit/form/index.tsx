@@ -94,6 +94,7 @@ const Form = ({ boardId }: Props) => {
 
   const handleCancel = () => {
     console.log('Cancelando edición...');
+    router.push('/home');
   };
 
   const handleSave = async () => {
