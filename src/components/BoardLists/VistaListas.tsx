@@ -1,6 +1,8 @@
 import React from "react";
+import AddListModal from "./AddListButton";
 
 interface Tarea {
+  board_id: number;
   id: number;
   etiquetas: string;
   descripcion: string;
@@ -52,6 +54,7 @@ const VistaListas: React.FC = () => {
       bordeColor: "border-l-red-500", // Borde rojo
       tareas: [
         {
+          board_id: 2,
           id: 1,
           etiquetas: "Etiquetas",
           descripcion: "Ut enim ad minim veniam, quis nostrud",
@@ -59,6 +62,7 @@ const VistaListas: React.FC = () => {
           comentarios: 3,
         },
         {
+          board_id: 2,
           id: 2,
           etiquetas: "Etiquetas",
           descripcion: "Ut enim ad minim veniam, quis nostrud",
@@ -66,6 +70,7 @@ const VistaListas: React.FC = () => {
           comentarios: 5,
         },
         {
+          board_id: 2,
           id: 3,
           etiquetas: "Etiquetas",
           descripcion: "Ut enim ad minim veniam, quis nostrud",
@@ -81,6 +86,7 @@ const VistaListas: React.FC = () => {
       bordeColor: "border-l-orange-500", // Borde naranja
       tareas: [
         {
+          board_id: 2,
           id: 4,
           etiquetas: "Etiquetas",
           descripcion: "Ut enim ad minim veniam, quis nostrud",
@@ -130,6 +136,11 @@ const VistaListas: React.FC = () => {
           </div>
         </div>
       ))}
+      <div className="relative">
+        <AddListModal
+          boardId={columnas[0].tareas[0].board_id}
+        />
+      </div>
     </div>
   );
 };
