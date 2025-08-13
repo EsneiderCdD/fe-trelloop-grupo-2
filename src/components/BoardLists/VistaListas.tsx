@@ -46,7 +46,11 @@ const VistaListas: React.FC = () => {
   //       ],
   //     },
   //   ];
-  const columnas: Columna[] = [
+
+  const [editandoListaId, setEditandoListaId] = React.useState<number | null>(null);
+  const [nuevoTitulo, setNuevoTitulo] = React.useState<string>("");
+
+  const [columnas, setColumnas] = React.useState<Columna[]>([
     {
       id: 1,
       titulo: "Por hacer",
@@ -95,7 +99,29 @@ const VistaListas: React.FC = () => {
         },
       ],
     },
-  ];
+  ]);
+  const guardarTitulo = (columnaId: number) => {
+    if (!nuevoTitulo.trim()) {
+      alert("El nombre no puede estar vacío");
+      return;
+    }
+    if (nuevoTitulo.trim().length > 25) {
+      alert("El nombre no puede tener más de 25 caracteres");
+      return;
+    }
+
+    console.log(`Guardar título "${nuevoTitulo}" para lista ID ${columnaId}`);
+
+    // 🔹 Actualiza el título de la columna en el estado
+    setColumnas((prevColumnas) =>
+      prevColumnas.map((col) =>
+        col.id === columnaId ? { ...col, titulo: nuevoTitulo.trim() } : col
+      )
+    );
+
+    setEditandoListaId(null);
+  };
+
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] h-full">
@@ -105,8 +131,37 @@ const VistaListas: React.FC = () => {
           <div
             className={`flex justify-between items-center px-3 py-2 rounded-t-md ${columna.color}`}
           >
-            <h2 className="text-white font-semibold">{columna.titulo}</h2>
-            <span className="text-white">{columna.tareas.length}</span>
+            {editandoListaId === columna.id ? (
+              <input
+                type="text"
+                value={nuevoTitulo}
+                onChange={(e) => setNuevoTitulo(e.target.value)}
+                onBlur={() => guardarTitulo(columna.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    guardarTitulo(columna.id);
+                  }
+                }}
+                className="bg-transparent border-b border-white text-white font-semibold focus:outline-none w-full"
+                autoFocus
+              />
+            ) : (
+              <h2 className="text-white font-semibold">{columna.titulo}</h2>
+            )}
+
+            <div className="flex items-center">
+              <span className="text-white">{columna.tareas.length}</span>
+              <img
+                src="/assets/icons/square-pen.svg"
+                alt="Editar lista"
+                className="w-4 h-4 cursor-pointer ml-2"
+                onClick={() => {
+                  setEditandoListaId(columna.id);
+                  setNuevoTitulo(columna.titulo);
+                }}
+              />
+            </div>
+
           </div>
 
           {/* Lista de tareas */}
