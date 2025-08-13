@@ -1,5 +1,6 @@
 import React from "react";
 import AddListModal from "./AddListButton";
+import { useParams, useRouter } from "next/navigation";
 
 interface Tarea {
   board_id: number;
@@ -96,6 +97,13 @@ const VistaListas: React.FC = () => {
       ],
     },
   ];
+  const router = useRouter();
+  const params = useParams();
+  const boardId = params.id;
+
+  const goToAddTask = () => {
+    router.push(`/boardList/${boardId}/addtask`);
+  }
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] h-full">
@@ -130,7 +138,8 @@ const VistaListas: React.FC = () => {
             ))}
 
             {/* Botón agregar tarea */}
-            <button className="mt-2 py-2 px-3 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+            <button className="mt-2 py-2 px-3 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+              onClick={() => goToAddTask()}>
               + Agregar tarea
             </button>
           </div>
