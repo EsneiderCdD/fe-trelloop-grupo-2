@@ -7,12 +7,10 @@ import { useRouter } from "next/navigation";
 
 
 
+
 export default function AddTask() {
 
     const router = useRouter();
-    const goToPreviousPage = () => {
-        router.back();
-    };
 
 
     return (
@@ -25,6 +23,44 @@ export default function AddTask() {
                 <div className="flex items-center justify-between p-5">
                     <h1 className="text-lg font-poppins whitespace-nowrap text-white">Crear tarjeta </h1>
                     <CloseButton onClick={() => router.back()} />
+                </div>
+                <div className="flex items-center justify-between p-5">
+                    {/* Datepicker*/}
+                    <h1>Hola Mundo lo</h1>
+
+
+
+                    {/* Formulario para crear una nueva tarjeta */}
+                    <form className="flex-1 p-6">
+                        <div className="mb-4">
+                            <label className="font-poppins block text-white mb-2">Título de la tarjeta</label>
+                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Escribe aquí" />
+                        </div>
+                        <div className="mb-4">
+                            <label className="font-poppins block text-white mb-2">Descripción</label>
+                            <textarea className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" rows={4} placeholder="Escribe aquí"></textarea>
+                        </div>
+                        <div className="mb-4">
+                            <label className="font-poppins block text-white mb-2">Responsables</label>
+                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Busca por nombre o @usuario" />
+                        </div>
+                        <div className="mb-4">
+                            <label className="font-poppins block text-white mb-2">Prioridad</label>
+                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Agrega una prioridad..." />
+                        </div>
+                        <div className="mb-4">
+                            <label className="font-poppins block text-white mb-2">Estado</label>
+                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Agrega un estado..." />
+                        </div>
+                        <div className="mb-4">
+                            <label className="font-poppins block text-white mb-2">Etiquetas</label>
+                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Escribe un nombre de etiqueta para crearla" />
+                        </div>
+                        <div className="flex mt-16">
+                            <button type="submit" className="font-poppins flex-1 py-2 border border-[#6A5FFF] text-[#6A5FFF] rounded-[8px] hover:bg-[#5a4fef1b]">Cancelar creación</button>
+                            <button type="submit" className="font-poppins flex-1 ml-4 py-2 bg-[#6A5FFF] hover:bg-[#5A4FEF] text-white rounded-[8px]">Crear tarjeta</button>
+                        </div>
+                    </form>
                 </div>
             </main>
         </div>
