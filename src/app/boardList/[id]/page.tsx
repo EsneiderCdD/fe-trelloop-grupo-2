@@ -11,7 +11,7 @@ interface BoardListProps {
 }
 
 export default function BoardListPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [vistaActiva, setVistaActiva] = useState<string>("backlog");
   const handleVistaChange = (vista: string) => {
     setVistaActiva(vista);
@@ -68,7 +68,7 @@ export default function BoardListPage() {
             </div>
           </div>
         </div>
-        {vistaActiva === "listas" && <VistaListas />}
+        {vistaActiva === "listas" && (id ? <VistaListas boardId={id} /> : <p>Cargando...</p>)}
       </main>
     </div>
   );
