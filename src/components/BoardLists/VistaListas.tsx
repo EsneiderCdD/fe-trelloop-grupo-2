@@ -72,7 +72,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
               </div>
 
               {/* Contenedor íconos */}
-              <div className="flex items-center gap-3 flex-shrink-0 pl-3">
+              <div className="flex items-center gap-2 flex-shrink-0 ">
                 {/* Contador de tareas */}
                 <span className="text-white">{list.cards.length}</span>
                 {/* Icono de edición */}
