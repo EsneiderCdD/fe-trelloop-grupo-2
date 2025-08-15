@@ -43,7 +43,7 @@ const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
         boardLists.length > 0 &&
         boardLists.map((list) => (
           <div key={list.id} className="flex flex-col w-64">
-            {/* Encabezado con estilo original */}
+            {/* Encabezado */}
             <div className="flex justify-between items-center px-3 py-2 rounded-t-md bg-neutral-600">
               {editandoListaId === list.id ? (
                 <input
