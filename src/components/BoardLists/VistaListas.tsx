@@ -1,5 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AddListModal from "./AddListButton";
+import { useParams } from "next/navigation";
+import { getToken } from "../../store/authStore";
+
+// ⬅️ Nuevo import del servicio
+import { getListsService } from "../../services/getListservice";
+import { updateListService } from "../../services/updateListService";
 
 interface Tarea {
   board_id: number;
@@ -47,81 +53,82 @@ const VistaListas: React.FC = () => {
   //     },
   //   ];
 
+  const { id: boardIdParam } = useParams();
+  const boardId = Number(boardIdParam);
+
   const [editandoListaId, setEditandoListaId] = React.useState<number | null>(null);
   const [nuevoTitulo, setNuevoTitulo] = React.useState<string>("");
 
-  const [columnas, setColumnas] = React.useState<Columna[]>([
-    {
-      id: 1,
-      titulo: "Por hacer",
-      color: "bg-[#6d4c41]",
-      bordeColor: "border-l-red-500", // Borde rojo
-      tareas: [
-        {
-          board_id: 2,
-          id: 1,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 3,
-        },
-        {
-          board_id: 2,
-          id: 2,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 5,
-        },
-        {
-          board_id: 2,
-          id: 3,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 7,
-        },
-      ],
-    },
-    {
-      id: 2,
-      titulo: "En progreso",
-      color: "bg-[#0288d1]",
-      bordeColor: "border-l-orange-500", // Borde naranja
-      tareas: [
-        {
-          board_id: 2,
-          id: 4,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 5,
-        },
-      ],
-    },
-  ]);
-  const guardarTitulo = (columnaId: number) => {
-    if (!nuevoTitulo.trim()) {
-      alert("El nombre no puede estar vacío");
-      return;
-    }
-    if (nuevoTitulo.trim().length > 25) {
-      alert("El nombre no puede tener más de 25 caracteres");
-      return;
-    }
+  const [columnas, setColumnas] = React.useState<Columna[]>([]);
 
-    console.log(`Guardar título "${nuevoTitulo}" para lista ID ${columnaId}`);
+const guardarTitulo = async (columnaId: number) => {
+  const tituloTrim = nuevoTitulo.trim();
+  if (!tituloTrim) {
+    alert("El nombre no puede estar vacío");
+    return;
+  }
+  if (tituloTrim.length > 25) {
+    alert("El nombre no puede tener más de 25 caracteres");
+    return;
+  }
 
-    // 🔹 Actualiza el título de la columna en el estado
+  try {
+    // Llamada al backend
+    const columna = columnas.find(col => col.id === columnaId);
+    if (!columna) return;
+
+    console.log("DEBUG -> columnaId:", columnaId, "tituloTrim:", tituloTrim);
+
+
+    await updateListService(boardId, columnaId, tituloTrim);
+
+    // Actualiza localmente solo si el backend fue exitoso
     setColumnas((prevColumnas) =>
       prevColumnas.map((col) =>
-        col.id === columnaId ? { ...col, titulo: nuevoTitulo.trim() } : col
+        col.id === columnaId ? { ...col, titulo: tituloTrim } : col
       )
     );
 
     setEditandoListaId(null);
-  };
+  } catch (err: any) {
+    console.error("Error al actualizar la lista", err);
+    alert(err.message || "Error al actualizar la lista");
+  }
+};
 
+
+  React.useEffect(() => {
+    const fetchLists = async () => {
+      try {
+        // ⬅️ Antes lo hacíamos con fetch directo, ahora usamos nuestro servicio
+        const token = getToken();
+        if (!token) {
+          console.error("No hay token de autenticación");
+          return;
+        }
+
+    const data = await getListsService(boardId);
+    console.log("Respuesta de getListsService:", data);
+
+   setColumnas(
+  data.map((list: any) => ({
+    id: list.id,
+    titulo: list.name,
+    color: "bg-[#6d4c41]",
+    bordeColor: "border-l-red-500",
+    tareas: [], 
+  }))
+);
+
+      } catch (err) {
+        console.error("Error general fetching lists", err);
+      }
+    };
+
+    if (boardId) {
+      fetchLists();
+    }
+  }, [boardId]);
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] h-full">
@@ -192,9 +199,7 @@ const VistaListas: React.FC = () => {
         </div>
       ))}
       <div className="relative">
-        <AddListModal
-          boardId={columnas[0].tareas[0].board_id}
-        />
+        <AddListModal boardId={boardId} />
       </div>
     </div>
   );
