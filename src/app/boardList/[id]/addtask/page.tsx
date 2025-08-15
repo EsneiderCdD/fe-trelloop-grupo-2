@@ -42,15 +42,28 @@ export default function AddTask() {
                         </div>
                         <div className="mb-4">
                             <label className="font-poppins block text-white mb-2">Responsables</label>
-                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Busca por nombre o @usuario" />
+                            <div className="w-full flex items-center gap-2 bg-[#2B2B2B] rounded-[8px]">
+                                <input type="text" className="flex-1 font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white focus:ring-2 focus:ring-[#6a5fff]" placeholder="Busca por nombre o @usuario" />
+                                <img src="/assets/icons/search.svg" alt="Buscar" className="w-5 h-5 mr-2" />
+                            </div>
                         </div>
                         <div className="mb-4">
                             <label className="font-poppins block text-white mb-2">Prioridad</label>
-                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Agrega una prioridad..." />
+                            <select className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-gray-400 border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]">
+                                <option value="" disabled selected>Agrega una prioridad...</option>
+                                <option value="alta" className="text-white">Alta</option>
+                                <option value="media" className="text-white">Media</option>
+                                <option value="baja" className="text-white">Baja</option>
+                            </select>
                         </div>
                         <div className="mb-4">
                             <label className="font-poppins block text-white mb-2">Estado</label>
-                            <input type="text" className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]" placeholder="Agrega un estado..." />
+                            <select className="font-poppins w-full p-2 rounded-lg bg-[#2a2a2a]  text-gray-400 border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]">
+                                <option value="" disabled selected>Agrega un estado...</option>
+                                <option value="pendiente">Pendiente</option>
+                                <option value="en-progreso">En progreso</option>
+                                <option value="completado">Completado</option>
+                            </select>
                         </div>
                         <div className="mb-4">
                             <label className="font-poppins block text-white mb-2">Etiquetas</label>
