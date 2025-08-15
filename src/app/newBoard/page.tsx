@@ -11,6 +11,7 @@ import { UserBoard } from "../../components/newBoard/UserBoard";
 import { createBoardController } from "controllers/boardController";
 import { ValidationError } from "../../types/validatesError";
 
+import { searchUsersController } from "controllers/userController";
 
 import { XMarkIcon, CameraIcon } from "@heroicons/react/24/outline";
 
@@ -18,29 +19,8 @@ const NewBoard = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
-  const [members, setMembers] = useState([
-    {
-      id: "member1",
-      name: "nombre completo",
-      username: "@usuario",
-      img: "/assets/images/chico1.webp",
-    },
-    {
-      id: "member2",
-      name: "nombre completo",
-      username: "@usuario",
-      img: "/assets/images/chico2.webp",
-    },
-  ]);
 
   const [boardImage, setBoardImage] = useState<File | null>(null);
-
-
-  const [tags, setTags] = useState([
-    { id: "tag1", name: "Etiqueta" },
-    { id: "tag2", name: "Etiqueta" },
-    { id: "tag3", name: "Etiqueta" },
-  ]);
 
   const router = useRouter();
   const goToHome = () => {
@@ -54,82 +34,121 @@ const NewBoard = () => {
   const [tagInput, setTagInput] = useState("");
 
   const [selectedMembers, setSelectedMembers] = useState<
-    { name: string; username: string }[]
+    {
+      id: number;
+      name: string;
+      last_name: string;
+      email: string;
+      avatar_url: string;
+    }[]
   >([]);
 
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const [status, setStatus] = useState<"PRIVATE" | "PUBLIC">("PRIVATE");
 
-  //constantes de prueba
-  const existingUsers = [
-    { name: "Nombre completo", username: "@usuario" },
-    { name: "Juan Pérez", username: "@jperez" },
-    { name: "Ana López", username: "@alopez" },
-  ];
-
-  const existingTags = ["Etiqueta", "Frontend", "Backend", "Urgente"];
+  const [searchMember, setSearchMember] = useState("");
+  const [results, setResults] = useState<
+    Array<{
+      id: number;
+      name: string;
+      last_name: string;
+      email: string;
+      avatar_url: string;
+    }>
+  >([]);
 
   //lógica para la busqueda y filtración de miembros y etiquetas
 
-  const filteredUsers = existingUsers.filter(
-    (user) =>
-      user.name.toLowerCase().includes(memberInput.toLowerCase()) ||
-      user.username.toLowerCase().includes(memberInput.toLowerCase())
-  );
-
-  const filteredTags = existingTags.filter(
-    (tag) =>
-      tag.toLowerCase().includes(tagInput.toLowerCase()) &&
-      !selectedTags.includes(tag)
-  );
-
-  const handleSelectMember = (user: { name: string; username: string }) => {
-    if (!selectedMembers.some((m) => m.username === user.username)) {
-      setSelectedMembers([...selectedMembers, user]);
-      setMemberInput("");
+  const handleSearchInputChange = (query: string) => {
+    setSearchMember(query);
+    if (query.length < 2) {
+      setResults([]); // Limpiar resultados si la query es muy corta
+      return;
     }
   };
 
-  const handleSelectTag = (tag: string) => {
-    if (!selectedTags.includes(tag)) {
-      setSelectedTags([...selectedTags, tag]);
+  const handleSearch = async (query: string) => {
+    if (query.length < 2) return;
+
+    try {
+      const users = await searchUsersController(query);
+      setResults(users);
+    } catch (error) {
+      console.error("❌ Error buscando miembros:", error);
+      setResults([]);
+    }
+  };
+
+  const handleAddTag = () => {
+    if (tagInput.trim() && !selectedTags.includes(tagInput.trim())) {
+      setSelectedTags([...selectedTags, tagInput.trim()]);
       setTagInput("");
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleRemoveTag = (tagToRemove: string) => {
+    setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
+  };
 
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("description", description);
-  formData.append("status", status);
-
-  if (boardImage) {
-    formData.append("image", boardImage);
-  }
-
-  selectedTags.forEach((tag) => formData.append("tags", tag));
-  selectedMembers.forEach((m) => formData.append("members", m.username));
-
-  try {
-    await createBoardController(formData);
-    router.push("/home");
-  } catch (err) {
-    if (err instanceof ValidationError) {
-      setFormErrors({ [err.field || "general"]: err.message });
-    } else {
-      setFormErrors({ general: "Error inesperado" });
+  const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
     }
-  }
-};
+  };
 
+  // Función para la selección de miembros
+  const handleSelectMember = (member: {
+    id: number;
+    name: string;
+    last_name: string;
+    email: string;
+    avatar_url: string;
+  }) => {
+    // Verificar que no esté seleccionado
+    if (!selectedMembers.some((m) => m.id === member.id)) {
+      setSelectedMembers([...selectedMembers, member]);
+      setSearchMember("");
+      setResults([]);
+    }
+  };
+
+  // Función para remover miembros
+  const handleRemoveMember = (idToRemove: number) => {
+    setSelectedMembers(selectedMembers.filter((m) => m.id !== idToRemove));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("status", status);
+
+    if (boardImage) {
+      formData.append("image", boardImage);
+    }
+
+    selectedTags.forEach((tag) => formData.append("tags", tag));
+    selectedMembers.forEach((m) => formData.append("members", m.id.toString()));
+
+    try {
+      await createBoardController(formData);
+      router.push("/home");
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        setFormErrors({ [err.field || "general"]: err.message });
+      } else {
+        setFormErrors({ general: "Error inesperado" });
+      }
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} noValidate>
       <div className="w-full bg-[#1A1A1A] text-white min-h-screen flex flex-col px-4">
-
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold whitespace-nowrap p-2 text-white">
@@ -146,7 +165,6 @@ const NewBoard = () => {
         {/* Campos obligatorios (Nombre y descripción) y foto*/}
         <div className="flex justify-center items-center">
           <div className="min-h-screen w-1/2 text-white flex flex-col gap-4 relative overflow-visible">
-            
             <label className="w-[130px] h-[130px] bg-[#1e1e1e] rounded-xl flex items-center justify-center hover:bg-[#2a2a2a] cursor-pointer">
               {boardImage ? (
                 <img
@@ -164,7 +182,7 @@ const NewBoard = () => {
                 onChange={(e) => setBoardImage(e.target.files?.[0] || null)}
               />
             </label>
-            
+
             <div className="flex flex-col gap-2">
               <label className="block mb-1 text-sm">Nombre de tablero</label>
               <input
@@ -197,8 +215,35 @@ const NewBoard = () => {
                 <input
                   type="text"
                   placeholder="Buscar por nombre o @usuario..."
+                  value={searchMember}
                   className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-[10px] px-4 pr-10 py-2 border border-[#3a3a3a] outline-none focus:ring-2 focus:ring-[#6a5fff] transition"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchMember(value);
+                    
+                    if (value.length >= 2) {
+                      handleSearch(value);
+                    } else {
+                      setResults([]);
+                    }
+                  }}
                 />
+
+
+
+                {results.length > 0 && (
+                  <ul className="absolute z-50 w-full bg-[#1e1e1e] border border-[#3a3a3a] rounded-md mt-1 max-h-40 overflow-y-auto">
+                    {results.map((member) => (
+                      <li
+                        key={member.id}
+                        className="px-4 py-2 hover:bg-[#2a2a2a] cursor-pointer text-white border-b border-[#3a3a3a]"
+                        onClick={() => handleSelectMember(member)}
+                      >
+                        {`${member.name} ${member.last_name}`}
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white pointer-events-none">
                   <svg
@@ -219,12 +264,12 @@ const NewBoard = () => {
               </div>
 
               <div className="container-miembros flex flex-wrap mt-[5px] gap-x-2">
-                {members.map((member) => (
+                {selectedMembers.map((member) => (
                   <UserBoard
                     key={member.id}
-                    name={member.name}
-                    username={member.username}
-                    img={member.img}
+                    name={`${member.name} ${member.last_name}`}
+                    username={member.email}
+                    img={member.avatar_url}
                   />
                 ))}
               </div>
@@ -237,17 +282,21 @@ const NewBoard = () => {
                 <input
                   type="text"
                   placeholder="Escribe un nombre de etiqueta para crearla..."
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagInputKeyDown}
                   className="w-full h-[41px] bg-[#1e1e1e] text-white placeholder-[#797676] rounded-[10px] px-4 pr-10 py-2 border border-[#3a3a3a] outline-none focus:ring-2 focus:ring-[#6a5fff] transition"
                 />
 
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white pointer-events-none">
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
                     stroke="currentColor"
-                    className="size-6"
+                    onClick={handleAddTag}
+                    className="size-6 cursor-pointer hover:stroke-[#6A5FFF] transition-colors"
                   >
                     <path
                       strokeLinecap="round"
@@ -259,8 +308,20 @@ const NewBoard = () => {
               </div>
 
               <div className="tags mt-[8px] flex flex-wrap gap-x-2">
-                {tags.map((tag) => (
-                  <TagChip key={tag.id} label={tag.name} />
+                {selectedTags.map((tag, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 bg-[#6A5FFF] text-white px-3 py-1 rounded-full"
+                  >
+                    <span className="text-sm">{tag}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="text-white hover:text-red-200 text-xs font-bold"
+                    >
+                      ×
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -338,8 +399,9 @@ const NewBoard = () => {
 
             {/* Botones crear y cancelar */}
             <div className="grid grid-cols-2 gap-x-6 pb-8">
-              <button className="w-full bg-[#1a1a1a1a] hover:bg-[#1a1a1a] text-primary-600 py-1 border border-primary-600 rounded-md transition duration-200"
-              onClick={goToHome}
+              <button
+                className="w-full bg-[#1a1a1a1a] hover:bg-[#1a1a1a] text-primary-600 py-1 border border-primary-600 rounded-md transition duration-200"
+                onClick={goToHome}
               >
                 Cancelar creación
               </button>
