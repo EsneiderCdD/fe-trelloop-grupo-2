@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AddListModal from "./AddListButton";
 import { useBoardLists } from "hooks/useBoardLists";
 import { updateListService } from "../../services/updateListService";
@@ -13,8 +13,10 @@ interface Tarea {
   comentarios: number;
 }
 
-// añadido isBoardOwner como prop opcional
-const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({ boardId, isBoardOwner = false }) => {
+const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
+  boardId,
+  isBoardOwner = false,
+}) => {
   const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
 
   const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
@@ -46,37 +48,48 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({ bo
         boardLists.map((list) => (
           <div key={list.id} className="flex flex-col w-64">
             {/* Encabezado */}
-            <div className="flex justify-between items-center px-3 py-1 rounded-t-md bg-neutral-600">
-              {editandoListaId === list.id ? (
-                <input
-                  type="text"
-                  value={nuevoTitulo}
-                  onChange={(e) => setNuevoTitulo(e.target.value)}
-                  onBlur={() => guardarTitulo(list.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") guardarTitulo(list.id);
-                    if (e.key === "Escape") setEditandoListaId(null);
-                  }}
-                  className="bg-transparent border-b border-white text-white font-semibold focus:outline-none w-full"
-                  autoFocus
-                />
-              ) : (
-                <h2 className="text-white font-semibold">{list.name}</h2>
-              )}
-              <div className="flex items-center gap-3">
+            <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
+              {/* Contenedor título/input */}
+              <div className="flex-1 min-w-0">
+                {editandoListaId === list.id ? (
+                  <input
+                    type="text"
+                    value={nuevoTitulo}
+                    onChange={(e) => setNuevoTitulo(e.target.value)}
+                    onBlur={() => guardarTitulo(list.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") guardarTitulo(list.id);
+                      if (e.key === "Escape") setEditandoListaId(null);
+                    }}
+                    className="bg-transparent border-b border-white text-white font-semibold focus:outline-none w-full"
+                    autoFocus
+                  />
+                ) : (
+                  <h2 className="text-white font-semibold truncate">
+                    {list.name}
+                  </h2>
+                )}
+              </div>
+
+              {/* Contenedor íconos */}
+              <div className="flex items-center gap-3 flex-shrink-0 pl-3">
                 {/* Contador de tareas */}
                 <span className="text-white">{list.cards.length}</span>
                 {/* Icono de edición */}
                 <img
                   src="/assets/icons/square-pen-white.svg"
                   alt="Editar lista"
-                  className="w-4 h-4 cursor-pointer "
+                  className="w-4 h-4 cursor-pointer"
                   onClick={() => iniciarEdicion(list.id, list.name)}
                 />
                 {/* Botón eliminar lista */}
                 <DeleteListButton
                   boardId={boardId}
-                  list={{ id: list.id, name: list.name, cards: list.cards }}
+                  list={{
+                    id: list.id,
+                    name: list.name,
+                    cards: list.cards,
+                  }}
                   getBoardLists={getBoardLists}
                   isBoardOwner={isBoardOwner}
                 />
@@ -110,9 +123,13 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({ bo
             </div>
           </div>
         ))}
+
+      {/* Botón agregar lista */}
       <div className="relative">
         <AddListModal boardId={boardId} getBoardLists={getBoardLists} />
       </div>
+
+      {/* Mensaje si no hay listas */}
       {(!Array.isArray(boardLists) || boardLists.length === 0) && (
         <p className="text-white mt-2">
           No hay listas creadas en este tablero.
