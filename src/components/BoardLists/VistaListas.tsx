@@ -1,6 +1,7 @@
 import React from "react";
 import AddListModal from "./AddListButton";
 import { useBoardLists } from "hooks/useBoardLists";
+import DeleteListButton from "./DeleteListButton";
 
 interface Tarea {
   board_id: number;
@@ -11,7 +12,8 @@ interface Tarea {
   comentarios: number;
 }
 
-const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
+// añadido isBoardOwner como prop opcional
+const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({ boardId, isBoardOwner = false }) => {
   const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
 
   if (loading) return <div>Cargando...</div>;
@@ -28,6 +30,15 @@ const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
               className={`flex justify-between items-center px-3 py-2 rounded-t-md `}
             >
               <h2 className="text-white font-semibold">{list.name}</h2>
+              {/* Botón eliminar lista */}
+              <div className="flex items-center gap-2">
+                <DeleteListButton
+                  boardId={boardId}
+                  list={{ id: list.id, name: list.name, cards: list.cards }}
+                  getBoardLists={getBoardLists}
+                  isBoardOwner={isBoardOwner}
+                />
+              </div>
               {/* <span className="text-white">{list.tareas.length}</span> */}
             </div>
 
