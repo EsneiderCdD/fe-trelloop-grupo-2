@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import AddListModal from "./AddListButton";
 import { useBoardLists } from "hooks/useBoardLists";
 import { updateListService } from "../../services/updateListService";
+import DeleteListButton from "./DeleteListButton";
 
 interface Tarea {
   board_id: number;
@@ -12,7 +13,8 @@ interface Tarea {
   comentarios: number;
 }
 
-const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
+// añadido isBoardOwner como prop opcional
+const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({ boardId, isBoardOwner = false }) => {
   const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
 
   const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
@@ -44,7 +46,7 @@ const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
         boardLists.map((list) => (
           <div key={list.id} className="flex flex-col w-64">
             {/* Encabezado */}
-            <div className="flex justify-between items-center px-3 py-2 rounded-t-md bg-neutral-600">
+            <div className="flex justify-between items-center px-3 py-1 rounded-t-md bg-neutral-600">
               {editandoListaId === list.id ? (
                 <input
                   type="text"
@@ -61,15 +63,22 @@ const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
               ) : (
                 <h2 className="text-white font-semibold">{list.name}</h2>
               )}
-              <div className="flex items-center">
+              <div className="flex items-center gap-3">
                 {/* Contador de tareas */}
                 <span className="text-white">{list.cards.length}</span>
                 {/* Icono de edición */}
                 <img
                   src="/assets/icons/square-pen-white.svg"
                   alt="Editar lista"
-                  className="w-4 h-4 cursor-pointer ml-2"
+                  className="w-4 h-4 cursor-pointer "
                   onClick={() => iniciarEdicion(list.id, list.name)}
+                />
+                {/* Botón eliminar lista */}
+                <DeleteListButton
+                  boardId={boardId}
+                  list={{ id: list.id, name: list.name, cards: list.cards }}
+                  getBoardLists={getBoardLists}
+                  isBoardOwner={isBoardOwner}
                 />
               </div>
             </div>
@@ -114,4 +123,3 @@ const VistaListas: React.FC<{ boardId: string }> = ({ boardId }) => {
 };
 
 export default VistaListas;
-
