@@ -70,10 +70,10 @@ export default function BoardListPage() {
           </div>
         </div>
         {/* Renderizado de componentes condicional */}
-        {vistaActiva === "listas" && <VistaListas />}
+        {/* {vistaActiva === "listas" && <VistaListas />} */}
         {vistaActiva === "backlog" && <VistaBacklog />}
-{/* 
-        {vistaActiva === "listas" && (id ? <VistaListas boardId={id} /> : <p>Cargando...</p>)} */}
+
+        {vistaActiva === "listas" && (id ? <VistaListas boardId={id} /> : <p>Cargando...</p>)}
       </main>
     </div>
   );
