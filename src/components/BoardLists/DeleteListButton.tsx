@@ -54,8 +54,8 @@ const DeleteListButton: React.FC<DeleteListButtonProps> = ({
             ? "Borrar lista"
             : "No puedes borrar: la lista tiene tarjetas y no eres el creador"
         }
-        className={`w-[22px] h-[22px] grid place-items-center rounded-[4px] border border-[#3C3C3CB2]
-          ${canDelete ? "bg-[#3A3A3A] hover:bg-[#494949] cursor-pointer" : "bg-[#3A3A3A] opacity-50 cursor-not-allowed"}`}
+        className={`w-[22px] h-[22px] grid place-items-center rounded-[4px] 
+          ${canDelete ? "bg-[#3A3A3A]cursor-pointer" : "bg-[#3A3A3A] opacity-50 cursor-not-allowed"}`}
       >
         <img src="/assets/icons/trash.png" alt="Eliminar" className="w-3.5 h-3.5" />
       </button>
