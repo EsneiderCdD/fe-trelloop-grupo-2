@@ -5,21 +5,24 @@ import { deleteListService } from "services/listService";
 interface DeleteListButtonProps {
   boardId: string;
   list: { id: number; name: string; cards?: any[] };
-  isBoardOwner?: boolean;                    // por defecto false; si eres dueño, pasa a true
-  getBoardLists: () => Promise<void>;       // refrescar sin recargar
+  isBoardOwner?: boolean;                    
+  isBoardMember?: boolean;                   
+  getBoardLists: () => Promise<void>;
 }
 
 const DeleteListButton: React.FC<DeleteListButtonProps> = ({
   boardId,
   list,
   isBoardOwner = false,
+  isBoardMember = false,                     
   getBoardLists,
 }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const hasCards = (list.cards?.length || 0) > 0;
-  const canDelete = !hasCards || isBoardOwner; // habilitado si vacía o soy creador
+  //Nuevo criterio: habilitar si está vacía, si soy owner, o si soy miembro
+  const canDelete = !hasCards || isBoardOwner || isBoardMember;
 
   const openConfirm = () => {
     if (!canDelete) return;
