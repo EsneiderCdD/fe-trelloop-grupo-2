@@ -4,6 +4,7 @@ import DashboardSidebar from "components/home/DashboardSidebar";
 import UserNavbar from "components/home/UserNavbar";
 import { useParams } from "next/navigation";
 import VistaListas from "components/BoardLists/VistaListas";
+import VistaBacklog from "components/BoardLists/VistaBacklog";
 import { useState } from "react";
 
 interface BoardListProps {
@@ -11,7 +12,7 @@ interface BoardListProps {
 }
 
 export default function BoardListPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [vistaActiva, setVistaActiva] = useState<string>("backlog");
   const handleVistaChange = (vista: string) => {
     setVistaActiva(vista);
@@ -66,7 +67,11 @@ export default function BoardListPage() {
             </div>
           </div>
         </div>
-        {vistaActiva === "listas" && <VistaListas />}
+        {/* Renderizado de componentes condicional */}
+        {/* {vistaActiva === "listas" && <VistaListas />} */}
+        {vistaActiva === "backlog" && <VistaBacklog />}
+
+        {vistaActiva === "listas" && (id ? <VistaListas boardId={id} /> : <p>Cargando...</p>)}
       </main>
     </div>
   );

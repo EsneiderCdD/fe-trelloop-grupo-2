@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import AddListModal from "./AddListButton";
 import { useParams, useRouter } from "next/navigation";
+import { useBoardLists } from "hooks/useBoardLists";
+import { updateListService } from "../../services/updateListService";
+import DeleteListButton from "./DeleteListButton";
 
 interface Tarea {
   board_id: number;
@@ -11,145 +14,136 @@ interface Tarea {
   comentarios: number;
 }
 
-interface Columna {
-  id: number;
-  titulo: string;
-  color: string;
-  bordeColor: string; // Nueva propiedad para el color del borde
-  tareas: Tarea[];
-}
+const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
+  boardId,
+  isBoardOwner = false,
+}) => {
+  const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
 
-// interface Columna {
-//   id: number;
-//   titulo: string;
-//   color: string; // clases Tailwind para color de encabezado
-//   tareas: Tarea[];
-// }
+  const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
+  const [nuevoTitulo, setNuevoTitulo] = useState("");
 
-const VistaListas: React.FC = () => {
-  //   const columnas: Columna[] = [
-  //     {
-  //       id: 1,
-  //       titulo: "Por hacer",
-  //       color: "bg-[#6d4c41]", // Marrón
-  //       tareas: [
-  //         { id: 1, etiquetas: "Etiquetas", descripcion: "Ut enim ad minim veniam, quis nostrud", personas: 3, comentarios: 3 },
-  //         { id: 2, etiquetas: "Etiquetas", descripcion: "Ut enim ad minim veniam, quis nostrud", personas: 3, comentarios: 5 },
-  //         { id: 3, etiquetas: "Etiquetas", descripcion: "Ut enim ad minim veniam, quis nostrud", personas: 3, comentarios: 7 },
-  //       ],
-  //     },
-  //     {
-  //       id: 2,
-  //       titulo: "En progreso",
-  //       color: "bg-[#0288d1]", // Azul
-  //       tareas: [
-  //         { id: 4, etiquetas: "Etiquetas", descripcion: "Ut enim ad minim veniam, quis nostrud", personas: 3, comentarios: 5 },
-  //       ],
-  //     },
-  //   ];
-  const columnas: Columna[] = [
-    {
-      id: 1,
-      titulo: "Por hacer",
-      color: "bg-[#6d4c41]",
-      bordeColor: "border-l-red-500", // Borde rojo
-      tareas: [
-        {
-          board_id: 2,
-          id: 1,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 3,
-        },
-        {
-          board_id: 2,
-          id: 2,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 5,
-        },
-        {
-          board_id: 2,
-          id: 3,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 7,
-        },
-      ],
-    },
-    {
-      id: 2,
-      titulo: "En progreso",
-      color: "bg-[#0288d1]",
-      bordeColor: "border-l-orange-500", // Borde naranja
-      tareas: [
-        {
-          board_id: 2,
-          id: 4,
-          etiquetas: "Etiquetas",
-          descripcion: "Ut enim ad minim veniam, quis nostrud",
-          personas: 3,
-          comentarios: 5,
-        },
-      ],
-    },
-  ];
+  const iniciarEdicion = (listId: number, nombreActual: string) => {
+    setEditandoListaId(listId);
+    setNuevoTitulo(nombreActual);
+  };
+
+  const guardarTitulo = async (listId: number) => {
+    if (!nuevoTitulo.trim()) return;
+    try {
+      await updateListService(Number(boardId), listId, nuevoTitulo);
+      setEditandoListaId(null);
+      getBoardLists();
+    } catch (err) {
+      console.error("Error actualizando lista", err);
+    }
+  };
+
+  if (loading) return <div>Cargando...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   const router = useRouter();
   const params = useParams();
-  const boardId = params.id;
+  const boardIdUrl = params.id;
 
   const goToAddTask = () => {
-    router.push(`/boardList/${boardId}/addtask`);
+    router.push(`/boardList/${boardIdUrl}/addtask`);
   }
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] h-full">
-      {columnas.map((columna) => (
-        <div key={columna.id} className="flex flex-col w-64">
-          {/* Encabezado */}
-          <div
-            className={`flex justify-between items-center px-3 py-2 rounded-t-md ${columna.color}`}
-          >
-            <h2 className="text-white font-semibold">{columna.titulo}</h2>
-            <span className="text-white">{columna.tareas.length}</span>
-          </div>
-
-          {/* Lista de tareas */}
-          <div className="flex flex-col gap-3 bg-[#2b2b2b] p-3 rounded-b-md flex-1">
-            {columna.tareas.map((tarea) => (
-              <div
-                key={tarea.id}
-                className={`bg-[#3a3a3a] rounded-md p-3 border-l-4 ${columna.bordeColor}`}
-              >
-                <div className="text-gray-400 text-sm mb-2">
-                  {tarea.etiquetas}
-                </div>
-                <div className="text-white text-sm mb-2">
-                  {tarea.descripcion}
-                </div>
-                <div className="flex justify-between text-gray-400 text-sm">
-                  <span>👥 {tarea.personas}</span>
-                  <span>💬 {tarea.comentarios}</span>
-                </div>
+      {Array.isArray(boardLists) &&
+        boardLists.length > 0 &&
+        boardLists.map((list) => (
+          <div key={list.id} className="flex flex-col w-64">
+            {/* Encabezado */}
+            <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
+              {/* Contenedor título/input */}
+              <div className="flex-1 min-w-0">
+                {editandoListaId === list.id ? (
+                  <input
+                    type="text"
+                    value={nuevoTitulo}
+                    onChange={(e) => setNuevoTitulo(e.target.value)}
+                    onBlur={() => guardarTitulo(list.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") guardarTitulo(list.id);
+                      if (e.key === "Escape") setEditandoListaId(null);
+                    }}
+                    className="bg-transparent border-b border-white text-white font-semibold focus:outline-none w-full"
+                    autoFocus
+                  />
+                ) : (
+                  <h2 className="text-white font-semibold truncate">
+                    {list.name}
+                  </h2>
+                )}
               </div>
-            ))}
+              {/* Contenedor íconos */}
+              <div className="flex items-center gap-2 flex-shrink-0 ">
+                {/* Contador de tareas */}
+                <span className="text-white">{list.cards.length}</span>
+                {/* Icono de edición */}
+                <img
+                  src="/assets/icons/square-pen-white.svg"
+                  alt="Editar lista"
+                  className="w-4 h-4 cursor-pointer"
+                  onClick={() => iniciarEdicion(list.id, list.name)}
+                />
+                {/* Botón eliminar lista */}
+                <DeleteListButton
+                  boardId={boardId}
+                  list={{
+                    id: list.id,
+                    name: list.name,
+                    cards: list.cards,
+                  }}
+                  getBoardLists={getBoardLists}
+                  isBoardOwner={isBoardOwner}
+                />
+              </div>
+            </div>
 
-            {/* Botón agregar tarea */}
-            <button className="mt-2 py-2 px-3 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-              onClick={() => goToAddTask()}>
-              + Agregar tarea
-            </button>
+            {/* Lista de tareas */}
+            <div className="flex flex-col gap-3 bg-[#2b2b2b] p-3 rounded-b-md flex-1">
+              {list.cards.map((tarea) => (
+                <div
+                  key={tarea.id}
+                  className="bg-[#3a3a3a] rounded-md p-3 border-l-4"
+                >
+                  <div className="text-gray-400 text-sm mb-2">
+                    {tarea.etiquetas}
+                  </div>
+                  <div className="text-white text-sm mb-2">
+                    {tarea.descripcion}
+                  </div>
+                  <div className="flex justify-between text-gray-400 text-sm">
+                    <span>👥 {tarea.personas}</span>
+                    <span>💬 {tarea.comentarios}</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Botón agregar tarea */}
+              <button className="mt-2 py-2 px-3 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                onClick={() => goToAddTask()}>
+                + Agregar tarea
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+
+      {/* Botón agregar lista */}
       <div className="relative">
-        <AddListModal
-          boardId={columnas[0].tareas[0].board_id}
-        />
+        <AddListModal boardId={boardId} getBoardLists={getBoardLists} />
       </div>
+
+      {/* Mensaje si no hay listas */}
+      {(!Array.isArray(boardLists) || boardLists.length === 0) && (
+        <p className="text-white mt-2">
+          No hay listas creadas en este tablero.
+        </p>
+      )}
     </div>
   );
 };
