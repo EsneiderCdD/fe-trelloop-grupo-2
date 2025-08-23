@@ -85,7 +85,7 @@ const VistaBacklog: React.FC = () => {
   };
 
   return (
-    <div className="p-6 bg-[#1a1a1a] min-h-screen text-white">
+    <div className="p-6 bg-[#1a1a1a] min-h-screen w-full text-white">
 
       {/* Tabla de backlog */}
       <div className="bg-[#2b2b2b] rounded-lg">

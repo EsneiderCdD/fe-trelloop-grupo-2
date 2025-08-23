@@ -51,11 +51,14 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
   }
 
   return (
-    <div className="flex gap-4 p-4 bg-[#1a1a1a] h-full">
+    <div className="flex gap-4 p-4 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
       {Array.isArray(boardLists) &&
         boardLists.length > 0 &&
         boardLists.map((list) => (
-          <div key={list.id} className="flex flex-col w-64">
+          <div
+            key={list.id}
+            className="w-[280px] bg-[#222] rounded-lg p-3 flex flex-col h-full flex-shrink-0"
+          >
             {/* Encabezado */}
             <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
               {/* Contenedor título/input */}
@@ -105,7 +108,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
             </div>
 
             {/* Lista de tareas */}
-            <div className="flex flex-col gap-3 bg-[#2b2b2b] p-3 rounded-b-md flex-1">
+            <div className="flex-1 overflow-y-auto overflow-x-auto space-y-2">
               {list.cards.map((tarea) => (
                 <div
                   key={tarea.id}
@@ -125,14 +128,12 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
               ))}
 
               {/* Botón agregar tarea */}
-              <button className="mt-2 py-2 px-3 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-                onClick={() => goToAddTask()}>
-                + Agregar tarea
-              </button>
             </div>
+            <button onClick={() => goToAddTask()} className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700">
+              + Agregar tarea
+            </button>
           </div>
         ))}
-
       {/* Botón agregar lista */}
       <div className="relative">
         <AddListModal boardId={boardId} getBoardLists={getBoardLists} />
