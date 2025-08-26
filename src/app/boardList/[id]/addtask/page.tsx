@@ -8,6 +8,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "styles/datepicker.css";
+import { es } from "date-fns/locale";
+import ReminderSelect from "components/Edit/form/view/ReminderSelect";
+
 
 
 
@@ -56,30 +60,35 @@ export default function AddTask() {
                 </div>
                 <div className="flex ms-[60px] p-5 w-full">
                     {/* Datepicker*/}
-                    <div className="mb-4 w-[280px]">
+                    <div className="mb-4 w-[325px]">
                         <div className="justify-between p-5">
                             <label className="font-poppins block text-white mb-2">Fecha de tarjeta</label>
-                            <DatePicker
-                                selected={startDate}
-                                onChange={onChange}
-                                startDate={startDate}
-                                endDate={endDate}
-                                selectsRange
-                                inline
-                            />
-                            <div className="flex items-center">
-                                <input
-                                    value={startDate ? startDate.toISOString().split('T')[0] : ''}
-                                    onChange={handleStartDateChange}
-                                    className="font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
-                                    placeholder="Desde"
+                            <div className="font-poppins w-full rounded-lg ms-2 outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] p-5">
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={onChange}
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    locale={es}
+                                    selectsRange
+                                    inline
                                 />
-                                <input
-                                    value={endDate ? endDate.toISOString().split('T')[0] : ''}
-                                    onChange={handleEndDateChange}
-                                    className="font-poppins w-full p-2 rounded-xl ms-2 outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
-                                    placeholder="Hasta"
-                                />
+                                <div className="flex items-center">
+                                    <input
+                                        value={startDate ? startDate.toISOString().split('T')[0] : ''}
+                                        onChange={handleStartDateChange}
+                                        className="font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
+                                        placeholder="Desde"
+                                    />
+                                    <input
+                                        value={endDate ? endDate.toISOString().split('T')[0] : ''}
+                                        onChange={handleEndDateChange}
+                                        className="font-poppins w-full p-2 rounded-xl ms-2 outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
+                                        placeholder="Hasta"
+                                    />
+                                </div>
+                                <label className="font-poppins block text-white text-sm mt-5 mb-2">Crear recordatorio</label>
+                                <ReminderSelect />
                             </div>
                         </div>
                     </div>
@@ -99,11 +108,31 @@ export default function AddTask() {
                                 <input type="text" className="flex-1 font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-white focus:ring-2 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200" placeholder="Busca por nombre o @usuario" />
                                 <img src="/assets/icons/search.svg" alt="Buscar" className="w-5 h-5 mr-2" />
                             </div>
+                            <div className="flex">
+                                <div className="flex mt-4 mb-4 me-5 items-center">
+                                    <div className="w-7 h-7 rounded-full border me-2 border-white bg-[#000000] ">
+                                        <img src="/assets/icons/user.png" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className="font-poppins block text-sm text-white">Nombre completo</label>
+                                        <label className="font-poppins block text-xs text-white">@usuario</label>
+                                    </div>
+                                </div>
+                                <div className="flex mt-4 mb-4 items-center">
+                                    <div className="w-7 h-7 rounded-full border me-2 border-white bg-[#000000] ">
+                                        <img src="/assets/icons/user.png" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className="font-poppins block text-sm text-white">Nombre completo</label>
+                                        <label className="font-poppins block text-xs text-white">@usuario</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="mb-4 w-[575px]">
                             <label className="font-poppins block text-white mb-2">Prioridad</label>
                             <select className="font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-gray-400 border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200">
-                                <option value="" disabled>Agrega una prioridad...</option>
+                                <option hidden>Agrega una prioridad...</option>
                                 <option value="alta" className="text-white">Alta</option>
                                 <option value="media" className="text-white">Media</option>
                                 <option value="baja" className="text-white">Baja</option>
@@ -112,7 +141,7 @@ export default function AddTask() {
                         <div className="mb-4 w-[575px]">
                             <label className="font-poppins block text-white mb-2">Estado</label>
                             <select className="font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-gray-400 border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200">
-                                <option value="" disabled>Agrega un estado...</option>
+                                <option hidden>Agrega un estado...</option>
                                 <option value="pendiente">Pendiente</option>
                                 <option value="en-progreso">En progreso</option>
                                 <option value="completado">Completado</option>
