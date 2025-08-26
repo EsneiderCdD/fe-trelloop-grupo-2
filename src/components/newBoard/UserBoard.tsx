@@ -6,7 +6,7 @@ interface UserBoardProps {
   img: string;
 }
 
-export const UserBoard = ({ name, username, img}: UserBoardProps) => {
+export const UserBoard = ({ name, username, img }: UserBoardProps) => {
   return (
     <div className="member flex items-center mr-[15px] mt-[8px]">
       <div className="member-img mr-[5px]">
@@ -27,4 +27,3 @@ export const UserBoard = ({ name, username, img}: UserBoardProps) => {
     </div>
   );
 };
-
