@@ -69,7 +69,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                   />
                 ) : (
                   <h2 className="text-white font-semibold truncate">
-                    {list.name} hola
+                    {list.name}
                   </h2>
                 )}
               </div>
