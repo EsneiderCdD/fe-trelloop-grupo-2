@@ -54,10 +54,11 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 
   return (
     <div
-      className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(prioridad)}`}
-      style={{ border: "dotted 1px red" }} // <--- borde de debug
+      className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(
+        prioridad
+      )}`}
+      style={{ border: "dotted 1px red" }} // borde de debug
     >
-
       {/* Fila superior: etiquetas + menú */}
       <div className="flex items-center justify-between gap-1 flex-wrap">
         <div className="flex gap-1 flex-wrap">
@@ -80,9 +81,9 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         </button>
       </div>
 
-      {/* Título con máximo 2 líneas */}
+      {/* Título con máximo 2 líneas, pegado a las etiquetas */}
       <div
-        className="text-[#E5E7EB] text-sm mb-1"
+        className="text-[#E5E7EB] text-sm mt-[-21px]"
         style={{
           display: "-webkit-box",
           WebkitLineClamp: 2,
