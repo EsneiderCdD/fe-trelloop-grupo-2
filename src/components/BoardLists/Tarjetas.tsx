@@ -54,14 +54,21 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 
   return (
     <div
-      className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(
-        prioridad
-      )}`}
+      className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(prioridad)}`}
+      style={{ border: "dotted 1px red" }} // <--- borde de debug
     >
+
       {/* Fila superior: etiquetas + menú */}
-      <div className="flex items-center justify-between">
-        <div className="rounded-[16px] bg-[#414141] text-[#E5E7EB] text-[11px] font-poppins px-3 py-0.5 w-fit">
-          {etiquetas.length > 0 ? etiquetas.join(", ") : "Sin etiquetas"}
+      <div className="flex items-center justify-between gap-1 flex-wrap">
+        <div className="flex gap-1 flex-wrap">
+          {etiquetas.slice(0, 2).map((tag, idx) => (
+            <div
+              key={idx}
+              className="rounded-[16px] bg-[#414141] text-[#E5E7EB] text-[11px] font-poppins px-3 py-0.5 w-fit"
+            >
+              {tag.length > 25 ? tag.slice(0, 22) + "..." : tag}
+            </div>
+          ))}
         </div>
 
         <button onClick={() => setShowMenu(!showMenu)}>
