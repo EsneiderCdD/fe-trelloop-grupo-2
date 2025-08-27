@@ -90,6 +90,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 etiquetas="Ejemplo"
                 personas={1}
                 comentarios={0}
+                prioridad="low" // 👈 agregado
               />
 
               {/* Tarjetas dinámicas desde el backend */}
@@ -97,11 +98,10 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 <Tarjeta
                   key={tarea.id}
                   descripcion={tarea.description}
-                  etiquetas={
-                    tarea.tags && tarea.tags.length > 0 ? tarea.tags[0].name : ""
-                  }
+                  etiquetas={tarea.tags && tarea.tags.length > 0 ? tarea.tags[0].name : ""}
                   personas={tarea.assignees ? tarea.assignees.length : 0}
                   comentarios={0} // lo dejamos fijo hasta que el backend lo devuelva
+                  prioridad={tarea.priority} // 👈 ahora sí pasamos la prioridad del back
                 />
               ))}
 

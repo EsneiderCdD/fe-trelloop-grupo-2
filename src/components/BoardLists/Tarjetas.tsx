@@ -5,6 +5,7 @@ interface TarjetaProps {
   etiquetas: string;
   personas: number;
   comentarios: number;
+  prioridad?: string; // ahora opcional
 }
 
 const Tarjeta: React.FC<TarjetaProps> = ({
@@ -12,11 +13,30 @@ const Tarjeta: React.FC<TarjetaProps> = ({
   etiquetas,
   personas,
   comentarios,
+  prioridad,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
 
+  // Mapeo prioridad → color (ahora acepta string | undefined)
+  const getPriorityColor = (prioridad?: string) => {
+    switch (prioridad?.toLowerCase()) {
+      case "high":
+        return "border-red-500";
+      case "medium":
+        return "border-yellow-500";
+      case "low":
+        return "border-green-500";
+      default:
+        return "border-purple-600"; // fallback si viene vacío o inesperado
+    }
+  };
+
   return (
-    <div className="relative bg-[#3a3a3a] w-[240px] h-[111px] rounded-md p-1 border-l-4 border-purple-600">
+    <div
+      className={`relative bg-[#3a3a3a] w-[240px] h-[111px] rounded-md p-1 border-l-4 ${getPriorityColor(
+        prioridad
+      )}`}
+    >
       {/* Fila superior: etiqueta + menú */}
       <div className="flex items-center justify-between mb-1">
         <div className="rounded-[16px] border border-[#979797] text-white text-[11px] px-3 py-0.5 w-fit">
@@ -39,7 +59,6 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       {/* Fila inferior: personas + contador comentarios */}
       <div className="flex justify-between items-center text-gray-400 text-sm">
         <div className="flex -space-x-2">
-          {/* Avatares dummy (pueden reemplazarse por imágenes reales de los usuarios) */}
           <div className="w-6 h-6 rounded-full bg-red-500 border-2 border-[#3a3a3a]" />
           <div className="w-6 h-6 rounded-full bg-green-500 border-2 border-[#3a3a3a]" />
           <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-[#3a3a3a]" />
