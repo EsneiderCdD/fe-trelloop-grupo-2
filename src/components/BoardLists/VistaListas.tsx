@@ -93,7 +93,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 
             {/* Lista de tareas */}
             <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1">
-              {/* Tarjetas dinámicas desde el backend */}
               {list.cards.map((tarea) => (
                 <Tarjeta
                   key={tarea.id}
@@ -103,7 +102,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                       ? tarea.tags.map((tag: any) => tag.name)
                       : []
                   }
-                  personas={tarea.assignees ? tarea.assignees.length : 0}
+                  assignees={tarea.assignees || []} // <--- aquí pasamos los responsables completos
                   comentarios={0} // fijo hasta que el backend lo devuelva
                   prioridad={tarea.priority?.toLowerCase() || "low"}
                 />

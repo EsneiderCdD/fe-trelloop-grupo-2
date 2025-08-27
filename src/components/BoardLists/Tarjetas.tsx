@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 
+interface Assignee {
+  avatar_url: string;
+  name: string;
+}
+
 interface TarjetaProps {
   descripcion: string;
   etiquetas: string[];
-  personas: number;
+  assignees: Assignee[];
   comentarios: number;
   prioridad?: string; // puede venir "Baja", "Media", "Alta" del backend
 }
@@ -11,7 +16,7 @@ interface TarjetaProps {
 const Tarjeta: React.FC<TarjetaProps> = ({
   descripcion,
   etiquetas,
-  personas,
+  assignees,
   comentarios,
   prioridad,
 }) => {
@@ -72,15 +77,15 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         {descripcion}
       </div>
 
-      {/* Fila inferior: personas + comentarios */}
+      {/* Fila inferior: avatars + comentarios */}
       <div className="flex justify-between items-center text-gray-400 text-sm">
         <div className="flex -space-x-2">
-          {Array.from({ length: personas }).map((_, idx) => (
-            <div
+          {assignees.map((user, idx) => (
+            <img
               key={idx}
-              className={`w-6 h-6 rounded-full border-2 border-[#3a3a3a] ${
-                ["red-500", "green-500", "blue-500"][idx % 3]
-              } bg-${["red-500", "green-500", "blue-500"][idx % 3]}`}
+              src={user.avatar_url}
+              alt={user.name}
+              className="w-6 h-6 rounded-full border-2 border-[#3a3a3a]"
             />
           ))}
         </div>
