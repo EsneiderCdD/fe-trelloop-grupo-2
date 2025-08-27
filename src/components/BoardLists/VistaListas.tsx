@@ -93,15 +93,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 
             {/* Lista de tareas */}
             <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1">
-              {/* Tarjeta de ejemplo */}
-              <Tarjeta
-                descripcion="Esta es una tarjeta de ejemplo (hardcodeada)"
-                etiquetas={["Ejemplo"]}
-                personas={1}
-                comentarios={0}
-                prioridad="low"
-              />
-
               {/* Tarjetas dinámicas desde el backend */}
               {list.cards.map((tarea) => (
                 <Tarjeta
