@@ -3,15 +3,7 @@ import AddListModal from "./AddListButton";
 import { useBoardLists } from "hooks/useBoardLists";
 import { updateListService } from "../../services/updateListService";
 import DeleteListButton from "./DeleteListButton";
-
-interface Tarea {
-  board_id: number;
-  id: number;
-  etiquetas: string;
-  descripcion: string;
-  personas: number;
-  comentarios: number;
-}
+import Tarjeta from "./Tarjetas";
 
 const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
   boardId,
@@ -49,7 +41,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
           <div key={list.id} className="flex flex-col w-64">
             {/* Encabezado */}
             <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
-              {/* Contenedor título/input */}
               <div className="flex-1 min-w-0">
                 {editandoListaId === list.id ? (
                   <input
@@ -71,25 +62,17 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 )}
               </div>
 
-              {/* Contenedor íconos */}
               <div className="flex items-center gap-2 flex-shrink-0 ">
-                {/* Contador de tareas */}
                 <span className="text-white">{list.cards.length}</span>
-                {/* Icono de edición */}
                 <img
                   src="/assets/icons/square-pen-white.svg"
                   alt="Editar lista"
                   className="w-4 h-4 cursor-pointer"
                   onClick={() => iniciarEdicion(list.id, list.name)}
                 />
-                {/* Botón eliminar lista */}
                 <DeleteListButton
                   boardId={boardId}
-                  list={{
-                    id: list.id,
-                    name: list.name,
-                    cards: list.cards,
-                  }}
+                  list={list}
                   getBoardLists={getBoardLists}
                   isBoardOwner={isBoardOwner}
                 />
@@ -97,23 +80,24 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
             </div>
 
             {/* Lista de tareas */}
-            <div className="flex flex-col gap-3 bg-[#2b2b2b] p-3 rounded-b-md flex-1">
+            <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1">
+              {/* Tarjeta fija de ejemplo */}
+              <Tarjeta
+                descripcion="Esta es una tarjeta de ejemplo (hardcodeada) Esta es una tarjeta de ejemplo (hardcodeada) Esta es una tarjeta de ejemplo (hardcodeada)"
+                etiquetas="Etiquetas"
+                personas={1}
+                comentarios={0}
+              />
+
+              {/* Tarjetas dinámicas */}
               {list.cards.map((tarea) => (
-                <div
+                <Tarjeta
                   key={tarea.id}
-                  className="bg-[#3a3a3a] rounded-md p-3 border-l-4"
-                >
-                  <div className="text-gray-400 text-sm mb-2">
-                    {tarea.etiquetas}
-                  </div>
-                  <div className="text-white text-sm mb-2">
-                    {tarea.descripcion}
-                  </div>
-                  <div className="flex justify-between text-gray-400 text-sm">
-                    <span>👥 {tarea.personas}</span>
-                    <span>💬 {tarea.comentarios}</span>
-                  </div>
-                </div>
+                  descripcion={tarea.descripcion}
+                  etiquetas={tarea.etiquetas}
+                  personas={tarea.personas}
+                  comentarios={tarea.comentarios}
+                />
               ))}
 
               {/* Botón agregar tarea */}
