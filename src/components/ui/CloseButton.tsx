@@ -1,22 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 interface CloseButtonProps {
-  redirectTo?: string;
+  onClick?: () => void;
 }
 
-const CloseButton = ({ redirectTo = "/home" }: CloseButtonProps) => {
-  const router = useRouter();
-
-  const handleClose = () => {
-    router.push(redirectTo);
-  };
+const CloseButton = ({ onClick }: CloseButtonProps) => {
 
   return (
     <button
       className="text-white bg-[#6A5FFF] hover:bg-[#5A4FEF] transition-colors duration-200 rounded-[20px] w-[40px] h-[40px] flex justify-center items-center shadow-md"
-      onClick={handleClose}
+      onClick={onClick}
       aria-label="Cerrar vista"
     >
       <svg
