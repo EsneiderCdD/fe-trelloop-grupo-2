@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AddListModal from "./AddListButton";
+import { useParams, useRouter } from "next/navigation";
 import { useBoardLists } from "hooks/useBoardLists";
 import { updateListService } from "../../services/updateListService";
 import DeleteListButton from "./DeleteListButton";
@@ -33,6 +34,14 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const router = useRouter();
+  const params = useParams();
+  const boardIdUrl = params.id;
+
+  const goToAddTask = () => {
+    router.push(`/boardList/${boardIdUrl}/addtask`);
+  };
+
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
       {Array.isArray(boardLists) &&
@@ -65,7 +74,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 )}
               </div>
 
-              <div className="flex items-center gap-2 flex-shrink-0 ">
+              {/* Contenedor íconos */}
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <span className="text-white">{list.cards.length}</span>
                 <img
                   src="/assets/icons/square-pen-white.svg"
@@ -90,7 +100,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 etiquetas="Ejemplo"
                 personas={1}
                 comentarios={0}
-                prioridad="low" // 👈 agregado
+                prioridad="low"
               />
 
               {/* Tarjetas dinámicas desde el backend */}
@@ -98,17 +108,23 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 <Tarjeta
                   key={tarea.id}
                   descripcion={tarea.description}
-                  etiquetas={tarea.tags && tarea.tags.length > 0 ? tarea.tags[0].name : ""}
+                  etiquetas={
+                    tarea.tags && tarea.tags.length > 0
+                      ? tarea.tags[0].name
+                      : ""
+                  }
                   personas={tarea.assignees ? tarea.assignees.length : 0}
                   comentarios={0} // lo dejamos fijo hasta que el backend lo devuelva
-                  prioridad={tarea.priority} // 👈 ahora sí pasamos la prioridad del back
+                  prioridad={tarea.priority}
                 />
               ))}
-
             </div>
 
             {/* Botón agregar tarea */}
-            <button className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700">
+            <button
+              onClick={() => goToAddTask()}
+              className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            >
               + Agregar tarea
             </button>
           </div>
@@ -130,4 +146,3 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 };
 
 export default VistaListas;
-
