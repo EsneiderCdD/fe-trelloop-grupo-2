@@ -82,42 +82,30 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
               </div>
             </div>
 
-            {/* Lista de tareas (priorizamos tu versión con la tarjeta de ejemplo) */}
+            {/* Lista de tareas */}
             <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1">
-              {/* Tarjeta fija de ejemplo */}
+              {/* Tarjeta de ejemplo */}
               <Tarjeta
-                descripcion="Esta es una tarjeta de ejemplo (hardcodeada) Esta es una tarjeta de ejemplo (hardcodeada) Esta es una tarjeta de ejemplo (hardcodeada)"
-                etiquetas="Etiquetas"
+                descripcion="Esta es una tarjeta de ejemplo (hardcodeada)"
+                etiquetas="Ejemplo"
                 personas={1}
                 comentarios={0}
               />
 
-              {/* Tarjetas dinámicas */}
+              {/* Tarjetas dinámicas desde el backend */}
               {list.cards.map((tarea) => (
                 <Tarjeta
                   key={tarea.id}
-                  descripcion={tarea.descripcion}
-                  etiquetas={tarea.etiquetas}
-                  personas={tarea.personas}
-                  comentarios={tarea.comentarios}
+                  descripcion={tarea.description}
+                  etiquetas={
+                    tarea.tags && tarea.tags.length > 0 ? tarea.tags[0].name : ""
+                  }
+                  personas={tarea.assignees ? tarea.assignees.length : 0}
+                  comentarios={0} // lo dejamos fijo hasta que el backend lo devuelva
                 />
               ))}
-            </div>
 
-            {/* Versión alternativa del contenedor (comentada, para no perderla) */}
-            {/*
-            <div className="flex-1 overflow-y-auto overflow-x-auto space-y-2">
-              {list.cards.map((tarea) => (
-                <Tarjeta
-                  key={tarea.id}
-                  descripcion={tarea.descripcion}
-                  etiquetas={tarea.etiquetas}
-                  personas={tarea.personas}
-                  comentarios={tarea.comentarios}
-                />
-              ))}
             </div>
-            */}
 
             {/* Botón agregar tarea */}
             <button className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700">
@@ -125,6 +113,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
             </button>
           </div>
         ))}
+
       {/* Botón agregar lista */}
       <div className="relative">
         <AddListModal boardId={boardId} getBoardLists={getBoardLists} />
@@ -141,3 +130,4 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 };
 
 export default VistaListas;
+
