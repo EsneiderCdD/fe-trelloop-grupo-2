@@ -96,7 +96,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
               {list.cards.map((tarea) => (
                 <Tarjeta
                   key={tarea.id}
-                  descripcion={tarea.description}
+                  descripcion={tarea.title}
                   etiquetas={
                     tarea.tags && tarea.tags.length > 0
                       ? tarea.tags.map((tag: any) => tag.name)

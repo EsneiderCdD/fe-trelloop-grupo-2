@@ -54,12 +54,14 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 
   return (
     <div
-      className={`relative bg-[#3a3a3a] w-[240px] h-[111px] rounded-md p-1 border-l-4 ${getPriorityColor(
+      className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(
         prioridad
       )}`}
+      style={{ border: "dotted 1px red" }} // <--- aquí
     >
+
       {/* Fila superior: etiquetas + menú */}
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between">
         <div className="rounded-[16px] border border-[#979797] text-white text-[11px] px-3 py-0.5 w-fit">
           {etiquetas.length > 0 ? etiquetas.join(", ") : "Sin etiquetas"}
         </div>
@@ -72,8 +74,8 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         </button>
       </div>
 
-      {/* Descripción */}
-      <div className="text-[#E5E7EB] text-sm mb-2 line-clamp-2 overflow-hidden">
+      {/* Título (antes descripción) */}
+      <div className="text-[#E5E7EB] text-sm line-clamp-2 overflow-hidden">
         {descripcion}
       </div>
 
