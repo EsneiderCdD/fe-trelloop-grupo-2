@@ -57,14 +57,13 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(
         prioridad
       )}`}
-      style={{ border: "dotted 1px red" }} // <--- aquí
     >
-
       {/* Fila superior: etiquetas + menú */}
       <div className="flex items-center justify-between">
-        <div className="rounded-[16px] border border-[#979797] text-white text-[11px] px-3 py-0.5 w-fit">
+        <div className="rounded-[16px] bg-[#414141] text-[#E5E7EB] text-[11px] font-poppins px-3 py-0.5 w-fit">
           {etiquetas.length > 0 ? etiquetas.join(", ") : "Sin etiquetas"}
         </div>
+
         <button onClick={() => setShowMenu(!showMenu)}>
           <img
             src="/assets/icons/ellipsis.svg"
@@ -74,8 +73,17 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         </button>
       </div>
 
-      {/* Título (antes descripción) */}
-      <div className="text-[#E5E7EB] text-sm line-clamp-2 overflow-hidden">
+      {/* Título con máximo 2 líneas */}
+      <div
+        className="text-[#E5E7EB] text-sm mb-1"
+        style={{
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
         {descripcion}
       </div>
 
