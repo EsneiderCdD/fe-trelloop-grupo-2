@@ -102,8 +102,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                       ? tarea.tags.map((tag: any) => tag.name)
                       : []
                   }
-                  assignees={tarea.assignees || []} // <--- aquí pasamos los responsables completos
-                  comentarios={0} // fijo hasta que el backend lo devuelva
+                  assignees={tarea.assignees || []} 
+                  comentarios={0} 
                   prioridad={tarea.priority?.toLowerCase() || "low"}
                 />
               ))}
