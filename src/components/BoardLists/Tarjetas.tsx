@@ -2,10 +2,10 @@ import React, { useState } from "react";
 
 interface TarjetaProps {
   descripcion: string;
-  etiquetas: string;
+  etiquetas: string[];
   personas: number;
   comentarios: number;
-  prioridad?: string; // ahora opcional
+  prioridad?: string; // puede venir "Baja", "Media", "Alta" del backend
 }
 
 const Tarjeta: React.FC<TarjetaProps> = ({
@@ -17,9 +17,25 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 }) => {
   const [showMenu, setShowMenu] = useState(false);
 
-  // Mapeo prioridad → color (ahora acepta string | undefined)
+  // Mapear prioridad del backend a valores internos
+  const mapPriorityBackendToInternal = (prioridad?: string) => {
+    if (!prioridad) return prioridad;
+    switch (prioridad.toLowerCase()) {
+      case "baja":
+        return "low";
+      case "media":
+        return "medium";
+      case "alta":
+        return "high";
+      default:
+        return prioridad;
+    }
+  };
+
+  // Obtener color según prioridad
   const getPriorityColor = (prioridad?: string) => {
-    switch (prioridad?.toLowerCase()) {
+    const internal = mapPriorityBackendToInternal(prioridad);
+    switch (internal) {
       case "high":
         return "border-red-500";
       case "medium":
@@ -27,7 +43,7 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       case "low":
         return "border-green-500";
       default:
-        return "border-purple-600"; // fallback si viene vacío o inesperado
+        return "border-purple-600"; // fallback
     }
   };
 
@@ -37,10 +53,10 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         prioridad
       )}`}
     >
-      {/* Fila superior: etiqueta + menú */}
+      {/* Fila superior: etiquetas + menú */}
       <div className="flex items-center justify-between mb-1">
         <div className="rounded-[16px] border border-[#979797] text-white text-[11px] px-3 py-0.5 w-fit">
-          {etiquetas}
+          {etiquetas.length > 0 ? etiquetas.join(", ") : "Sin etiquetas"}
         </div>
         <button onClick={() => setShowMenu(!showMenu)}>
           <img
@@ -56,12 +72,17 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         {descripcion}
       </div>
 
-      {/* Fila inferior: personas + contador comentarios */}
+      {/* Fila inferior: personas + comentarios */}
       <div className="flex justify-between items-center text-gray-400 text-sm">
         <div className="flex -space-x-2">
-          <div className="w-6 h-6 rounded-full bg-red-500 border-2 border-[#3a3a3a]" />
-          <div className="w-6 h-6 rounded-full bg-green-500 border-2 border-[#3a3a3a]" />
-          <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-[#3a3a3a]" />
+          {Array.from({ length: personas }).map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-6 h-6 rounded-full border-2 border-[#3a3a3a] ${
+                ["red-500", "green-500", "blue-500"][idx % 3]
+              } bg-${["red-500", "green-500", "blue-500"][idx % 3]}`}
+            />
+          ))}
         </div>
 
         <div className="flex items-center gap-1">

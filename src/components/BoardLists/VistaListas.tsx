@@ -44,8 +44,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
-      {Array.isArray(boardLists) &&
-        boardLists.length > 0 &&
+      {Array.isArray(boardLists) && boardLists.length > 0 ? (
         boardLists.map((list) => (
           <div
             key={list.id}
@@ -97,7 +96,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
               {/* Tarjeta de ejemplo */}
               <Tarjeta
                 descripcion="Esta es una tarjeta de ejemplo (hardcodeada)"
-                etiquetas="Ejemplo"
+                etiquetas={["Ejemplo"]}
                 personas={1}
                 comentarios={0}
                 prioridad="low"
@@ -110,12 +109,12 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                   descripcion={tarea.description}
                   etiquetas={
                     tarea.tags && tarea.tags.length > 0
-                      ? tarea.tags[0].name
-                      : ""
+                      ? tarea.tags.map((tag: any) => tag.name)
+                      : []
                   }
                   personas={tarea.assignees ? tarea.assignees.length : 0}
-                  comentarios={0} // lo dejamos fijo hasta que el backend lo devuelva
-                  prioridad={tarea.priority}
+                  comentarios={0} // fijo hasta que el backend lo devuelva
+                  prioridad={tarea.priority?.toLowerCase() || "low"}
                 />
               ))}
             </div>
@@ -128,19 +127,17 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
               + Agregar tarea
             </button>
           </div>
-        ))}
+        ))
+      ) : (
+        <p className="text-white mt-2">
+          No hay listas creadas en este tablero.
+        </p>
+      )}
 
       {/* Botón agregar lista */}
       <div className="relative">
         <AddListModal boardId={boardId} getBoardLists={getBoardLists} />
       </div>
-
-      {/* Mensaje si no hay listas */}
-      {(!Array.isArray(boardLists) || boardLists.length === 0) && (
-        <p className="text-white mt-2">
-          No hay listas creadas en este tablero.
-        </p>
-      )}
     </div>
   );
 };
