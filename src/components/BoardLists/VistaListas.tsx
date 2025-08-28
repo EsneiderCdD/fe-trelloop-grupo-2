@@ -67,7 +67,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                     autoFocus
                   />
                 ) : (
-                  <h2 className="text-white font-semibold truncate">
+                  <h2 className="text-white font-semibold truncate ">
                     {list.name}
                   </h2>
                 )}
@@ -92,7 +92,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
             </div>
 
             {/* Lista de tareas */}
-            <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1">
+            <div className=" flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1">
               {list.cards.map((tarea) => (
                 <Tarjeta
                   key={tarea.id}
@@ -102,8 +102,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                       ? tarea.tags.map((tag: any) => tag.name)
                       : []
                   }
-                  assignees={tarea.assignees || []} 
-                  comentarios={0} 
+                  assignees={tarea.assignees || []}
+                  comentarios={0}
                   prioridad={tarea.priority?.toLowerCase() || "low"}
                 />
               ))}
