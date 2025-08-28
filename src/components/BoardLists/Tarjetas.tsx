@@ -99,14 +99,31 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       {/* Fila inferior: avatars + comentarios */}
       <div className="flex justify-between items-center text-gray-400 text-sm">
         <div className="flex -space-x-2">
-          {assignees.map((user, idx) => (
-            <img
-              key={idx}
-              src={user.avatar_url}
-              alt={user.name}
-              className="w-6 h-6 rounded-full border-2 border-[#3a3a3a]"
-            />
-          ))}
+          {assignees.length <= 2 ? (
+            assignees.map((user, idx) => (
+              <img
+                key={idx}
+                src={user.avatar_url}
+                alt={user.name}
+                className="w-6 h-6 rounded-full border-2 border-[#3a3a3a]"
+              />
+            ))
+          ) : (
+            <>
+              {assignees.slice(0, 2).map((user, idx) => (
+                <img
+                  key={idx}
+                  src={user.avatar_url}
+                  alt={user.name}
+                  className="w-6 h-6 rounded-full border-2 border-[#3a3a3a]"
+                />
+              ))}
+              {/* La "bolita" muestra el TOTAL de miembros (mínimo 3) */}
+              <div className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-[#3a3a3a] bg-[#3a3a3a] text-white text-xs">
+                {assignees.length}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-1">
