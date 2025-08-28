@@ -48,7 +48,7 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       case "low":
         return "border-green-500";
       default:
-        return "border-purple-600"; // fallback
+        return "border-purple-600"; 
     }
   };
 
@@ -57,7 +57,6 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(
         prioridad
       )}`}
-      // style={{ border: "dotted 1px red" }} 
     >
       {/* Fila superior: etiquetas + menú */}
       <div className="flex items-center justify-between gap-1 flex-wrap">
@@ -81,16 +80,15 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         </button>
       </div>
 
-      {/* Título con máximo 2 líneas, pegado a las etiquetas */}
+      {/* Título con máximo 2 líneas */}
       <div
-        className=" ml-1 text-[13px] font-poppins ml text-[#E5E7EB] text-sm]"
+        className=" ml-1 text-[13px] font-poppins text-[#E5E7EB]"
         style={{
           display: "-webkit-box",
           WebkitLineClamp: 2,
           WebkitBoxOrient: "vertical",
           overflow: "hidden",
           textOverflow: "ellipsis",
-          
         }}
       >
         {descripcion}
@@ -105,7 +103,7 @@ const Tarjeta: React.FC<TarjetaProps> = ({
                 key={idx}
                 src={user.avatar_url}
                 alt={user.name}
-                className="w-6 h-6 rounded-full border-2 border-[#3a3a3a]"
+                className="w-6 h-6 rounded-full border-[0.5px] border-black"
               />
             ))
           ) : (
@@ -115,13 +113,14 @@ const Tarjeta: React.FC<TarjetaProps> = ({
                   key={idx}
                   src={user.avatar_url}
                   alt={user.name}
-                  className="w-6 h-6 rounded-full border-2 border-[#3a3a3a]"
+                  className="w-6 h-6 rounded-full border-[0.5px] border-black"
                 />
               ))}
               {/* La "bolita" muestra el TOTAL de miembros (mínimo 3) */}
-              <div className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-[#3a3a3a] bg-[#3a3a3a] text-white text-xs">
+              <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
                 {assignees.length}
               </div>
+
             </>
           )}
         </div>
