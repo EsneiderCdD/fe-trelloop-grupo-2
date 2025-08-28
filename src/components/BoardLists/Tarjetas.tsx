@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface Assignee {
   avatar_url: string;
@@ -21,6 +21,26 @@ const Tarjeta: React.FC<TarjetaProps> = ({
   prioridad,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // Cerrar menú si se hace click fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
 
   // Mapear prioridad del backend a valores internos
   const mapPriorityBackendToInternal = (prioridad?: string) => {
@@ -36,7 +56,6 @@ const Tarjeta: React.FC<TarjetaProps> = ({
         return prioridad;
     }
   };
-
 
   const getPriorityColor = (prioridad?: string) => {
     const internal = mapPriorityBackendToInternal(prioridad);
@@ -120,7 +139,6 @@ const Tarjeta: React.FC<TarjetaProps> = ({
               <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
                 {assignees.length}
               </div>
-
             </>
           )}
         </div>
@@ -137,7 +155,10 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 
       {/* Menú contextual */}
       {showMenu && (
-        <div className="absolute top-5 left-56 z-50 w-[223px] h-[150px] rounded-md bg-[#272727] shadow-lg p-4 flex flex-col gap-2 animate-fade-in">
+        <div
+          ref={menuRef}
+          className="absolute top-5 left-56 z-50 w-[223px] h-[150px] rounded-md bg-[#272727] shadow-lg p-4 flex flex-col gap-2 animate-fade-in"
+        >
           <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
             <img src="/assets/icons/eyes.svg" alt="Ver" className="w-5 h-5" />
             <span className="text-white text-sm font-medium">Ver tarjeta</span>
