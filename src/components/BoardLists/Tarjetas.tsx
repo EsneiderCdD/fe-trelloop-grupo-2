@@ -37,18 +37,18 @@ const Tarjeta: React.FC<TarjetaProps> = ({
     }
   };
 
-  // Obtener color según prioridad
+
   const getPriorityColor = (prioridad?: string) => {
     const internal = mapPriorityBackendToInternal(prioridad);
     switch (internal) {
       case "high":
-        return "border-red-500";
+        return "border-[#A70000]"; // Alta
       case "medium":
-        return "border-yellow-500";
+        return "border-[#DF8200]"; // Media
       case "low":
-        return "border-green-500";
+        return "border-[#667085]"; // Baja
       default:
-        return "border-purple-600"; 
+        return "border-purple-600"; // Fallback
     }
   };
 
@@ -139,7 +139,7 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       {showMenu && (
         <div className="absolute top-5 left-56 z-50 w-[223px] h-[150px] rounded-md bg-[#272727] shadow-lg p-4 flex flex-col gap-2 animate-fade-in">
           <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
-            <img src="/assets/icons/edit.png" alt="Ver" className="w-4 h-4" />
+            <img src="/assets/icons/eyes.svg" alt="Ver" className="w-5 h-5" />
             <span className="text-white text-sm font-medium">Ver tarjeta</span>
           </button>
 
