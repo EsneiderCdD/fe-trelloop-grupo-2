@@ -33,7 +33,7 @@ export const useResponsibleSearch = (boardId: number) => {
 
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/boards/${boardId}/search?q=${encodeURIComponent(query)}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/api/users/boards/${boardId}/search_assignees?q=${encodeURIComponent(query)}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
