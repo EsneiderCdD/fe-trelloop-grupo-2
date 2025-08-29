@@ -105,6 +105,7 @@ const Responsible = ({ members, onDelete, onAdd, boardId }: MembersProps) => {
               <div className="text-xs text-gray-400">@{member.username}</div>
             </div>
             <button
+              type="button"
               className="text-white ml-[25px]"
               onClick={() => onDelete(member.id)}
             >
