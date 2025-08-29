@@ -52,6 +52,28 @@ const Tarjeta: React.FC<TarjetaProps> = ({
     }
   };
 
+  // 🔥 Ajuste: máx 2 etiquetas, total hasta 25 caracteres
+  const getVisibleTags = (tags: string[]) => {
+    const maxChars = 45;
+    const maxTags = 2;
+    let total = 0;
+    const visibles: string[] = [];
+
+    for (const tag of tags) {
+      if (visibles.length >= maxTags) break;
+
+      const lengthWithSpace = tag.length + (visibles.length > 0 ? 1 : 0);
+      if (total + lengthWithSpace <= maxChars) {
+        visibles.push(tag);
+        total += lengthWithSpace;
+      } else {
+        break;
+      }
+    }
+
+    return visibles;
+  };
+
   return (
     <div
       className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between ${getPriorityColor(
@@ -61,7 +83,7 @@ const Tarjeta: React.FC<TarjetaProps> = ({
       {/* Fila superior: etiquetas + menú */}
       <div className="flex items-center justify-between gap-1 flex-wrap">
         <div className="flex gap-1 flex-wrap">
-          {etiquetas.slice(0, 2).map((tag, idx) => (
+          {getVisibleTags(etiquetas).map((tag, idx) => (
             <div
               key={idx}
               className="rounded-[16px] bg-[#414141] text-[#E5E7EB] text-[11px] font-poppins px-3 py-0.5 w-fit"
@@ -156,4 +178,3 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 };
 
 export default Tarjeta;
-
