@@ -11,7 +11,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
   isBoardOwner = false,
 }) => {
   const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
-
+  
   const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
   const [nuevoTitulo, setNuevoTitulo] = useState("");
 
@@ -97,6 +97,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 <Tarjeta
                   key={tarea.id}
                   descripcion={tarea.title}
+                  editURL={`/boardList/${boardId}/lists/${list.id}/cards/${tarea.id}`}
                   etiquetas={
                     tarea.tags && tarea.tags.length > 0
                       ? tarea.tags.map((tag: any) => tag.name)

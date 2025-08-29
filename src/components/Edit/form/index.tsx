@@ -18,7 +18,7 @@ const Form = ({ boardId }: Props) => {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState<string | File>('');
   const [members, setMembers] = useState<any[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<{id: number, name: string}[]>([]);
   const [visibility, setVisibility] = useState<'PRIVATE' | 'PUBLIC'>('PRIVATE');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +60,7 @@ const Form = ({ boardId }: Props) => {
           }))
         );
 
-        setTags(data.tags || []);
+        setTags((data.tags || []).map((tag: any) => ({ id: tag.id, name: tag.name })));
         setVisibility(data.status === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE');
       } catch (err: any) {
         setError(err.message || 'Error desconocido.');
@@ -76,8 +76,13 @@ const Form = ({ boardId }: Props) => {
     setMembers((prev) => prev.filter((m) => m.id !== id));
   };
 
-  const handleDeleteTag = (tagToRemove: string) => {
-    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
+  const handleDeleteTag = (tagIdToRemove: number) => {
+    setTags((prev) => prev.filter((tag) => tag.id !== tagIdToRemove));
+  };
+
+  const handleAddTag = (tagName: string) => {
+    const newTag = { id: Date.now(), name: tagName };
+    setTags((prev) => [...prev, newTag]);
   };
 
   const handleAddMember = (user: any) => {
@@ -120,7 +125,7 @@ const Form = ({ boardId }: Props) => {
     });
 
     tags.forEach((tag) => {
-      formData.append("tags", tag);
+      formData.append("tags", tag.name);
     });
 
     try {
@@ -180,7 +185,7 @@ const Form = ({ boardId }: Props) => {
       <section>
         <Tags
           tags={tags}
-          onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
+          onAdd={handleAddTag}
           onDelete={handleDeleteTag}
         />
       </section>

@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 
 interface Assignee {
@@ -11,6 +12,7 @@ interface TarjetaProps {
   assignees: Assignee[];
   comentarios: number;
   prioridad?: string;
+  editURL?: string;
 }
 
 const Tarjeta: React.FC<TarjetaProps> = ({
@@ -19,9 +21,11 @@ const Tarjeta: React.FC<TarjetaProps> = ({
   assignees,
   comentarios,
   prioridad,
+  editURL
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -162,7 +166,7 @@ const Tarjeta: React.FC<TarjetaProps> = ({
             <img src="/assets/icons/eyes.svg" alt="Ver" className="w-5 h-5" />
             <span className="text-white text-sm font-medium">Ver tarjeta</span>
           </button>
-          <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
+          <button onClick={() => router.push(editURL ? editURL : '')} className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
             <img src="/assets/icons/edit.png" alt="Editar" className="w-4 h-4" />
             <span className="text-white text-sm font-medium">Editar tarjeta</span>
           </button>

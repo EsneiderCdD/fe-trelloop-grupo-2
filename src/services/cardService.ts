@@ -38,7 +38,7 @@ export const updateListCardById = async (boardId: number, listId: number, cardId
   const responseData = await response.json();
 
   if (!response.ok) {
-    throw new ValidationError(responseData.message || "Error al actualizar la lista", "general");
+    throw new ValidationError(responseData.message || "Error al actualizar la tarjeta", "general");
   }
 
   return responseData;

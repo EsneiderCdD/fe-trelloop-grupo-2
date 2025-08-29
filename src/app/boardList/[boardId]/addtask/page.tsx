@@ -19,7 +19,7 @@ import Tags from "components/Edit/form/view/Tags";
 export default function AddTask() {
 
     const router = useRouter();
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<{id: number, name: string}[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const onChange = (dates: [Date | null, Date | null]) => {
@@ -28,8 +28,13 @@ export default function AddTask() {
         setEndDate(end);
     }
 
-    const handleDeleteTag = (tagToRemove: string) => {
-        setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
+    const handleDeleteTag = (tagIdToRemove: number) => {
+        setTags((prev) => prev.filter((tag) => tag.id !== tagIdToRemove));
+    };
+
+    const handleAddTag = (tagName: string) => {
+        const newTag = { id: Date.now(), name: tagName };
+        setTags((prev) => [...prev, newTag]);
     };
 
     const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +93,7 @@ export default function AddTask() {
                                     />
                                 </div>
                                 <label className="font-poppins block text-white text-sm mt-5 mb-2">Crear recordatorio</label>
-                                <ReminderSelect />
+                                {/* <ReminderSelect /> */}
                             </div>
                         </div>
                     </div>
@@ -150,7 +155,7 @@ export default function AddTask() {
                         <div className="font-poppins mb-4 w-[575px]">
                             <Tags
                                 tags={tags}
-                                onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
+                                onAdd={handleAddTag}
                                 onDelete={handleDeleteTag}
                             />
                         </div>
