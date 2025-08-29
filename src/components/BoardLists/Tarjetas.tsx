@@ -52,7 +52,6 @@ const Tarjeta: React.FC<TarjetaProps> = ({
     }
   };
 
-  // 🔥 Ajuste: máx 2 etiquetas, total hasta 25 caracteres
   const getVisibleTags = (tags: string[]) => {
     const maxChars = 45;
     const maxTags = 2;
