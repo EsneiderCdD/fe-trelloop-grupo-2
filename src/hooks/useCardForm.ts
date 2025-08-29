@@ -142,7 +142,7 @@ export function useCardForm() {
       };
 
       await updateListCardById(boardIdNum, listIdNum, cardIdNum, adaptFormData);
-      // router.push(`/boardList/${boardId}`);
+      router.push(`/boardList/${boardId}`);
     } catch (error) {
       console.error('Error al actualizar tarjeta:', error);
     }
