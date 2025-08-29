@@ -88,7 +88,7 @@ export default function AddTask() {
                                     />
                                 </div>
                                 <label className="font-poppins block text-white text-sm mt-5 mb-2">Crear recordatorio</label>
-                                <ReminderSelect />
+                                {/* <ReminderSelect /> */}
                             </div>
                         </div>
                     </div>
