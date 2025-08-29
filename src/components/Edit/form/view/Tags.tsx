@@ -48,7 +48,7 @@ const Tags = ({ tags, onAdd, onDelete }: TagsProps) => {
       <div className="tags mt-[8px] flex flex-wrap">
         {tags.map((tag) => (
           <div
-            key={tag}
+            key={tag.id}
             className="tag w-[120px] h-[24px] border rounded-[16px] flex flex-row items-center justify-evenly mr-[10px] mb-[8px]"
           >
             <div className="tag-icon flex items-center">
@@ -67,11 +67,11 @@ const Tags = ({ tags, onAdd, onDelete }: TagsProps) => {
               </svg>
             </div>
             <div className="tag-name flex items-center text-[12px] font-[500] text-white">
-              {tag}
+              {tag.name}
             </div>
             <button
               className="tag-action flex items-center text-white"
-              onClick={() => onDelete(tag)}
+              onClick={() => onDelete(tag.id)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

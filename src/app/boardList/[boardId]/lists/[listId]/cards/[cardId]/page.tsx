@@ -1,26 +1,25 @@
 "use client";
-import Responsible from "components/EditCard/Responsible";
-import DashboardSidebar from "components/home/DashboardSidebar";
-import UserNavbar from "components/home/UserNavbar";
-import React, { useEffect, useState } from "react";
-import { updateListCardById } from "services/cardService";
-import { getToken } from "store/authStore";
+
+import React from "react";
 import { useParams, useRouter } from "next/navigation";
-import Tags from "components/Edit/form/view/Tags";
-import ReminderSelect from "components/Edit/form/view/ReminderSelect";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "styles/datepicker.css";
-import { es, se } from "date-fns/locale";
+import { es } from "date-fns/locale";
+
+import DashboardSidebar from "components/home/DashboardSidebar";
+import UserNavbar from "components/home/UserNavbar";
 import CloseButton from "components/ui/CloseButton";
-import { adapter } from "next/dist/server/web/adapter";
-import { title } from "process";
+import Responsible from "components/EditCard/Responsible";
+import Tags from "components/Edit/form/view/Tags";
+import ReminderSelect from "components/Edit/form/view/ReminderSelect";
+
+import { useCardForm } from "hooks/useCardForm";
+import { useCardMembers } from "hooks/useCardMembers";
+import { useCardTags } from "hooks/useCardTags";
 
 export default function PgtListasEditar() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [tags, setTags] = useState<string[]>([]);
   const { boardId, listId, cardId } = useParams<{
     boardId: string;
     listId: string;
@@ -29,171 +28,38 @@ export default function PgtListasEditar() {
   const boardIdNum = Number(boardId);
   const listIdNum = Number(listId);
   const cardIdNum = Number(cardId);
-  const initialFormState = {
-    title: "",
-    description: "",
-    assignees: [],
-    priority: "",
-    status: "",
-    tags: [],
-    startDate: null,
-    endDate: null,
-    reminderDate: null,
-  };
-  const [form, setForm] = useState<any>(initialFormState);
-  const [reminderValue, setReminderValue] = useState(0);
 
-  useEffect(() => {
-    const fetchBoard = async () => {
-      const token = getToken();
-      if (!token) {
-        setError("No estás autenticado.");
-        setLoading(false);
-        return;
-      }
+  const {
+    form,
+    loading,
+    error,
+    reminderValue,
+    handleFormChange,
+    handleDateChange,
+    handleReminderChange,
+    handleSubmit,
+    setForm,
+  } = useCardForm();
 
-      try {
-        const res = await fetch(`http://localhost:5000/api/boards/${boardId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  const { handleAddResponsible, handleDeleteResponsible } = useCardMembers(
+    form,
+    setForm,
+    boardIdNum,
+    listIdNum,
+    cardIdNum
+  );
+  const { tags, handleAddTag, handleDeleteTag } = useCardTags(
+    form.tags,
+    setForm
+  );
+  // proximo manejo de loading y errores
+  // if (loading) {
+  //   return <div>Cargando...</div>;
+  // }
 
-        if (!res.ok) {
-          throw new Error("No se pudo cargar el tablero.");
-        }
-
-        const data = await res.json();
-        console.log("data", data);
-
-        const filteredList = data.lists.find(
-          (list: any) => list.id === listIdNum
-        );
-
-        const filteredCard = filteredList.cards.find(
-          (card: any) => card.id === cardIdNum
-        );
-
-        let cardMembers = (filteredCard?.assignees || []).map((user: any) => ({
-          id: String(user.id),
-          name: `${user.name} ${user.last_name}`.trim(),
-          username: user.email?.split("@")[0] || "usuario",
-          email: user.email,
-          img: user.avatar_url,
-        }));
-
-        const startDate = filteredCard?.start_date ? new Date(filteredCard.start_date) : null;
-        const endDate = filteredCard?.end_date ? new Date(filteredCard.end_date) : null;
-        const reminderDate = filteredCard?.reminder_date ? new Date(filteredCard.reminder_date) : null;
-
-        setForm({
-          title: filteredCard?.title || "",
-          description: filteredCard?.description || "",
-          assignees: cardMembers || [],
-          priority: filteredCard?.priority || "",
-          status: filteredCard?.status || "",
-          tags: filteredCard?.tags || [],
-          startDate: startDate || null,
-          endDate: endDate || null,
-          reminderDate: reminderDate || null,
-        });
-
-        if (endDate && reminderDate) {
-          const diffTime = endDate.getTime() - reminderDate.getTime();
-          const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-          setReminderValue(diffDays);
-        }
-
-      } catch (err: any) {
-        setError(err.message || "Error desconocido.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBoard();
-  }, [boardId, listIdNum, cardIdNum]);
-  console.log("form", form);
-
-  const handleDeleteResponsible = async (id: string) => {
-    try {
-      const updatedMembers = form.assignees.filter((m: any) => m.id !== id);
-      await updateListCardById(boardIdNum, listIdNum, cardIdNum, {
-        assignee_ids: updatedMembers.map((m: any) => m.email),
-      });
-      setForm((prevForm: any) => ({ ...prevForm, assignees: updatedMembers }));
-    } catch (error) {
-      console.error("Error al eliminar responsable:", error);
-    }
-  };
-
-  const handleAddResponsible = async (user: any) => {
-    try {
-      const exists = form.assignees.some((m: any) => m.id === user.id);
-      if (exists) return;
-      const updatedMembers = [...form.assignees, user];
-      await updateListCardById(boardIdNum, listIdNum, cardIdNum, {
-        assignee_ids: updatedMembers.map((m) => m.email),
-      });
-      setForm((prevForm: any) => ({ ...prevForm, assignees: updatedMembers }));
-    } catch (error) {
-      console.error("Error al agregar responsable:", error);
-    }
-  };
-
-  const handleDeleteTag = (tagToRemove: string) => {
-    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
-  };
-
-  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(e.target.value);
-    if (!isNaN(date.getTime())) {
-      setForm((prevForm: any) => ({ ...prevForm, startDate: date }));
-    }
-  };
-
-  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(e.target.value);
-    if (!isNaN(date.getTime())) {
-      setForm((prevForm: any) => ({ ...prevForm, endDate: date }));
-    }
-  };
-
-  const onChange = (dates: [Date | null, Date | null]) => {
-    const [start, end] = dates;
-    setForm((prevForm: any) => ({ ...prevForm, startDate: start, endDate: end }));
-  };
-
-  const handleReminderChange = (value: number) => {
-    setReminderValue(value);
-  };
-
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      let reminderDate = null;
-      if (form.endDate && reminderValue > 0) {
-        reminderDate = new Date(form.endDate);
-        reminderDate.setDate(reminderDate.getDate() - reminderValue);
-      }
-
-      const adaptFormData = {
-        title: form.title,
-        description: form.description,
-        status: form.status,
-        assignee_ids: form.assignees.map((m: any) => m.email),
-        tags: form.tags.map((t: any) => t.name),
-        start_date: form.startDate?.toISOString().split("T")[0],
-        end_date: form.endDate?.toISOString().split("T")[0],
-        reminder_date: reminderDate?.toISOString().split("T")[0],
-        reminder_message: reminderValue > 0 ? `Recordatorio: ${reminderValue} día(s) antes` : null,
-      };
-      await updateListCardById(boardIdNum, listIdNum, cardIdNum, adaptFormData);
-      // router.push(`/boardList/${boardId}`);
-    } catch (error) {
-      console.error("Error al actualizar tarjeta:", error);
-    }
-  };
+  // if (error) {
+  //   return <div>Error: {error}</div>;
+  // }
 
   return (
     <div className="flex bg-[#191919] h-full w-full">
@@ -206,8 +72,11 @@ export default function PgtListasEditar() {
           </h1>
           <CloseButton onClick={() => router.back()} />
         </div>
-        <div className=" p-6 flex items-center justify-center w-full">
-          <form onSubmit={onSubmit} className="flex items-center justify-center w-full">
+        <div className="p-6 flex items-center justify-center w-full">
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center justify-center w-full"
+          >
             <div className="flex gap-16 max-w-7xl justify-center">
               <div className="w-[320px] flex-shrink-0">
                 <div className="mb-4 w-[325px] p-5 pt-0">
@@ -217,7 +86,7 @@ export default function PgtListasEditar() {
                   <div className="font-poppins w-full rounded-lg ms-2 outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] p-5">
                     <DatePicker
                       selected={form.startDate}
-                      onChange={onChange}
+                      onChange={handleDateChange}
                       startDate={form.startDate}
                       endDate={form.endDate}
                       locale={es}
@@ -226,14 +95,29 @@ export default function PgtListasEditar() {
                     />
                     <div className="flex items-center">
                       <input
-                        value={form.startDate ? form.startDate.toISOString().split("T")[0] : ""}
-                        onChange={handleStartDateChange}
+                        value={
+                          form.startDate
+                            ? form.startDate.toISOString().split("T")[0]
+                            : ""
+                        }
+                        onChange={(e) =>
+                          handleFormChange(
+                            "startDate",
+                            new Date(e.target.value)
+                          )
+                        }
                         className="font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
                         placeholder="Desde"
                       />
                       <input
-                        value={form.endDate ? form.endDate.toISOString().split("T")[0] : ""}
-                        onChange={handleEndDateChange}
+                        value={
+                          form.endDate
+                            ? form.endDate.toISOString().split("T")[0]
+                            : ""
+                        }
+                        onChange={(e) =>
+                          handleFormChange("endDate", new Date(e.target.value))
+                        }
                         className="font-poppins w-full p-2 rounded-xl ms-2 outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
                         placeholder="Hasta"
                       />
@@ -241,7 +125,10 @@ export default function PgtListasEditar() {
                     <label className="font-poppins block text-white text-sm mt-5 mb-2">
                       Crear recordatorio
                     </label>
-                    <ReminderSelect value={reminderValue} onChange={handleReminderChange} />
+                    <ReminderSelect
+                      value={reminderValue}
+                      onChange={handleReminderChange}
+                    />
                   </div>
                 </div>
               </div>
@@ -253,7 +140,9 @@ export default function PgtListasEditar() {
                     </label>
                     <input
                       value={form.title}
-                      onChange={(e) => setForm((prev: any) => ({ ...prev, title: e.target.value }))}
+                      onChange={(e) =>
+                        handleFormChange("title", e.target.value)
+                      }
                       placeholder="Ut enim ad minim veniam, quis nostrud"
                       className="w-full bg-[#ffffff0a] rounded-[10px] border border-solid border-[#3c3c3cb2] backdrop-blur-[1.8px]   [font-family:'Poppins',Helvetica] font-normal text-white placeholder-[#797676] text-sm tracking-[0] leading-[normal] px-2.5 py-[9px] outline-none h-auto focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff]"
                     />
@@ -264,7 +153,9 @@ export default function PgtListasEditar() {
                     </label>
                     <textarea
                       value={form.description}
-                      onChange={(e) => setForm((prev: any) => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        handleFormChange("description", e.target.value)
+                      }
                       placeholder="Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
                       className="flex-1 w-full min-h-[130px] bg-[#ffffff0a] rounded-[10px] border border-solid border-[#3c3c3cb2]  p-2.5 [font-family:'Poppins',Helvetica] font-normal placeholder-[#797676] text-white text-sm tracking-[0] leading-[normal] outline-none resize-none focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff]"
                     />
@@ -282,22 +173,25 @@ export default function PgtListasEditar() {
                       Prioridad
                     </label>
                     <select
-                      onChange={(e) => setForm((prev: any) => ({ ...prev, priority: e.target.value }))}
-                      value={
-                        form.priority === "Alta"
-                          ? "high"
-                          : form.priority === "Media"
-                          ? "medium"
-                          : form.priority === "Baja"
-                          ? "low"
-                          : form.priority
+                      onChange={(e) =>
+                        handleFormChange("priority", e.target.value)
                       }
+                      value={form.priority}
                       className="font-poppins w-full p-2 rounded-xl outline-none bg-[#ffffff0a] text-[#cac5c5] border border-[#3a3a3a] focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200"
                     >
                       <option hidden>Agrega una prioridad...</option>
-                      <option value="high" className="text-white bg-[#222222]">Alta</option>
-                      <option value="medium" className="text-white bg-[#222222]">Media</option>
-                      <option value="low" className="text-white bg-[#222222]">Baja</option>
+                      <option value="high" className="text-white bg-[#222222]">
+                        Alta
+                      </option>
+                      <option
+                        value="medium"
+                        className="text-white bg-[#222222]"
+                      >
+                        Media
+                      </option>
+                      <option value="low" className="text-white bg-[#222222]">
+                        Baja
+                      </option>
                     </select>
                   </div>
                   <div>
@@ -305,20 +199,39 @@ export default function PgtListasEditar() {
                       Estado
                     </label>
                     <select
-                      onChange={(e) => setForm((prev: any) => ({ ...prev, status: e.target.value }))}
+                      onChange={(e) =>
+                        handleFormChange("status", e.target.value)
+                      }
                       value={form.status}
                       className="font-poppins w-full p-2 rounded-xl outline-none bg-[#ffffff0a] text-[#cac5c5] border border-[#3a3a3a] focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200"
                     >
-                      <option className="text-white" hidden>Agrega un estado...</option>
-                      <option className="text-white bg-[#222222]" value="Pendiente">Pendiente</option>
-                      <option className="text-white bg-[#222222]" value="En progreso">En progreso</option>
-                      <option className="text-white bg-[#222222]" value="Completado">Completado</option>
+                      <option className="text-white" hidden>
+                        Agrega un estado...
+                      </option>
+                      <option
+                        className="text-white bg-[#222222]"
+                        value="Pendiente"
+                      >
+                        Pendiente
+                      </option>
+                      <option
+                        className="text-white bg-[#222222]"
+                        value="En progreso"
+                      >
+                        En progreso
+                      </option>
+                      <option
+                        className="text-white bg-[#222222]"
+                        value="Completado"
+                      >
+                        Completado
+                      </option>
                     </select>
                   </div>
                   <div className="font-poppins mb-4">
                     <Tags
-                      tags={form.tags.map((tag: any) => tag.name)}
-                      onAdd={(newTag) => setForm((prev: any) => ({ ...prev, tags: [...prev.tags, newTag] }))}
+                      tags={tags}
+                      onAdd={handleAddTag}
                       onDelete={handleDeleteTag}
                     />
                   </div>
