@@ -8,11 +8,11 @@ import VistaBacklog from "components/BoardLists/VistaBacklog";
 import { useState } from "react";
 
 interface BoardListProps {
-  params: { id: string };
+  params: { boardId: string };
 }
 
 export default function BoardListPage() {
-  const { id } = useParams<{ id: string }>();
+  const { boardId } = useParams<{ boardId: string }>();
   const [vistaActiva, setVistaActiva] = useState<string>("backlog");
   const handleVistaChange = (vista: string) => {
     setVistaActiva(vista);
@@ -73,7 +73,7 @@ export default function BoardListPage() {
         <section className="flex-1 min-h-0 overflow-hidden flex">
           {vistaActiva === "backlog" && <VistaBacklog />}
           {vistaActiva === "lists" &&
-            (id ? <VistaListas boardId={id} /> : <p>Cargando...</p>)}
+            (boardId ? <VistaListas boardId={boardId} /> : <p>Cargando...</p>)}
         </section>
       </main>
     </div>

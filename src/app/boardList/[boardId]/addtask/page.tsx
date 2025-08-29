@@ -1,6 +1,5 @@
 "use client";
 
-import Tags from "components/edit/form/view/Tags";
 import DashboardSidebar from "components/home/DashboardSidebar";
 import UserNavbar from "components/home/UserNavbar";
 import CloseButton from "components/ui/CloseButton";
@@ -11,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "styles/datepicker.css";
 import { es } from "date-fns/locale";
 import ReminderSelect from "components/Edit/form/view/ReminderSelect";
+import Tags from "components/Edit/form/view/Tags";
 
 
 
@@ -147,7 +147,7 @@ export default function AddTask() {
                                 <option value="completado">Completado</option>
                             </select>
                         </div>
-                        <div className="font-poppins mb-4">
+                        <div className="font-poppins mb-4 w-[575px]">
                             <Tags
                                 tags={tags}
                                 onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
