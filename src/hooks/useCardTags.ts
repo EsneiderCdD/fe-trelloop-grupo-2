@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useCardTags(initialTags: any[], setForm: Function) {
   const [tags, setTags] = useState(initialTags);
+
+  useEffect(() => {
+    setTags(initialTags);
+  }, [initialTags]);
 
   const handleDeleteTag = (tagIdToRemove: number) => {
     const updatedTags = tags.filter((tag: any) => tag.id !== tagIdToRemove);
