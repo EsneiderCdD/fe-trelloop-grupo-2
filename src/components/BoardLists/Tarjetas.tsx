@@ -10,7 +10,7 @@ interface TarjetaProps {
   etiquetas: string[];
   assignees: Assignee[];
   comentarios: number;
-  prioridad?: string; // puede venir "Baja", "Media", "Alta" del backend
+  prioridad?: string;
 }
 
 const Tarjeta: React.FC<TarjetaProps> = ({
@@ -23,51 +23,32 @@ const Tarjeta: React.FC<TarjetaProps> = ({
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // Cerrar menú si se hace click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowMenu(false);
       }
     };
-
     if (showMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showMenu]);
 
-  // Mapear prioridad del backend a valores internos
-  const mapPriorityBackendToInternal = (prioridad?: string) => {
-    if (!prioridad) return prioridad;
-    switch (prioridad.toLowerCase()) {
-      case "baja":
-        return "low";
-      case "media":
-        return "medium";
-      case "alta":
-        return "high";
-      default:
-        return prioridad;
-    }
-  };
-
   const getPriorityColor = (prioridad?: string) => {
-    const internal = mapPriorityBackendToInternal(prioridad);
-    switch (internal) {
-      case "high":
-        return "border-[#A70000]"; // Alta
-      case "medium":
-        return "border-[#DF8200]"; // Media
-      case "low":
-        return "border-[#667085]"; // Baja
+    switch (prioridad?.toLowerCase()) {
+      case "alta":
+        return "border-[#A70000]";
+      case "media":
+        return "border-[#DF8200]";
+      case "baja":
+        return "border-[#667085]";
       default:
-        return "border-purple-600"; // Fallback
+        return "border-purple-600";
     }
   };
 
@@ -89,7 +70,6 @@ const Tarjeta: React.FC<TarjetaProps> = ({
             </div>
           ))}
         </div>
-
         <button onClick={() => setShowMenu(!showMenu)}>
           <img
             src="/assets/icons/ellipsis.svg"
@@ -135,14 +115,12 @@ const Tarjeta: React.FC<TarjetaProps> = ({
                   className="w-6 h-6 rounded-full border-[0.5px] border-black"
                 />
               ))}
-              {/* La "bolita" muestra el TOTAL de miembros (mínimo 3) */}
               <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
                 {assignees.length}
               </div>
             </>
           )}
         </div>
-
         <div className="flex items-center gap-1">
           <span className="text-white mr-1 text-sm">{comentarios}</span>
           <img
@@ -163,12 +141,10 @@ const Tarjeta: React.FC<TarjetaProps> = ({
             <img src="/assets/icons/eyes.svg" alt="Ver" className="w-5 h-5" />
             <span className="text-white text-sm font-medium">Ver tarjeta</span>
           </button>
-
           <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
             <img src="/assets/icons/edit.png" alt="Editar" className="w-4 h-4" />
             <span className="text-white text-sm font-medium">Editar tarjeta</span>
           </button>
-
           <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
             <img src="/assets/icons/trash.png" alt="Eliminar" className="w-4 h-4" />
             <span className="text-white text-sm font-medium">Eliminar tarjeta</span>
@@ -180,3 +156,4 @@ const Tarjeta: React.FC<TarjetaProps> = ({
 };
 
 export default Tarjeta;
+

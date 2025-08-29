@@ -104,7 +104,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                   }
                   assignees={tarea.assignees || []}
                   comentarios={0}
-                  prioridad={tarea.priority?.toLowerCase() || "low"}
+                  prioridad={tarea.priority}
                 />
               ))}
             </div>
@@ -133,3 +133,4 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 };
 
 export default VistaListas;
+
