@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import MemberSearchResult from "components/Edit/form/view/MemberSearchResult";
-import { useMemberSearch } from "components/Edit/form/controllers/useMemberSearch";
 import { useResponsibleSearch } from "hooks/useResponsibleSearch";
 
 const DEFAULT_IMAGE_URL =
@@ -43,7 +42,7 @@ const Responsible = ({ members, onDelete, onAdd, boardId }: MembersProps) => {
           placeholder="Buscar por nombre o @usuario..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full h-[41px] bg-[#ffffff0a] text-sm text-[#797575] placeholder-[#797676] rounded-[10px]  border border-solid border-[#3c3c3cb2] outline-none focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200 [font-family:'Poppins',Helvetica] pr-10 px-2.5 py-[9px] font-normal"
+          className="w-full h-[41px] bg-[#ffffff0a] text-sm text-white placeholder-[#797676] rounded-[10px]  border border-solid border-[#3c3c3cb2] outline-none focus:ring-1 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200 [font-family:'Poppins',Helvetica] pr-10 px-2.5 py-[9px] font-normal"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white pointer-events-none">
           <svg
