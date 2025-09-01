@@ -18,6 +18,8 @@ import { useCardForm } from "hooks/useCardForm";
 import { useCardMembers } from "hooks/useCardMembers";
 import { useCardTags } from "hooks/useCardTags";
 
+import { Tags as TagsType } from "types/tags";
+
 export default function PgtListasEditar() {
   const router = useRouter();
   const { boardId, listId, cardId } = useParams<{
@@ -48,9 +50,12 @@ export default function PgtListasEditar() {
     listIdNum,
     cardIdNum
   );
+  const adaptSetFormTags = (setForm: any) => (tags: TagsType[]) => {
+  setForm((prev: any) => ({ ...prev, tags }));
+};
   const { tags, handleAddTag, handleDeleteTag } = useCardTags(
     form.tags,
-    setForm
+    adaptSetFormTags(setForm)
   );
   // proximo manejo de loading y errores
   // if (loading) {
