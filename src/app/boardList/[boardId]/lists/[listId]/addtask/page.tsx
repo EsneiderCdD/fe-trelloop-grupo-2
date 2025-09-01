@@ -4,7 +4,7 @@ import DashboardSidebar from "components/home/DashboardSidebar";
 import UserNavbar from "components/home/UserNavbar";
 import CloseButton from "components/ui/CloseButton";
 import { useRouter, useParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getToken } from "store/authStore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,6 +12,7 @@ import "styles/datepicker.css";
 import { es } from "date-fns/locale";
 import ReminderSelect from "components/Edit/form/view/ReminderSelect";
 import Tags from "components/Edit/form/view/Tags";
+import Responsible from "components/EditCard/Responsible";
 
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -25,6 +26,8 @@ export default function AddTask() {
     const [priority, setPriority] = useState("low");
     const [status, setStatus] = useState("pending");
     const [members, setMembers] = useState<any[]>([]);
+    const [assignees, setAssignees] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [tags, setTags] = useState<string[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
@@ -33,8 +36,9 @@ export default function AddTask() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    const { boardId } = useParams<{ boardId: string; }>();
-    const { listId } = useParams<{ listId: string; }>();
+    const { boardId, listId } = useParams<{ boardId: string; listId: string; }>();
+    const boardIdNum = Number(boardId);
+
 
     const onChange = (dates: [Date | null, Date | null]) => {
         const [start, end] = dates;
@@ -64,7 +68,66 @@ export default function AddTask() {
         setReminderDate(date);
         setReminderMessage(message);
         console.log("Recordatorio establecido para:", date, "con mensaje:", message);
-    }
+    };
+
+    useEffect(() => {
+        const fetchBoardMembers = async () => {
+            const token = getToken();
+            if (!token) {
+                setError("No estás autenticado.");
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/boards/${boardId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!res.ok) {
+                    throw new Error("No se pudo cargar el tablero.");
+                }
+
+                const data = await res.json();
+                const boardMembers = data?.members || [];
+
+                setMembers(
+                    boardMembers.map((user: any) => ({
+                        id: String(user.id),
+                        name: `${user.name} ${user.last_name}`.trim(),
+                        username: user.email?.split("@")[0] || "usuario",
+                        email: user.email,
+                        img: user.avatar_url,
+                    }))
+                );
+            } catch (err: any) {
+                setError(err.message || "Error desconocido.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBoardMembers();
+    }, [boardId]);
+
+    // Lógica para agregar responsables
+    const handleAddResponsible = (user: any) => {
+        setAssignees((prev) => {
+            const exists = prev.some((m) => m.id === user.id);
+            if (!exists) {
+                return [...prev, user];
+            }
+            return prev;
+        });
+    };
+
+    // Lógica para eliminar responsables
+    const handleDeleteResponsible = (id: string) => {
+        setAssignees((prev) => prev.filter((m) => m.id !== id));
+    };
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -76,8 +139,6 @@ export default function AddTask() {
         const formattedStartDate = startDate ? startDate.toISOString().split('T')[0] : null;
         const formattedEndDate = endDate ? endDate.toISOString().split('T')[0] : null;
         const formattedReminderDate = reminderDate ? reminderDate.toISOString().split('T')[0] : null;
-
-        console.log("Fechas formateadas:", { formattedStartDate, formattedEndDate, formattedReminderDate });
 
         const cardData = {
             title,
@@ -122,7 +183,7 @@ export default function AddTask() {
         <div className="flex bg-[#1A1A1A] min-h-screen">
             {/* Sidebar lateral */}
             <DashboardSidebar />
-            <main className="flex-1 flex flex-col">
+            <main className="flex-1 bg-[#1A1A1A] flex flex-col">
                 {/* Navbar autenticado con buscador, iconos y sin botón */}
                 <UserNavbar showCreateBoardButton={false} />
                 <div className="flex items-center justify-between p-5">
@@ -165,8 +226,6 @@ export default function AddTask() {
                     </div>
                     {/* Formulario para crear una nueva tarjeta */}
                     <form className="flex-1 p-6" onSubmit={handleSubmit}>
-                        {error && <div className="mb-4 text-red-500 font-poppins">{error}</div>}
-                        {success && <div className="mb-4 text-green-500 font-poppins">{success}</div>}
                         <div className="mb-4 w-[575px]">
                             <label className="font-poppins block text-white mb-2">Título de la tarjeta</label>
                             <input type="text" className="font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:ring-2 focus:ring-[#6a5fff]"
@@ -184,33 +243,14 @@ export default function AddTask() {
                                 onChange={(e) => setDescription(e.target.value)}
                             ></textarea>
                         </div>
-                        <div className="mb-4 w-[575px]">
-                            <label className="font-poppins block text-white mb-2">Responsables</label>
-                            <div className="w-full flex items-center gap-2 bg-[#2B2B2B] rounded-[8px]">
-                                <input type="text" className="flex-1 font-poppins w-full p-2 rounded-xl outline-none bg-[#2a2a2a] text-white focus:ring-2 focus:ring-[#6a5fff] focus:border-[#6a5fff] transition-all duration-200" placeholder="Busca por nombre o @usuario" />
-                                <img src="/assets/icons/search.svg" alt="Buscar" className="w-5 h-5 mr-2" />
-                            </div>
-                            <div className="flex">
-                                <div className="flex mt-4 mb-4 me-5 items-center">
-                                    <div className="w-7 h-7 rounded-full border me-2 border-white bg-[#000000] ">
-                                        <img src="/assets/icons/user.png" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <label className="font-poppins block text-sm text-white">Nombre completo</label>
-                                        <label className="font-poppins block text-xs text-white">@usuario</label>
-                                    </div>
-                                </div>
-                                <div className="flex mt-4 mb-4 items-center">
-                                    <div className="w-7 h-7 rounded-full border me-2 border-white bg-[#000000] ">
-                                        <img src="/assets/icons/user.png" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <label className="font-poppins block text-sm text-white">Nombre completo</label>
-                                        <label className="font-poppins block text-xs text-white">@usuario</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <section className="mb-4 w-[575px]">
+                            <Responsible
+                                boardId={boardIdNum}
+                                members={members}
+                                onDelete={handleDeleteResponsible}
+                                onAdd={handleAddResponsible}
+                            />
+                        </section>
                         <div className="mb-4 w-[575px]">
                             <label className="font-poppins block text-white mb-2">Prioridad</label>
                             <select
@@ -248,6 +288,8 @@ export default function AddTask() {
                             <button type="submit" className="font-poppins flex-1 py-2 border border-[#6A5FFF] text-[#6A5FFF] rounded-xl hover:bg-[#5a4fef1b]">Cancelar creación</button>
                             <button type="submit" className="font-poppins flex-1 ml-4 py-2 bg-[#6A5FFF] hover:bg-[#5A4FEF] text-white rounded-xl">Crear tarjeta</button>
                         </div>
+                        {error && <div className="mt-4 text-red-500 font-poppins">{error}</div>}
+                        {success && <div className="mt-4 text-green-500 font-poppins">{success}</div>}
                     </form>
                 </div>
             </main>
