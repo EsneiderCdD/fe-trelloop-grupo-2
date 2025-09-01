@@ -10,14 +10,14 @@ export function useCardTags(initialTags: any[], setForm: Function) {
   const handleDeleteTag = (tagIdToRemove: number) => {
     const updatedTags = tags.filter((tag: any) => tag.id !== tagIdToRemove);
     setTags(updatedTags);
-    setForm((prevForm: any) => ({ ...prevForm, tags: updatedTags }));
+    setForm(updatedTags);
   };
 
   const handleAddTag = (newTagName: string) => {
-    const newTag = { name: newTagName, id: Date.now() }; // Assign a temporary unique ID
+    const newTag = { id: Date.now(), name: newTagName };
     const updatedTags = [...tags, newTag];
     setTags(updatedTags);
-    setForm((prevForm: any) => ({ ...prevForm, tags: updatedTags }));
+    setForm(updatedTags);
   };
 
   return {

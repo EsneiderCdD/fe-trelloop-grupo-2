@@ -13,6 +13,7 @@ import { es } from "date-fns/locale";
 import ReminderSelect from "components/Edit/form/view/ReminderSelect";
 import Tags from "components/Edit/form/view/Tags";
 import Responsible from "components/EditCard/Responsible";
+import { useCardTags } from "hooks/useCardTags";
 
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -28,7 +29,7 @@ export default function AddTask() {
     const [members, setMembers] = useState<any[]>([]);
     const [assignees, setAssignees] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [tags, setTags] = useState<string[]>([]);
+    const [formTags, setFormTags] = useState<{id: number, name: string}[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [reminderDate, setReminderDate] = useState<Date | null>(null);
@@ -45,10 +46,6 @@ export default function AddTask() {
         setStartDate(start);
         setEndDate(end);
     }
-
-    const handleDeleteTag = (tagToRemove: string) => {
-        setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
-    };
 
     const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const date = new Date(e.target.value);
@@ -127,6 +124,8 @@ export default function AddTask() {
         setAssignees((prev) => prev.filter((m) => m.id !== id));
     };
 
+    const { tags, handleDeleteTag, handleAddTag } = useCardTags(formTags, setFormTags);
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -136,20 +135,20 @@ export default function AddTask() {
         const formattedStartDate = startDate ? startDate.toISOString().split('T')[0] : null;
         const formattedEndDate = endDate ? endDate.toISOString().split('T')[0] : null;
         const formattedReminderDate = reminderDate ? reminderDate.toISOString().split('T')[0] : null;
+       
 
         const cardData = {
             title,
             description,
             priority,
-            status,
             members,
-            tags,
+            tags: tags.map((t: any) => t.name),
             start_date: formattedStartDate,
             end_date: formattedEndDate,
             reminder_date: formattedReminderDate,
             reminder_message: reminderMessage
         };
-
+         console.log("Tags to submit:", cardData);
         const token = getToken();
 
         try {
@@ -214,7 +213,7 @@ export default function AddTask() {
                                     />
                                 </div>
                                 <label className="font-poppins block text-white text-sm mt-5 mb-2">Crear recordatorio</label>
-                                <ReminderSelect />
+                                {/* <ReminderSelect /> */}
                             </div>
                         </div>
                     </div>
@@ -274,7 +273,7 @@ export default function AddTask() {
                         <div className="font-poppins mb-4 w-[575px]">
                             <Tags
                                 tags={tags}
-                                onAdd={(newTag) => setTags((prev) => [...prev, newTag])}
+                                onAdd={handleAddTag}
                                 onDelete={handleDeleteTag}
                             />
                         </div>
