@@ -67,7 +67,6 @@ export default function AddTask() {
     const handleReminderDateChange = (date: Date | null, message: string) => {
         setReminderDate(date);
         setReminderMessage(message);
-        console.log("Recordatorio establecido para:", date, "con mensaje:", message);
     };
 
     useEffect(() => {
@@ -133,8 +132,6 @@ export default function AddTask() {
         e.preventDefault();
         setError(null);
         setSuccess(null);
-        console.log("Enviando formulario con datos:", { title, description, priority, status, members, tags, startDate, endDate, reminderDate, reminderMessage })
-
 
         const formattedStartDate = startDate ? startDate.toISOString().split('T')[0] : null;
         const formattedEndDate = endDate ? endDate.toISOString().split('T')[0] : null;
@@ -167,15 +164,12 @@ export default function AddTask() {
             const data = await response.json();
             if (response.ok) {
                 setSuccess("Tarjeta creada exitosamente");
-                console.log("Tarjeta creada:", data);
                 router.push(`/boardList/${boardId}`);
             } else {
                 setError(data.message || "Error al crear la tarjeta");
-                console.error("Error al crear la tarjeta:", data);
             }
         } catch (error) {
             setError("Error de red al crear la tarjeta");
-            console.error("Error de red al crear la tarjeta:", error);
         };
     };
 
