@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AddListModal from "./AddListButton";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useBoardLists } from "hooks/useBoardLists";
 import { updateListService } from "../../services/updateListService";
 import DeleteListButton from "./DeleteListButton";
@@ -11,7 +11,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
   isBoardOwner = false,
 }) => {
   const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
-  
+
   const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
   const [nuevoTitulo, setNuevoTitulo] = useState("");
 
@@ -35,12 +35,10 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
   if (error) return <div>Error: {error}</div>;
 
   const router = useRouter();
-  const params = useParams();
-  const boardIdUrl = params.id;
 
-  const goToAddTask = () => {
-    router.push(`/boardList/${boardIdUrl}/addtask`);
-  };
+  const goToAddTask = (listId: string | number) => {
+    router.push(`/boardList/${boardId}/lists/${listId}/addtask`);
+  }
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
@@ -109,12 +107,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                 />
               ))}
             </div>
-
-            {/* Botón agregar tarea */}
-            <button
-              onClick={() => goToAddTask()}
-              className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700"
-            >
+            <button onClick={() => goToAddTask(list.id)} className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700">
               + Agregar tarea
             </button>
           </div>
