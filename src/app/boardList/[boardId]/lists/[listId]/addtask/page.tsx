@@ -29,11 +29,10 @@ export default function AddTask() {
     const [members, setMembers] = useState<any[]>([]);
     const [assignees, setAssignees] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [formTags, setFormTags] = useState<{id: number, name: string}[]>([]);
+    const [formTags, setFormTags] = useState<{ id: number, name: string }[]>([]);
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
-    const [reminderDate, setReminderDate] = useState<Date | null>(null);
-    const [reminderMessage, setReminderMessage] = useState("");
+    const [reminderDaysBefore, setReminderDaysBefore] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
@@ -61,10 +60,10 @@ export default function AddTask() {
         }
     };
 
-    const handleReminderDateChange = (date: Date | null, message: string) => {
-        setReminderDate(date);
-        setReminderMessage(message);
+    const handleReminderChange = (daysBefore: number) => {
+        setReminderDaysBefore(daysBefore);
     };
+
 
     useEffect(() => {
         const fetchBoardMembers = async () => {
@@ -134,21 +133,31 @@ export default function AddTask() {
 
         const formattedStartDate = startDate ? startDate.toISOString().split('T')[0] : null;
         const formattedEndDate = endDate ? endDate.toISOString().split('T')[0] : null;
-        const formattedReminderDate = reminderDate ? reminderDate.toISOString().split('T')[0] : null;
-       
+
+        let formattedReminderDate = null;
+        let reminderMessage = "";
+
+        if (endDate && reminderDaysBefore > 0) {
+            const reminderDate = new Date(endDate);
+            reminderDate.setDate(reminderDate.getDate() - reminderDaysBefore);
+            formattedReminderDate = reminderDate.toISOString().split('T')[0];
+            reminderMessage = `Recordatorio establecido para ${reminderDaysBefore} día(s) antes de la fecha de finalización de la tarjeta ${title}`;
+        }
+
 
         const cardData = {
             title,
             description,
             priority,
             members,
+            assignees: assignees.map(a => a.id),
             tags: tags.map((t: any) => t.name),
             start_date: formattedStartDate,
             end_date: formattedEndDate,
             reminder_date: formattedReminderDate,
             reminder_message: reminderMessage
         };
-         console.log("Tags to submit:", cardData);
+        console.log("Tags to submit:", cardData);
         const token = getToken();
 
         try {
@@ -171,6 +180,11 @@ export default function AddTask() {
             setError("Error de red al crear la tarjeta");
         };
     };
+
+    const goToBoardLists = () => {
+        router.push(`/boardList/${boardId}`)
+    }
+
 
     return (
         <div className="flex bg-[#1A1A1A] min-h-screen">
@@ -212,8 +226,12 @@ export default function AddTask() {
                                         placeholder="Hasta"
                                     />
                                 </div>
-                                <label className="font-poppins block text-white text-sm mt-5 mb-2">Crear recordatorio</label>
                                 {/* <ReminderSelect /> */}
+                                <label className="font-poppins block text-white text-sm mt-5 mb-2">Crear recordatorio</label>
+                                <ReminderSelect
+                                    value={reminderDaysBefore}
+                                    onChange={handleReminderChange}
+                                />
                             </div>
                         </div>
                     </div>
@@ -278,8 +296,11 @@ export default function AddTask() {
                             />
                         </div>
                         <div className="flex w-[575px]">
-                            <button type="submit" className="font-poppins flex-1 py-2 border border-[#6A5FFF] text-[#6A5FFF] rounded-xl hover:bg-[#5a4fef1b]">Cancelar creación</button>
-                            <button type="submit" className="font-poppins flex-1 ml-4 py-2 bg-[#6A5FFF] hover:bg-[#5A4FEF] text-white rounded-xl">Crear tarjeta</button>
+                            <button type="button" className="font-poppins flex-1 py-2 border border-[#6A5FFF] text-[#6A5FFF] rounded-xl hover:bg-[#5a4fef1b]"
+                                onClick={goToBoardLists}
+                            >Cancelar creación</button>
+                            <button type="submit" className="font-poppins flex-1 ml-4 py-2 bg-[#6A5FFF] hover:bg-[#5A4FEF] text-white rounded-xl"
+                            >Crear tarjeta</button>
                         </div>
                         {error && <div className="mt-4 text-red-500 font-poppins">{error}</div>}
                         {success && <div className="mt-4 text-green-500 font-poppins">{success}</div>}
