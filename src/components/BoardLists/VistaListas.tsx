@@ -6,9 +6,10 @@ import { updateListService } from "../../services/updateListService";
 import DeleteListButton from "./DeleteListButton";
 import Tarjeta from "./Tarjetas";
 
-const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
+const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMember?: boolean }> = ({
   boardId,
   isBoardOwner = false,
+  isBoardMember = false,
 }) => {
   const { boardLists, loading, error, getBoardLists } = useBoardLists(boardId);
 
@@ -38,7 +39,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 
   const goToAddTask = (listId: string | number) => {
     router.push(`/boardList/${boardId}/lists/${listId}/addtask`);
-  }
+  };
 
   return (
     <div className="flex gap-4 p-4 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
@@ -104,10 +105,23 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
                   assignees={tarea.assignees || []}
                   comentarios={0}
                   prioridad={tarea.priority}
+                  boardId={boardId}
+                  listId={list.id.toString()}
+                  card={{
+                    id: tarea.id,
+                    title: tarea.title,
+                    description: tarea.description
+                  }}
+                  isBoardOwner={isBoardOwner}
+                  isBoardMember={isBoardMember} 
+                  getBoardLists={getBoardLists}
                 />
               ))}
             </div>
-            <button onClick={() => goToAddTask(list.id)} className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700">
+            <button
+              onClick={() => goToAddTask(list.id)}
+              className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            >
               + Agregar tarea
             </button>
           </div>
@@ -127,4 +141,3 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean }> = ({
 };
 
 export default VistaListas;
-

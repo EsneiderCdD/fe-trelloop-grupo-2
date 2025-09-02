@@ -5,7 +5,7 @@ import UserNavbar from "components/home/UserNavbar";
 import { useParams } from "next/navigation";
 import VistaListas from "components/BoardLists/VistaListas";
 import VistaBacklog from "components/BoardLists/VistaBacklog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface BoardListProps {
   params: { boardId: string };
@@ -14,6 +14,44 @@ interface BoardListProps {
 export default function BoardListPage() {
   const { boardId } = useParams<{ boardId: string }>();
   const [vistaActiva, setVistaActiva] = useState<string>("backlog");
+  const [boardPermissions, setBoardPermissions] = useState({
+    isOwner: false,
+    isMember: false,
+    loading: true,
+  });
+
+  console.log('=== DEBUG BOARDLISTPAGE ===');
+  console.log('boardPermissions.isOwner:', boardPermissions.isOwner);
+  console.log('boardPermissions.isMember:', boardPermissions.isMember);
+  console.log('============================');
+
+  useEffect(() => {
+    const fetchBoardPermissions = async () => {
+      if (!boardId) return;
+
+      try {
+        setBoardPermissions({
+          isOwner: true, // Cambiar a true para testing
+          isMember: true, // Cambiar a true para testing
+          loading: false
+        });
+        // const response = await fetch(`/api/boards/${boardId}/permissions`);
+        // const data = await response.json();
+
+        // setBoardPermissions({
+        //   isOwner: data.is_owner,
+        //   isMember: data.is_member,
+        //   loading: false,
+        // });
+      } catch (error) {
+        console.error("Error fetching board permissions:", error);
+        setBoardPermissions((prev) => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchBoardPermissions();
+  }, [boardId]);
+
   const handleVistaChange = (vista: string) => {
     setVistaActiva(vista);
   };
@@ -32,10 +70,11 @@ export default function BoardListPage() {
             <div className="flex-grow font-poppins flex items-center justify-start gap-4">
               <button
                 type="button"
-                className={`px-5 py-1.5 text-1x1 rounded-lg transition-colors ${vistaActiva === "backlog"
-                  ? "bg-[#6A5FFF] text-white"
-                  : "hover:bg-[#6A5FFF] hover:text-white"
-                  }`}
+                className={`px-5 py-1.5 text-1x1 rounded-lg transition-colors ${
+                  vistaActiva === "backlog"
+                    ? "bg-[#6A5FFF] text-white"
+                    : "hover:bg-[#6A5FFF] hover:text-white"
+                }`}
                 onClick={() => handleVistaChange("backlog")}
               >
                 Backlog
@@ -43,10 +82,11 @@ export default function BoardListPage() {
               <div className="border-r border-[#3a3a3a] h-6"></div>
               <button
                 type="button"
-                className={`px-5 py-1.5 text-1x1 font-medium rounded-lg transition-colors ${vistaActiva === "listas"
-                  ? "bg-[#6A5FFF] text-white"
-                  : "hover:bg-[#6A5FFF] hover:text-white"
-                  }`}
+                className={`px-5 py-1.5 text-1x1 font-medium rounded-lg transition-colors ${
+                  vistaActiva === "listas"
+                    ? "bg-[#6A5FFF] text-white"
+                    : "hover:bg-[#6A5FFF] hover:text-white"
+                }`}
                 onClick={() => handleVistaChange("lists")}
               >
                 Listas
@@ -73,7 +113,14 @@ export default function BoardListPage() {
         <section className="flex-1 min-h-0 overflow-hidden flex">
           {vistaActiva === "backlog" && <VistaBacklog />}
           {vistaActiva === "lists" &&
-            (boardId ? <VistaListas boardId={boardId} /> : <p>Cargando...</p>)}
+            (boardId ? (<VistaListas 
+            boardId={boardId}
+            isBoardOwner={boardPermissions.isOwner}
+            isBoardMember={boardPermissions.isMember}
+            /> 
+            ) : (
+            <p>Cargando...</p>
+          ))}
         </section>
       </main>
     </div>
