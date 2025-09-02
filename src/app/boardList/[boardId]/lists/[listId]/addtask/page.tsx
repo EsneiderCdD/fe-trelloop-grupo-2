@@ -149,7 +149,6 @@ export default function AddTask() {
             title,
             description,
             priority,
-            members,
             assignees: assignees.map(a => a.id),
             tags: tags.map((t: any) => t.name),
             start_date: formattedStartDate,
@@ -157,7 +156,7 @@ export default function AddTask() {
             reminder_date: formattedReminderDate,
             reminder_message: reminderMessage
         };
-        console.log("Tags to submit:", cardData);
+
         const token = getToken();
 
         try {
@@ -258,6 +257,7 @@ export default function AddTask() {
                             <Responsible
                                 boardId={boardIdNum}
                                 members={members}
+                                assignees={assignees}
                                 onDelete={handleDeleteResponsible}
                                 onAdd={handleAddResponsible}
                             />
