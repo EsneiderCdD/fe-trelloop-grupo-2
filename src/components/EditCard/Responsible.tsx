@@ -17,16 +17,15 @@ type Member = {
 type MembersProps = {
   boardId: number;
   members: Member[];
-  assignees: Member[];
   onDelete: (id: string) => void;
   onAdd: (member: Member) => void;
 };
 
-const Responsible = ({ members, assignees, onDelete, onAdd, boardId }: MembersProps) => {
+const Responsible = ({ members, onDelete, onAdd, boardId }: MembersProps) => {
   const { query, setQuery, results, loading } = useResponsibleSearch(boardId);
 
   const handleSelect = (member: Member) => {
-    const alreadyExists = assignees.some((m) => m.id === member.id);
+    const alreadyExists = members.some((m) => m.id === member.id);
     if (!alreadyExists) {
       onAdd(member);
     }
@@ -92,7 +91,7 @@ const Responsible = ({ members, assignees, onDelete, onAdd, boardId }: MembersPr
       </div>
 
       <div className="flex mt-[5px] flex-wrap">
-        {assignees.map((member) => (
+        {members.map((member) => (
           <div className="flex items-center mr-[15px] mt-[8px]" key={member.id}>
             <Image
               src={member.img || DEFAULT_IMAGE_URL}

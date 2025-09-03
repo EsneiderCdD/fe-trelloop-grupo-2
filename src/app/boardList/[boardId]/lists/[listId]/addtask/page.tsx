@@ -26,7 +26,6 @@ export default function AddTask() {
     const [description, setDescription] = useState("");
     const [priority, setPriority] = useState("low");
     const [status, setStatus] = useState("pending");
-    const [members, setMembers] = useState<any[]>([]);
     const [assignees, setAssignees] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [formTags, setFormTags] = useState<{ id: number, name: string }[]>([]);
@@ -63,49 +62,6 @@ export default function AddTask() {
     const handleReminderChange = (daysBefore: number) => {
         setReminderDaysBefore(daysBefore);
     };
-
-
-    useEffect(() => {
-        const fetchBoardMembers = async () => {
-            const token = getToken();
-            if (!token) {
-                setError("No estás autenticado.");
-                setLoading(false);
-                return;
-            }
-
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/boards/${boardId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                if (!res.ok) {
-                    throw new Error("No se pudo cargar el tablero.");
-                }
-
-                const data = await res.json();
-                const boardMembers = data?.members || [];
-
-                setMembers(
-                    boardMembers.map((user: any) => ({
-                        id: String(user.id),
-                        name: `${user.name} ${user.last_name}`.trim(),
-                        username: user.email?.split("@")[0] || "usuario",
-                        email: user.email,
-                        img: user.avatar_url,
-                    }))
-                );
-            } catch (err: any) {
-                setError(err.message || "Error desconocido.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchBoardMembers();
-    }, [boardId]);
 
     // Lógica para agregar responsables
     const handleAddResponsible = (user: any) => {
@@ -149,7 +105,7 @@ export default function AddTask() {
             title,
             description,
             priority,
-            assignees: assignees.map(a => a.id),
+            assignee_ids: assignees.map(a => a.id),
             tags: tags.map((t: any) => t.name),
             start_date: formattedStartDate,
             end_date: formattedEndDate,
@@ -256,8 +212,7 @@ export default function AddTask() {
                         <section className="mb-4 w-[575px]">
                             <Responsible
                                 boardId={boardIdNum}
-                                members={members}
-                                assignees={assignees}
+                                members={assignees}
                                 onDelete={handleDeleteResponsible}
                                 onAdd={handleAddResponsible}
                             />
