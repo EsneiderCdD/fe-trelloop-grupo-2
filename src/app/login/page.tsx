@@ -1,12 +1,11 @@
 "use client";
 
 import React from "react";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useAuthStore } from "store/authStore";
-import Image from "next/image";
 import LogoutBanner from "components/LogoutBanner";
 
 const Login = () => {
@@ -16,11 +15,48 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const { login, loading, user, isAuthenticated, logoutReason, clearLogoutReason } = useAuthStore();
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Función para cargar email guardado del localStorage
+  const loadRememberedEmail = () => {
+    try {
+      const savedEmail = localStorage.getItem("rememberedEmail");
+      const wasRemembered = localStorage.getItem("rememberMeChecked");
+
+      if (savedEmail && wasRemembered === "true") {
+        setEmail(savedEmail);
+        setRememberMe(true);
+      }
+    } catch (error) {
+      console.error("Error al cargar email guardado:", error);
+    }
+  };
+
+  // Función para guardar email en localStorage
+  const saveEmail = (email: string) => {
+    try {
+      localStorage.setItem("rememberedEmail", email);
+      localStorage.setItem("rememberMeChecked", "true");
+    } catch (error) {
+      console.error("Error al guardar email:", error);
+    }
+  };
+
+  // Función para limpiar email guardado
+  const clearRememberedEmail = () => {
+    try {
+      localStorage.removeItem("rememberedEmail");
+      localStorage.removeItem("rememberMeChecked");
+    } catch (error) {
+      console.error("Error al limpiar email:", error);
+    }
+  };
 
   // Limpiar el banner cuando el componente se monta (opcional)
   useEffect(() => {
     // Solo limpiar si el usuario está navegando desde otra página
     // pero mantener el mensaje si viene de logout por inactividad
+    loadRememberedEmail();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,6 +87,13 @@ const Login = () => {
     const success = await login({ email, password });
 
     if (success) {
+      // Si el login es exitoso y el usuario marcó "Recordarme"
+      if (rememberMe) {
+        saveEmail(email);
+      } else {
+        // Si no marcó "Recordarme", limpiar cualquier email guardado previamente
+        clearRememberedEmail();
+      }
       // Redirigir al usuario a la página principal o a donde se desee
       router.push("/home");
     } else {
@@ -60,6 +103,17 @@ const Login = () => {
 
   const handleDismissAlert = () => {
     clearLogoutReason();
+  };
+
+  // Función para manejar cambios en el checkbox
+  const handleRememberMeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setRememberMe(checked);
+
+    // Si desmarca "Recordarme", limpiar el email guardado inmediatamente
+    if (!checked) {
+      clearRememberedEmail();
+    }
   };
 
   return (
@@ -80,12 +134,12 @@ const Login = () => {
           <hr className="border-gray-600" />
         </div>
 
-      {/* Banner de alerta (solo si hay logoutReason) */}
+        {/* Banner de alerta (solo si hay logoutReason) */}
         {logoutReason && (
           <div className="px-4 pt-4">
-            <LogoutBanner 
-              reason={logoutReason} 
-              onDismiss={handleDismissAlert} 
+            <LogoutBanner
+              reason={logoutReason}
+              onDismiss={handleDismissAlert}
             />
           </div>
         )}
@@ -95,8 +149,8 @@ const Login = () => {
           {/* Lado izquierdo */}
           <div className="w-1/2 hidden md:flex items-center justify-center">
             <img
-              src="/assets/images/ilustracion-usuario.png"
-              alt="Ilustración de usuario"
+              src="/assets/images/ilustracion-candado.svg"
+              alt="Ilustración de candado"
               className="max-w-md max-h-96 object-contain"
             />
           </div>
@@ -147,6 +201,8 @@ const Login = () => {
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={handleRememberMeChange}
                     className="w-3 h-3 text-primary-0 rounded border-gray-300 focus:text-primary-0"
                   />
                   <span className="text-sm text-neutral-100">Recordarme</span>
