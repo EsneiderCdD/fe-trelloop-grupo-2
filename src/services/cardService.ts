@@ -15,10 +15,23 @@ export const deleteCardById = async (boardId: number, listId: number, cardId: nu
   });
 
   if (!res.ok) {
-    throw new Error("Error al eliminar el tarjeta");
+    const errorText = await res.text();
+    throw new Error(`Error al eliminar la tarjeta: ${res.status} ${res.statusText}`);
   }
 
-  return res.json();
+  // Verificar si hay contenido en la respuesta antes de parsear JSON
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    try {
+      return await res.json();
+    } catch (error) {
+      // Si no hay JSON válido, devolver un objeto vacío
+      return {};
+    }
+  } else {
+    // Si no es JSON, devolver un objeto vacío
+    return {};
+  }
 };
 
 export const updateListCardById = async (boardId: number, listId: number, cardId: number, card: any) => {
@@ -38,7 +51,7 @@ export const updateListCardById = async (boardId: number, listId: number, cardId
   const responseData = await response.json();
 
   if (!response.ok) {
-    throw new ValidationError(responseData.message || "Error al actualizar la lista", "general");
+    throw new ValidationError(responseData.message || "Error al actualizar la tarjeta", "general");
   }
 
   return responseData;
