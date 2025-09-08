@@ -183,7 +183,7 @@ const VistaListas: React.FC<{
           {Array.isArray(localLists) && localLists.length > 0 ? (
             localLists.map((list) => (
               <DroppableList key={list.id} listId={list.id}>
-                <div className="w-[280px] bg-[#222] rounded-lg p-3 flex flex-col h-full flex-shrink-0">
+                <div className="w-[280px] bg-[#222] rounded-lg p-3 flex flex-col flex-shrink-0">
                   {/* Encabezado */}
                   <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
                     <div className="flex-1 min-w-0">
@@ -225,7 +225,7 @@ const VistaListas: React.FC<{
                   </div>
 
                   {/* Lista de tareas */}
-                  <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md flex-1 min-h-[100px]">
+                  <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md  min-h-[612px]">
                     {list.cards.map((tarea) => (
                       <DraggableTarjeta
                         key={tarea.id}
