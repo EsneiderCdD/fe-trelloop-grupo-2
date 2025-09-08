@@ -11,11 +11,11 @@ const DroppableList: React.FC<DroppableListProps> = ({ children, listId }) => {
     id: `list-${listId}`,
   });
 
-  const style = {
-    backgroundColor: isOver ? 'rgba(106, 95, 255, 0.1)' : undefined,
-    borderColor: isOver ? '#6A5FFF' : undefined,
-    borderWidth: isOver ? '2px' : undefined,
-    borderStyle: isOver ? 'dashed' : undefined,
+  const style: React.CSSProperties = {
+    backgroundColor: isOver ? "rgba(106, 95, 255, 0.1)" : undefined,
+    borderColor: isOver ? "#6A5FFF" : undefined,
+    borderWidth: isOver ? 2 : undefined,
+    borderStyle: isOver ? "dashed" : undefined,
   };
 
   return (
