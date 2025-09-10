@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useDroppable } from "@dnd-kit/core";
 
@@ -7,19 +9,12 @@ interface DroppableListProps {
 }
 
 const DroppableList: React.FC<DroppableListProps> = ({ children, listId }) => {
-  const { isOver, setNodeRef } = useDroppable({
+  const { setNodeRef } = useDroppable({
     id: `list-${listId}`,
   });
 
-  const style: React.CSSProperties = {
-    backgroundColor: isOver ? "rgba(106, 95, 255, 0.1)" : undefined,
-    borderColor: isOver ? "#6A5FFF" : undefined,
-    borderWidth: isOver ? 2 : undefined,
-    borderStyle: isOver ? "dashed" : undefined,
-  };
-
   return (
-    <div ref={setNodeRef} style={style} className="transition-all duration-200">
+    <div ref={setNodeRef}>
       {children}
     </div>
   );
