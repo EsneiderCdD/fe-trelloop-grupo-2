@@ -79,6 +79,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
     const overIdRaw = over.id;
 
+    // Caso: está sobre la "zona" de la lista (id tipo 'list-<id>') -> mover al final de esa lista
     if (typeof overIdRaw === "string" && overIdRaw.startsWith("list-")) {
       const targetListId = Number(overIdRaw.replace("list-", ""));
       setLocalLists((currentLists) => {
@@ -104,6 +105,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
           if (list.id === sourceListId) {
             return { ...list, cards: list.cards.filter((card) => card.id !== activeId) };
           } else if (list.id === targetListId) {
+            // Al soltar en la zona de la lista, siempre agregar al final
             return { ...list, cards: [...list.cards, activeCardLocal!] };
           }
           return list;
@@ -113,6 +115,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return;
     }
 
+    // Caso: está sobre otra tarjeta (over.id es id de tarjeta)
     const overId = typeof overIdRaw === "string" ? Number(overIdRaw) : (overIdRaw as number);
     if (isNaN(overId)) return;
 
@@ -142,6 +145,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
       if (!activeCardLocal || sourceListId === null || overListId === null) return currentLists;
 
+      // Reorden dentro de la misma lista
       if (sourceListId === overListId) {
         if (sourceIndex === overIndex) return currentLists;
         return currentLists.map((list) => {
@@ -150,13 +154,24 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         });
       }
 
+      // Mover entre listas distintas
       return currentLists.map((list) => {
         if (list.id === sourceListId) {
+          // quitar de la lista origen
           return { ...list, cards: list.cards.filter((c) => c.id !== activeId) };
         }
         if (list.id === overListId) {
+          // insertar en la lista destino en la posición correcta
           const newCards = [...list.cards];
-          newCards.splice(overIndex, 0, activeCardLocal!);
+
+          // FIX: si el overIndex es el último elemento, insertar al final (overIndex + 1)
+          // Esto evita que la tarjeta termine antes del último elemento (penúltima).
+          let insertIndex = overIndex;
+          if (overIndex === list.cards.length - 1) {
+            insertIndex = list.cards.length; // colocar al final
+          }
+
+          newCards.splice(insertIndex, 0, activeCardLocal!);
           return { ...list, cards: newCards };
         }
         return list;
@@ -246,7 +261,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                     )}
                   </div>
                 </SortableContext>
-
 
                 <button
                   onClick={() => goToAddTask(list.id)}
