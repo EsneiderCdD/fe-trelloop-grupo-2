@@ -35,10 +35,29 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
   const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
   const [nuevoTitulo, setNuevoTitulo] = useState("");
 
+  /**
+   * Inicializa / sincroniza localLists desde originalLists
+   * SOLO actualiza cuando hay una diferencia real para evitar re-renders infinitos.
+   */
   useEffect(() => {
-    if (originalLists && Array.isArray(originalLists)) {
-      setLocalLists(originalLists);
-    }
+    if (!originalLists || !Array.isArray(originalLists)) return;
+
+    setLocalLists((prev) => {
+      // Si prev vacío inicializamos
+      if (prev.length === 0) return originalLists;
+
+      // Comparación rápida: mismos ids de listas y mismas longitudes de cards por lista
+      const same =
+        prev.length === originalLists.length &&
+        prev.every((pl, idx) => {
+          const ol = originalLists[idx];
+          if (!ol) return false;
+          return pl.id === ol.id && pl.cards.length === ol.cards.length;
+        });
+
+      return same ? prev : originalLists;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [originalLists]);
 
   const sensors = useSensors(
@@ -101,6 +120,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
         if (sourceListId === targetListId) return currentLists;
 
+        // Solo crear nuevas listas afectadas
         return currentLists.map((list) => {
           if (list.id === sourceListId) {
             return { ...list, cards: list.cards.filter((card) => card.id !== activeId) };
