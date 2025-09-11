@@ -72,17 +72,13 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     setActiveCard(draggedCard || null);
   };
 
-  // === CAMBIO: handleDragOver soporta reordenamiento dentro de la misma lista
-  // y además INSERT cross-list si el "over" es una tarjeta de otra lista.
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    // Normalizamos ids (active puede venir como string o number)
     const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
     const overIdRaw = over.id;
 
-    // Caso 1: estamos sobre la zona droppable de la lista (ej: "list-3")
     if (typeof overIdRaw === "string" && overIdRaw.startsWith("list-")) {
       const targetListId = Number(overIdRaw.replace("list-", ""));
       setLocalLists((currentLists) => {
@@ -102,10 +98,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
           return currentLists;
         }
 
-        // Si es la misma lista, no hacemos nada
         if (sourceListId === targetListId) return currentLists;
 
-        // Removemos de la lista origen e insertamos al final de la lista destino
         return currentLists.map((list) => {
           if (list.id === sourceListId) {
             return { ...list, cards: list.cards.filter((card) => card.id !== activeId) };
@@ -119,9 +113,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return;
     }
 
-    // Caso 2: estamos sobre otra tarjeta (overIdRaw es id de tarjeta)
-    // -> si es misma lista: reordenar (arrayMove)
-    // -> si es distinta lista: remover de origen y colocar en la posición de la tarjeta sobre la que estamos
     const overId = typeof overIdRaw === "string" ? Number(overIdRaw) : (overIdRaw as number);
     if (isNaN(overId)) return;
 
@@ -149,10 +140,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         if (sourceListId !== null && overListId !== null) break;
       }
 
-      // Si no encontro elementos válidos, no hacemos nada
       if (!activeCardLocal || sourceListId === null || overListId === null) return currentLists;
 
-      // Misma lista -> reordenamiento vertical (arrayMove)
       if (sourceListId === overListId) {
         if (sourceIndex === overIndex) return currentLists;
         return currentLists.map((list) => {
@@ -161,14 +150,12 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         });
       }
 
-      // Cross-list: remover de origen e insertar en destino en la posición 'overIndex'
       return currentLists.map((list) => {
         if (list.id === sourceListId) {
           return { ...list, cards: list.cards.filter((c) => c.id !== activeId) };
         }
         if (list.id === overListId) {
           const newCards = [...list.cards];
-          // Insertamos antes de la tarjeta sobre la que estamos (si prefieres después, cambia overIndex -> overIndex + 1)
           newCards.splice(overIndex, 0, activeCardLocal!);
           return { ...list, cards: newCards };
         }
@@ -179,7 +166,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveCard(null);
-    // persistencia (sync con backend) queda para el siguiente paso del sprint
   };
 
   if (loading) return <div>Cargando...</div>;
@@ -238,20 +224,29 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
                 {/* Lista de tareas */}
                 <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-                  <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md min-h-[612px]">
-                    {list.cards.map((tarea) => (
-                      <DraggableTarjeta
-                        key={tarea.id}
-                        card={tarea}
-                        boardId={boardId}
-                        listId={list.id.toString()}
-                        isBoardOwner={isBoardOwner}
-                        isBoardMember={isBoardMember}
-                        getBoardLists={getBoardLists}
-                      />
-                    ))}
+                  <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md 
+                  min-h-[612px] max-h-[612px] 
+                  overflow-y-auto overflow-x-hidden scrollbar-custom">
+                    {list.cards.length > 0 ? (
+                      list.cards.map((tarea) => (
+                        <DraggableTarjeta
+                          key={tarea.id}
+                          card={tarea}
+                          boardId={boardId}
+                          listId={list.id.toString()}
+                          isBoardOwner={isBoardOwner}
+                          isBoardMember={isBoardMember}
+                          getBoardLists={getBoardLists}
+                        />
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+                        
+                      </div>
+                    )}
                   </div>
                 </SortableContext>
+
 
                 <button
                   onClick={() => goToAddTask(list.id)}
