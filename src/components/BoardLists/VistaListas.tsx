@@ -43,10 +43,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     if (!originalLists || !Array.isArray(originalLists)) return;
 
     setLocalLists((prev) => {
-      // Si prev vacío inicializamos
       if (prev.length === 0) return originalLists;
 
-      // Comparación rápida: mismos ids de listas y mismas longitudes de cards por lista
       const same =
         prev.length === originalLists.length &&
         prev.every((pl, idx) => {
@@ -98,7 +96,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
     const overIdRaw = over.id;
 
-    // Caso: está sobre la "zona" de la lista (id tipo 'list-<id>') -> mover al final de esa lista
+    // Caso: está sobre la "zona" de la lista -> mover al final
     if (typeof overIdRaw === "string" && overIdRaw.startsWith("list-")) {
       const targetListId = Number(overIdRaw.replace("list-", ""));
       setLocalLists((currentLists) => {
@@ -120,12 +118,10 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
         if (sourceListId === targetListId) return currentLists;
 
-        // Solo crear nuevas listas afectadas
         return currentLists.map((list) => {
           if (list.id === sourceListId) {
             return { ...list, cards: list.cards.filter((card) => card.id !== activeId) };
           } else if (list.id === targetListId) {
-            // Al soltar en la zona de la lista, siempre agregar al final
             return { ...list, cards: [...list.cards, activeCardLocal!] };
           }
           return list;
@@ -135,7 +131,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return;
     }
 
-    // Caso: está sobre otra tarjeta (over.id es id de tarjeta)
+    // Caso: está sobre otra tarjeta
     const overId = typeof overIdRaw === "string" ? Number(overIdRaw) : (overIdRaw as number);
     if (isNaN(overId)) return;
 
@@ -177,20 +173,14 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       // Mover entre listas distintas
       return currentLists.map((list) => {
         if (list.id === sourceListId) {
-          // quitar de la lista origen
           return { ...list, cards: list.cards.filter((c) => c.id !== activeId) };
         }
         if (list.id === overListId) {
-          // insertar en la lista destino en la posición correcta
           const newCards = [...list.cards];
-
-          // FIX: si el overIndex es el último elemento, insertar al final (overIndex + 1)
-          // Esto evita que la tarjeta termine antes del último elemento (penúltima).
           let insertIndex = overIndex;
           if (overIndex === list.cards.length - 1) {
-            insertIndex = list.cards.length; // colocar al final
+            insertIndex = list.cards.length;
           }
-
           newCards.splice(insertIndex, 0, activeCardLocal!);
           return { ...list, cards: newCards };
         }
@@ -253,15 +243,22 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                       className="w-4 h-4 cursor-pointer"
                       onClick={() => iniciarEdicion(list.id, list.name)}
                     />
-                    <DeleteListButton boardId={boardId} list={list} getBoardLists={getBoardLists} isBoardOwner={isBoardOwner} />
+                    <DeleteListButton
+                      boardId={boardId}
+                      list={list}
+                      getBoardLists={getBoardLists}
+                      isBoardOwner={isBoardOwner}
+                    />
                   </div>
                 </div>
 
                 {/* Lista de tareas */}
                 <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-                  <div className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md 
+                  <div
+                    className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md 
                   min-h-[612px] max-h-[612px] 
-                  overflow-y-auto overflow-x-hidden scrollbar-custom">
+                  overflow-y-auto overflow-x-hidden scrollbar-custom"
+                  >
                     {list.cards.length > 0 ? (
                       list.cards.map((tarea) => (
                         <DraggableTarjeta
@@ -275,9 +272,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                         />
                       ))
                     ) : (
-                      <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-                        
-                      </div>
+                      <div className="flex items-center justify-center h-full text-gray-400 text-sm"></div>
                     )}
                   </div>
                 </SortableContext>
