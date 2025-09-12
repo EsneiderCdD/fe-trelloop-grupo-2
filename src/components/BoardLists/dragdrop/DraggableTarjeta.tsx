@@ -1,9 +1,12 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useRouter } from "next/navigation";
 import DeleteCardButton from "../DeleteCardButton";
 import { Card } from "./types";
+import Portal from "../Portal";
 
 interface DraggableTarjetaProps {
   card: Card;
@@ -23,8 +26,11 @@ const DraggableTarjeta: React.FC<DraggableTarjetaProps> = ({
   getBoardLists,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
 
@@ -41,7 +47,12 @@ const DraggableTarjeta: React.FC<DraggableTarjetaProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         setShowMenu(false);
       }
     };
@@ -109,6 +120,13 @@ const DraggableTarjeta: React.FC<DraggableTarjetaProps> = ({
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!showMenu && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom - 5,
+        left: rect.left + 14,     
+      });
+    }
     setShowMenu(!showMenu);
   };
 
@@ -140,8 +158,12 @@ const DraggableTarjeta: React.FC<DraggableTarjetaProps> = ({
             ))}
           </div>
 
-          <button onClick={handleMenuClick}>
-            <img src="/assets/icons/ellipsis.svg" alt="Opciones" className="w-6 h-6 transform rotate-90" />
+          <button ref={buttonRef} onClick={handleMenuClick}>
+            <img
+              src="/assets/icons/ellipsis.svg"
+              alt="Opciones"
+              className="w-6 h-6 transform rotate-90"
+            />
           </button>
         </div>
 
@@ -193,22 +215,30 @@ const DraggableTarjeta: React.FC<DraggableTarjetaProps> = ({
             <img src="/assets/icons/workflow.svg" alt="Comentarios" className="w-5 h-5" />
           </div>
         </div>
+      </div>
 
-        {/* Menú contextual */}
-        {showMenu && (
+      {/* Menú contextual en Portal */}
+      {showMenu && menuPosition && (
+        <Portal>
           <div
             ref={menuRef}
-            className="absolute top-5 left-56 z-50 w-[223px] h-[150px] rounded-md bg-[#272727] shadow-lg p-4 flex flex-col gap-2 animate-fade-in"
-            style={{ zIndex: 9999 }}
+            className="fixed z-[9999] w-[223px] h-[150px] rounded-md bg-[#272727] shadow-lg p-4 flex flex-col gap-2 animate-fade-in"
+            style={{
+              top: menuPosition.top,
+              left: menuPosition.left,
+            }}
           >
             <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
               <img src="/assets/icons/eyes.svg" alt="Ver" className="w-5 h-5" />
               <span className="text-white text-sm font-medium">Ver tarjeta</span>
             </button>
 
-            <button onClick={() => router.push(editURL)} className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
+            <button
+              onClick={() => router.push(editURL)}
+              className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]"
+            >
               <img src="/assets/icons/edit.png" alt="Editar" className="w-4 h-4" />
-              <span className="text-white text-sm font-medium"> Editar tarjeta </span>
+              <span className="text-white text-sm font-medium">Editar tarjeta</span>
             </button>
 
             <DeleteCardButton
@@ -222,8 +252,8 @@ const DraggableTarjeta: React.FC<DraggableTarjetaProps> = ({
               onDeleteClick={handleDeleteClick}
             />
           </div>
-        )}
-      </div>
+        </Portal>
+      )}
 
       {/* Modal de confirmación */}
       {showDeleteModal && (
