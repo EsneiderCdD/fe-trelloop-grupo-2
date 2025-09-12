@@ -297,7 +297,20 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       </div>
 
       {/* Overlay para mostrar la tarjeta siendo arrastrada */}
-      <DragOverlay>{activeCard ? <DragOverlayCard activeCard={activeCard} /> : null}</DragOverlay>
+      <DragOverlay>
+        {activeCard ? (
+          <DraggableTarjeta
+            card={activeCard}
+            boardId={boardId}
+            listId={"overlay"} // valor dummy
+            isBoardOwner={isBoardOwner}
+            isBoardMember={isBoardMember}
+            getBoardLists={getBoardLists}
+            isOverlay={true}
+          />
+        ) : null}
+      </DragOverlay>
+
     </DndContext>
   );
 };
