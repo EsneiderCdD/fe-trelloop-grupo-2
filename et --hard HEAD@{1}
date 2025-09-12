@@ -1,0 +1,104 @@
+[33m11ac51e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mazulejo-equipo-6-grupo-2[m[33m)[m HEAD@{0}: commit (merge): Merge branch 'grupo-2
+[33m75f9ddb[m HEAD@{1}: commit: fix : bug render buble
+[33mdf2bcc9[m[33m ([m[1;31morigin/azulejo-equipo-6-grupo-2[m[33m)[m HEAD@{2}: commit: fix : bug insersion ultima posicion
+[33m6f8d9fd[m HEAD@{3}: commit: fix: bugs drag drop
+[33m11f8148[m HEAD@{4}: commit: fix : deseñalizacion estilos en droppablelist
+[33m2e3f1ed[m HEAD@{5}: reset: moving to HEAD
+[33m2e3f1ed[m HEAD@{6}: commit: fiX : colision con areas drag & drop
+[33m5a66517[m HEAD@{7}: commit: refactor : dragdrop
+[33mf3b3edf[m HEAD@{8}: commit: fix: list responsive y min-h
+[33m70311c2[m HEAD@{9}: commit: feat(&style): DraggableTarjeta - DroppableList - VistasListas - dnd-kit +
+[33m27ce231[m HEAD@{10}: pull origin grupo-2: Fast-forward
+[33m1689210[m HEAD@{11}: pull origin grupo-2: Fast-forward
+[33m547b705[m HEAD@{12}: pull origin grupo-2: Fast-forward
+[33maa5f281[m HEAD@{13}: commit: sprint terminado
+[33m9859636[m HEAD@{14}: commit (merge): Merge branch 'grupo-2'
+[33mf2f8a72[m HEAD@{15}: commit: chore: casos de uso : etiquetas
+[33m430387f[m HEAD@{16}: commit: chore: casos de uso/validaciones basicas
+[33m66f78e4[m HEAD@{17}: commit: feat(fix): bug menu desplegable
+[33mea1ccf7[m HEAD@{18}: commit: feat(style): ver tarjeta
+[33m9aa7e08[m HEAD@{19}: commit: feat(style): border, color, tipografia...
+[33m85657a5[m HEAD@{20}: commit: feat: contador de responsables
+[33m66c366b[m HEAD@{21}: commit: fix: bug button closebutton
+[33mc49770d[m HEAD@{22}: commit: feat(style) : tipografia tarjetas
+[33ma335623[m HEAD@{23}: commit: style: tags
+[33mdb8116f[m HEAD@{24}: commit: style: tags
+[33mac36774[m HEAD@{25}: commit: style: etiquetas
+[33m33fcf6f[m HEAD@{26}: commit: feat:style : espacido de las cards
+[33m3607fba[m HEAD@{27}: commit: feat: fetch imagenes/avatar
+[33mde90923[m HEAD@{28}: commit: feat: fetch imagenes/avatar
+[33m22a588b[m HEAD@{29}: commit: chore: clean code
+[33m4020715[m HEAD@{30}: commit: feat(style) : fetch y style prioridad tarjeta
+[33m3dba278[m HEAD@{31}: commit (merge): Merge grupo-2
+[33md8712f2[m HEAD@{32}: commit: feat: fetch prioridad de la card
+[33m260b4c0[m HEAD@{33}: commit: feat: fetch cards
+[33m4d43bd5[m HEAD@{34}: commit (merge): merge-front grupo-2
+[33me03ded3[m HEAD@{35}: commit: feat(style): Tarjetas.tsx yy VistasListas (Harcodeado)
+[33mef926d8[m HEAD@{36}: pull origin grupo-2: Fast-forward
+[33m80725fe[m HEAD@{37}: commit: feat: Editar nombre de la lista
+[33m2cc2e37[m HEAD@{38}: commit: feat(merge) : editar y eliminar listas
+[33me47a6c7[m HEAD@{39}: commit (merge): feat(merge): editar y eliminar listas
+[33m40ec24f[m HEAD@{40}: commit: feat:Editar nombre de la listas terminado
+[33mcf50898[m HEAD@{41}: reset: moving to HEAD
+[33mcf50898[m HEAD@{42}: commit: feat: editar tablero
+[33m55a73c8[m HEAD@{43}: commit (merge): feat(merge): Lists
+[33m31a9d2a[m HEAD@{44}: commit: feat: funcionalidad Editar nombre de listas
+[33m03178d0[m HEAD@{45}: commit: feat: editar nombre listas
+[33mbc0fc4b[m HEAD@{46}: pull origin grupo-2: Fast-forward
+[33mdfe1ed7[m HEAD@{47}: commit: fix: bug error image
+[33m492ae2b[m HEAD@{48}: commit: fix: bug url imagen del tablero
+[33md8454df[m HEAD@{49}: commit: feat: rediccionamiento al home despues de editar
+[33m2411a47[m HEAD@{50}: checkout: moving from azulejo-equipo-6-grupo-2 to azulejo-equipo-6-grupo-2
+[33m2411a47[m HEAD@{51}: commit: feat: Tarea finalizada -> editar tablero
+[33m3c774f9[m HEAD@{52}: pull origin azulejo-equipo-6-grupo-2: Fast-forward
+[33ma9f1ac6[m HEAD@{53}: commit (merge): Merge branch into azulejo-equipo-6-grupo-2
+[33m9fcf088[m HEAD@{54}: commit: fix: bugs, acceso al tablero, carga de imagen
+[33m668ead2[m HEAD@{55}: commit: fix: bug API_URL
+[33m49e0d70[m HEAD@{56}: reset: moving to HEAD
+[33m49e0d70[m HEAD@{57}: commit (merge): Actualizacion grupo -2
+[33m057d778[m HEAD@{58}: commit: refactor: types.ts
+[33mc027ddb[m HEAD@{59}: commit: fix: rename folders
+[33m0676f12[m HEAD@{60}: reset: moving to HEAD
+[33m0676f12[m HEAD@{61}: commit: feat: types.ts
+[33m83bdc95[m HEAD@{62}: commit: feat: Enviar PUT con ids e imagen
+[33m57cc80a[m HEAD@{63}: commit: feat: boardinfo -> campo y cambiar imagen de cloudinary
+[33m5255fb3[m HEAD@{64}: commit: feat: publico y privado payload
+[33m8fe45a3[m HEAD@{65}: commit: feat: agregar palabras campo tags
+[33m4da4a18[m HEAD@{66}: commit: feat
+[33me6a2ccd[m HEAD@{67}: commit: fix : default image front bug
+[33m12f0fe6[m HEAD@{68}: commit: comentario?
+[33mc50c70f[m HEAD@{69}: commit: feat: memebersearch y usemembersearch
+[33mc018312[m HEAD@{70}: commit (merge): Merge branch 'grupo-2' of into azulejo-equipo-6-grupo-2
+[33m0ba9eb9[m HEAD@{71}: commit: planning.md
+[33m995c8e6[m HEAD@{72}: commit (merge): Mergd grupo 2
+[33m40f1640[m HEAD@{73}: commit: refactor: refactor inicial para Edit.tsx
+[33m17dd353[m HEAD@{74}: commit: refactor : BoardInfo -> Image, Name, Description
+[33mc0abb1e[m HEAD@{75}: commit: chore: Arquitectura para EditBoard
+[33mcdeb7ae[m[33m ([m[1;31morigin/bitbuilders-equipo-5-grupo-2[m[33m)[m HEAD@{76}: merge origin/grupo-2: Fast-forward
+[33mb5d2951[m HEAD@{77}: commit: fix(feature): Circulos (background y footer)
+[33me0bc177[m HEAD@{78}: commit: fix(feature): Circulos (background y footer)
+[33mab37f0d[m HEAD@{79}: pull origin grupo-2: Fast-forward
+[33m267795a[m HEAD@{80}: commit: comentar grilla front
+[33m42478ea[m HEAD@{81}: commit: feat: typography and corrections
+[33m3e4ea18[m HEAD@{82}: commit (merge): resolucion de conflictos
+[33me9538e3[m HEAD@{83}: commit: eliminar comentario
+[33mf478b7c[m HEAD@{84}: checkout: moving from azulejo-equipo-6-grupo-2 to azulejo-equipo-6-grupo-2
+[33mf478b7c[m HEAD@{85}: checkout: moving from azulejo-equipo-6-grupo-2 to azulejo-equipo-6-grupo-2
+[33mf478b7c[m HEAD@{86}: reset: moving to f478b7c
+[33m2ab3e8c[m HEAD@{87}: commit (merge): Merge: Resolucion de conflictos
+[33mc3962a1[m HEAD@{88}: commit: Guardando cambios antes del pull
+[33mf478b7c[m HEAD@{89}: pull origin azulejo-equipo-6-grupo-2: Fast-forward
+[33m12b9df7[m HEAD@{90}: reset: moving to HEAD^
+[33m6e298e3[m HEAD@{91}: commit (merge): Merge origin/grupo-2 into azulejo-equipo-6-grupo-2
+[33m12b9df7[m HEAD@{92}: pull origin azulejo-equipo-6-grupo-2: Fast-forward
+[33m8cc228d[m HEAD@{93}: commit: ajustes mejores layout
+[33mf7801c9[m HEAD@{94}: pull origin azulejo-equipo-6-grupo-2: Fast-forward
+[33m0b405f6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{95}: checkout: moving from esneider-equipo-6-grupo-2 to azulejo-equipo-6-grupo-2
+[33m84b54c0[m[33m ([m[1;31morigin/esneider-equipo-6-grupo-2[m[33m, [m[1;32mesneider-equipo-6-grupo-2[m[33m)[m HEAD@{96}: commit: checkpoint Header Estructuralidad
+[33mb1f5add[m HEAD@{97}: commit: Forma Header Imagenes
+[33m4911aa7[m HEAD@{98}: commit: checkpoint: Header-Imagenes
+[33m883b35d[m HEAD@{99}: commit: Footer Estructural
+[33m0b405f6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{100}: checkout: moving from azulejo-equipo-6-grupo-2 to esneider-equipo-6-grupo-2
+[33m0b405f6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{101}: checkout: moving from main to azulejo-equipo-6-grupo-2
+[33m0b405f6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{102}: checkout: moving from main to main
+[33m0b405f6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{103}: clone: from https://github.com/Programa-TrainIT-Ar/fe-trelloop-grupo-2.git
