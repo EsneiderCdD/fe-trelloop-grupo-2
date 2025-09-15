@@ -20,7 +20,7 @@ import { updateListService } from "../../services/updateListService";
 import DeleteListButton from "./DeleteListButton";
 import DroppableList from "./dragdrop/DroppableList";
 import DraggableTarjeta from "./dragdrop/DraggableTarjeta";
-import DragOverlayCard from "./dragdrop/DragOverlayCard";
+// import DragOverlayCard from "./dragdrop/DragOverlayCard";
 import { Card, List } from "./dragdrop/types";
 
 const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMember?: boolean }> = ({
@@ -55,7 +55,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
       return same ? prev : originalLists;
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [originalLists]);
 
   const sensors = useSensors(
@@ -306,7 +306,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
             isBoardOwner={isBoardOwner}
             isBoardMember={isBoardMember}
             getBoardLists={getBoardLists}
-            isOverlay={true}
+            // isOverlay={true}
           />
         ) : null}
       </DragOverlay>
