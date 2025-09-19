@@ -209,11 +209,11 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex gap-4 p-4 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
+      <div className="flex gap-4 p-4 pt-1 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
         {Array.isArray(localLists) && localLists.length > 0 ? (
           localLists.map((list) => (
             <DroppableList key={list.id} listId={list.id}>
-              <div className="w-[280px] bg-[#222] rounded-lg p-3 flex flex-col flex-shrink-0">
+              <div className="w-[280px] bg-[#222] rounded-lg p-2  pt-0 flex flex-col flex-shrink-0">
                 {/* Encabezado */}
                 <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
                   <div className="flex-1 min-w-0">
@@ -255,8 +255,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                 {/* Lista de tareas */}
                 <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
                   <div
-                    className="flex flex-col gap-3 bg-[#2b2b2b] p-2 rounded-b-md 
-                  min-h-[612px] max-h-[612px] 
+                    className="flex flex-col gap-3 bg-[#2b2b2b] p-1 rounded-b-md 
+                  min-h-[450px] max-h-[450px] 
                   overflow-y-auto overflow-x-hidden scrollbar-custom"
                   >
                     {list.cards.length > 0 ? (
@@ -279,7 +279,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
                 <button
                   onClick={() => goToAddTask(list.id)}
-                  className="mt-2 py-2 px-3 w-full bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                  className="mt-2 py-2 px-3 w-full bg-[#6A5FFF] text-white rounded-xl"
                 >
                   + Agregar tarea
                 </button>

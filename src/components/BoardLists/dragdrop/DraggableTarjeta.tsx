@@ -83,7 +83,7 @@ const DraggableTarjeta: React.FC<Props> = ({
         style={style}
         {...attributes}
         {...listeners}
-        className={`relative bg-[#3a3a3a] w-[240px] h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between cursor-grab active:cursor-grabbing ${getPriorityColor(
+        className={`relative bg-[#3a3a3a] w-[250px] min-h-[101px] rounded-md p-1 border-l-4 flex flex-col justify-between cursor-grab active:cursor-grabbing ${getPriorityColor(
           card.priority
         )} ${isDragging ? "z-50" : ""}`}
       >
