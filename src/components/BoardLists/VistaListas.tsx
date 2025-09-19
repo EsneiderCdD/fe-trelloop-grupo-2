@@ -256,7 +256,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                 <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
                   <div
                     className="flex flex-col gap-3 bg-[#2b2b2b] p-1 rounded-b-md 
-                  min-h-[450px] max-h-[450px] 
+                  min-h-[455px] max-h-[450px] 
                   overflow-y-auto overflow-x-hidden scrollbar-custom"
                   >
                     {list.cards.length > 0 ? (
