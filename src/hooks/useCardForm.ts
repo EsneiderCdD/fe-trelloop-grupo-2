@@ -8,7 +8,8 @@ import { getCardById as apiGetCardById, updateListCardById } from "services/card
 const initialFormState: any = {
   title: "",
   description: "",
-  assignees: [],
+  assignees: [],      // responsables
+  members: [],        
   priority: "",
   status: "",
   tags: [],
@@ -41,6 +42,7 @@ export function useCardForm() {
         const payload = await apiGetCardById(boardIdNum, listIdNum, cardIdNum);
         const card = payload?.card || payload;
 
+        // Responsables (assignees de la tarjeta)
         const assignees = (card.assignees || []).map((user: any) => ({
           id: String(user.id),
           name: `${user.name} ${user.last_name}`.trim(),
@@ -49,12 +51,22 @@ export function useCardForm() {
           img: user.avatar_url,
         }));
 
+        // Miembros del tablero (board_members del backend)
+        const members = (card.board_members || []).map((m: any) => ({
+          id: String(m.id),
+          name: `${m.name} ${m.last_name}`.trim(),
+          email: m.email,
+          img: m.avatar_url,
+          role: m.role, // owner/admin/member
+        }));
+
         const prMap: any = { Alta: "high", Media: "medium", Baja: "low" };
 
         setForm({
           title: card.title || "",
           description: card.description || "",
           assignees,
+          members,
           priority: prMap[card.priority] || card.priority || "",
           status: card.status || "",
           tags: card.tags || [],
@@ -108,8 +120,8 @@ export function useCardForm() {
         title: form.title,
         description: form.description,
         priority: priorityMap[form.priority] || null,
-        assignee_ids: form.assignees.map((m: any) => m.email),
-        tags: form.tags.map((t: any) => t.name),
+        assignee_ids: (form.assignees || []).map((m: any) => m.email), // mantiene responsables
+        tags: (form.tags || []).map((t: any) => t.name),
         start_date: form.startDate ? new Date(form.startDate).toISOString().split("T")[0] : undefined,
         end_date: form.endDate ? new Date(form.endDate).toISOString().split("T")[0] : undefined,
         reminder_date: reminderDate ? reminderDate.toISOString().split("T")[0] : undefined,
