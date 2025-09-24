@@ -130,7 +130,7 @@ function CommentsPanel({
           })
         );
       } catch {
-        // opcional: toast
+        
       } finally {
         if (!mounted) return;
         setLoading(false);
@@ -156,7 +156,7 @@ function CommentsPanel({
         body: created.comment,
         dateLabel: timeAgo(created.created_at),
       };
-      setComments((prev) => [ui, ...prev]); // prepend
+      setComments((prev) => [ui, ...prev]);
       setNewComment("");
     } catch (e: any) {
       alert(e?.message || "No se pudo enviar el comentario");
@@ -169,13 +169,11 @@ function CommentsPanel({
 
   return (
     <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
-      {/* Título con icono correcto */}
       <div className="flex items-center gap-2 mb-3">
         <img src="/assets/icons/messages-square.png" alt="Comentarios" width={18} height={18} className="opacity-80" />
         <span className="text-[13px] font-medium">Comentarios</span>
       </div>
 
-      {/* Caja de entrada + botón (en columna, botón debajo) */}
       <div className="flex flex-col">
         <div className="flex items-start gap-3">
           <div className="w-8 h-8 rounded-full overflow-hidden bg-[#1f1f1f] flex items-center justify-center shrink-0">
@@ -187,7 +185,7 @@ function CommentsPanel({
             />
           </div>
 
-          {/* Input con medidas exactas */}
+          {/* Input */}
           <textarea
             placeholder="Escribe aquí..."
             value={newComment}
@@ -210,7 +208,7 @@ function CommentsPanel({
           />
         </div>
 
-        {/* Botón Enviar (debajo, alineado a la derecha) */}
+        {/* Botón Enviar*/}
         <div className="flex justify-end mt-2 pl-11">
           <button
             type="button"
@@ -245,7 +243,7 @@ function CommentsPanel({
             overscrollBehavior: "contain",
             WebkitOverflowScrolling: "touch",
             msOverflowStyle: "auto",
-            overflowY: "auto" as any, // refuerzo inline por si hay estilos globales
+            overflowY: "auto" as any,
           }}
         >
           {loading ? (
@@ -281,7 +279,7 @@ function CommentsPanel({
                     </button>
                   </div>
 
-                  {/* Texto del comentario visible, respetando saltos de línea */}
+                  {/* Texto del comentario*/}
                   <p className="mt-1 text-[13px] leading-[1.4] opacity-90 whitespace-pre-wrap break-words">
                     {c.body}
                   </p>
@@ -492,7 +490,7 @@ export default function CardDetail() {
                       <span style={{ fontFamily: "Poppins", fontWeight: 500, fontSize: 14, lineHeight: "100%" }}>Mover tarjeta de lista</span>
                     </button>
 
-                    {/* Área con select + botón (ajustada para no desbordar) */}
+                    {/* Área con select + botón */}
                     {showMoveArea && (
                       <div className="mt-2 px-4 w-full">
                         <div className="flex items-center gap-2 w-full">
@@ -537,7 +535,7 @@ export default function CardDetail() {
             </div>
           </div>
 
-          {/* Cuerpo principal (GRID para alinear Comentarios con la Descripción) */}
+          {/* Cuerpo principal */}
           <div className="mt-4 w-[1124px] max-w-full mx-auto grid grid-cols-[1fr_360px] gap-4 items-start">
             {/* Fila 1, Col 1: Chips + título */}
             <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
@@ -616,7 +614,7 @@ export default function CardDetail() {
                         background: "rgba(255,255,255,0.04)",
                         border: "1px solid rgba(60,60,60,0.7)",
                         borderRadius: 8,
-                        padding: "0 16px", // el padding lo manejamos con pr en el input
+                        padding: "0 16px",
                       }}
                     >
                       {/* Input ocupa todo y deja espacio a la derecha para el icono */}
@@ -774,7 +772,6 @@ export default function CardDetail() {
                               // desmarcado: borde gris exacto
                               border: t.done ? "1px solid #6A5FFF" : "1px solid rgba(116, 113, 113, 1)",
                               backgroundColor: t.done ? "#6A5FFF" : "transparent",
-                              // marcado: check blanco
                               backgroundImage: t.done
                                 ? "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='white' d='M6.1 11.2l-3-3 .8-.8 2.2 2.1 4.9-4.9.8.8z'/%3E%3C/svg%3E\")"
                                 : "none",
