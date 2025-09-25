@@ -22,6 +22,9 @@ import DroppableList from "./dragdrop/DroppableList";
 import DraggableTarjeta from "./dragdrop/DraggableTarjeta";
 // import DragOverlayCard from "./dragdrop/DragOverlayCard";
 import { Card, List } from "./dragdrop/types";
+import { updateCardPosition } from "./services/cardService";
+import { getToken } from "../../store/authStore";
+
 
 const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMember?: boolean }> = ({
   boardId,
@@ -55,7 +58,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
       return same ? prev : originalLists;
     });
-   
+
   }, [originalLists]);
 
   const sensors = useSensors(
@@ -188,10 +191,71 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       });
     });
   };
+const handleDragEnd = async (event: DragEndEvent) => {
+  const { active, over } = event;
+  setActiveCard(null);
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    setActiveCard(null);
-  };
+  if (!over) return;
+
+  const activeId = typeof active.id === "string" ? Number(active.id) : active.id;
+  const overId = typeof over.id === "string" ? Number(over.id) : over.id;
+
+  let sourceListId: number | null = null;
+  let targetListId: number | null = null;
+  let newPosition = 0;
+
+  // Encontrar lista origen y tarjeta
+  let draggedCard: Card | null = null;
+  for (const list of localLists) {
+    const idx = list.cards.findIndex((c) => c.id === activeId);
+    if (idx >= 0) {
+      sourceListId = list.id;
+      draggedCard = list.cards[idx];
+      break;
+    }
+  }
+
+  // Encontrar lista destino
+  for (const list of localLists) {
+    const idx = list.cards.findIndex((c) => c.id === overId);
+    if (idx >= 0) {
+      targetListId = list.id;
+      newPosition = idx;
+      break;
+    }
+  }
+
+  if (!sourceListId || !targetListId || !draggedCard) return;
+
+  try {
+    const token = getToken();
+    if (!token) throw new Error("JWT token missing");
+
+    // Llamada al backend para actualizar posición y lista
+    await updateCardPosition(boardId, targetListId, activeId, newPosition, token);
+
+    // Actualización local optimista
+    setLocalLists((lists) => {
+      return lists.map((list) => {
+        if (list.id === sourceListId) {
+          return { ...list, cards: list.cards.filter((c) => c.id !== activeId) };
+        }
+        if (list.id === targetListId) {
+          const newCards = [...list.cards];
+          const insertIndex = Math.min(newPosition, newCards.length);
+          newCards.splice(insertIndex, 0, draggedCard);
+          return { ...list, cards: newCards };
+        }
+        return list;
+      });
+    });
+
+    // Opcional: refrescar listas completas desde backend
+    getBoardLists();
+  } catch (err) {
+    console.error("Error al actualizar posición de la tarjeta:", err);
+  }
+};
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -306,7 +370,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
             isBoardOwner={isBoardOwner}
             isBoardMember={isBoardMember}
             getBoardLists={getBoardLists}
-            // isOverlay={true}
+          // isOverlay={true}
           />
         ) : null}
       </DragOverlay>
