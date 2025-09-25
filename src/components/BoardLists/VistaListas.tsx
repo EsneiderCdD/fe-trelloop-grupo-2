@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
 import {
   DndContext,
   DragEndEvent,
@@ -32,6 +33,12 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
   isBoardMember = false,
 }) => {
   const { boardLists: originalLists, loading, error, getBoardLists } = useBoardLists(boardId);
+
+  const dragInfoRef = useRef<{ cardId: number; sourceListId: number; sourceIndex: number } | null>(null);
+  const uiIndexToBackendPos = (listLength: number, uiIndex: number) => {
+    return Math.max(0, listLength - 1 - uiIndex);
+  };
+
 
   const [localLists, setLocalLists] = useState<List[]>([]);
   const [activeCard, setActiveCard] = useState<Card | null>(null);
@@ -87,10 +94,24 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    const cardId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
-    const draggedCard = localLists.flatMap((list) => list.cards).find((card) => card.id === cardId);
-    setActiveCard(draggedCard || null);
+    const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
+
+    // Encuentra lista origen e índice en el estado actual (antes de mover)
+    for (const list of localLists) {
+      const idx = list.cards.findIndex((c) => c.id === activeId);
+      if (idx >= 0) {
+        // Guardamos info útil para comparar al terminar el drag
+        dragInfoRef.current = { cardId: activeId, sourceListId: list.id, sourceIndex: idx };
+        setActiveCard(list.cards[idx]); // mantiene la carta arrastrada para el overlay
+        return;
+      }
+    }
+
+    // Fallback si no la encuentra
+    dragInfoRef.current = null;
+    setActiveCard(null);
   };
+
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
@@ -191,71 +212,91 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       });
     });
   };
-const handleDragEnd = async (event: DragEndEvent) => {
-  const { active, over } = event;
-  setActiveCard(null);
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  if (!over) return;
-
-  const activeId = typeof active.id === "string" ? Number(active.id) : active.id;
-  const overId = typeof over.id === "string" ? Number(over.id) : over.id;
-
-  let sourceListId: number | null = null;
-  let targetListId: number | null = null;
-  let newPosition = 0;
-
-  // Encontrar lista origen y tarjeta
-  let draggedCard: Card | null = null;
-  for (const list of localLists) {
-    const idx = list.cards.findIndex((c) => c.id === activeId);
-    if (idx >= 0) {
-      sourceListId = list.id;
-      draggedCard = list.cards[idx];
-      break;
+    // Si canceló (soltó fuera)
+    if (!over) {
+      setActiveCard(null);
+      dragInfoRef.current = null;
+      return;
     }
-  }
 
-  // Encontrar lista destino
-  for (const list of localLists) {
-    const idx = list.cards.findIndex((c) => c.id === overId);
-    if (idx >= 0) {
-      targetListId = list.id;
-      newPosition = idx;
-      break;
+    const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
+
+    // 1) Intentar determinar la lista destino y el índice FINAL en la UI
+    let targetListId: number | null = null;
+    let targetUiIndex = -1;
+
+    // Si localLists ya fue actualizado por onDragOver, la card debería aparecer en la lista destino.
+    for (const list of localLists) {
+      const idx = list.cards.findIndex((c) => c.id === activeId);
+      if (idx >= 0) {
+        targetListId = list.id;
+        targetUiIndex = idx;
+        break;
+      }
     }
-  }
 
-  if (!sourceListId || !targetListId || !draggedCard) return;
+    // Fallback: si no encontramos la card por id, tal vez el 'over' es la zona de la lista ("list-<id>")
+    if (targetListId === null && typeof over.id === "string" && over.id.startsWith("list-")) {
+      const parsed = Number(over.id.replace("list-", ""));
+      if (!isNaN(parsed)) {
+        targetListId = parsed;
+        // si localLists tiene la lista destino, asumimos que se insertó al final en UI (append)
+        const targetList = localLists.find((l) => l.id === targetListId);
+        targetUiIndex = targetList ? targetList.cards.length - 1 : 0;
+      }
+    }
 
-  try {
-    const token = getToken();
-    if (!token) throw new Error("JWT token missing");
+    if (targetListId === null) {
+      // No pudimos determinar destino, limpiamos y salimos
+      setActiveCard(null);
+      dragInfoRef.current = null;
+      return;
+    }
 
-    // Llamada al backend para actualizar posición y lista
-    await updateCardPosition(boardId, targetListId, activeId, newPosition, token);
+    const targetList = localLists.find((l) => l.id === targetListId)!;
+    const listLengthAfterMove = targetList.cards.length; // incluye la card arrastrada (si onDragOver la insertó)
 
-    // Actualización local optimista
-    setLocalLists((lists) => {
-      return lists.map((list) => {
-        if (list.id === sourceListId) {
-          return { ...list, cards: list.cards.filter((c) => c.id !== activeId) };
-        }
-        if (list.id === targetListId) {
-          const newCards = [...list.cards];
-          const insertIndex = Math.min(newPosition, newCards.length);
-          newCards.splice(insertIndex, 0, draggedCard);
-          return { ...list, cards: newCards };
-        }
-        return list;
-      });
-    });
+    // 2) Convertir UI index -> posición backend (inverso)
+    const backendPosition = uiIndexToBackendPos(listLengthAfterMove, targetUiIndex);
 
-    // Opcional: refrescar listas completas desde backend
-    getBoardLists();
-  } catch (err) {
-    console.error("Error al actualizar posición de la tarjeta:", err);
-  }
-};
+    // 3) Decidir si realmente debemos llamar al backend (evitar llamadas innecesarias)
+    let shouldUpdate = true;
+    const original = dragInfoRef.current;
+
+    // If the card object includes a 'position' coming from backend, compare directly
+    const draggedCardFinal = targetList.cards[targetUiIndex];
+    if (draggedCardFinal && typeof (draggedCardFinal as any).position === "number") {
+      if ((draggedCardFinal as any).position === backendPosition) {
+        shouldUpdate = false;
+      }
+    } else if (original && original.sourceListId === targetListId) {
+      // Si la card no cambió de lista y el índice UI no cambió, no hay que actualizar
+      if (original.sourceIndex === targetUiIndex) {
+        shouldUpdate = false;
+      }
+    }
+
+    try {
+      const token = getToken();
+      if (!token) throw new Error("JWT token missing");
+
+      if (shouldUpdate) {
+        // Enviamos la posición en coordenadas del backend (inverso a la UI)
+        await updateCardPosition(boardId, targetListId, activeId, backendPosition, token);
+      }
+
+      // Refrescar desde backend la fuente de la verdad
+      getBoardLists();
+    } catch (err) {
+      console.error("Error al actualizar posición de la tarjeta:", err);
+    } finally {
+      setActiveCard(null);
+      dragInfoRef.current = null;
+    }
+  };
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
