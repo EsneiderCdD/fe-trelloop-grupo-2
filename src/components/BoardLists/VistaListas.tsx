@@ -365,20 +365,24 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                   overflow-y-auto overflow-x-hidden scrollbar-custom"
                   >
                     {list.cards.length > 0 ? (
-                      list.cards.map((tarea) => (
-                        <DraggableTarjeta
-                          key={tarea.id}
-                          card={tarea}
-                          boardId={boardId}
-                          listId={list.id.toString()}
-                          isBoardOwner={isBoardOwner}
-                          isBoardMember={isBoardMember}
-                          getBoardLists={getBoardLists}
-                        />
-                      ))
+                      list.cards.map((tarea) => {
+                        console.log("📌 Card renderizada:", tarea);
+                        return (
+                          <DraggableTarjeta
+                            key={tarea.id}
+                            card={tarea}
+                            boardId={boardId}
+                            listId={list.id.toString()}
+                            isBoardOwner={isBoardOwner}
+                            isBoardMember={isBoardMember}
+                            getBoardLists={getBoardLists}
+                          />
+                        );
+                      })
                     ) : (
                       <div className="flex items-center justify-center h-full text-gray-400 text-sm"></div>
                     )}
+
                   </div>
                 </SortableContext>
 
