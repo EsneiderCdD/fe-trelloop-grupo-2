@@ -1,3 +1,4 @@
+// CardMenu.tsx
 "use client";
 
 import React, { useRef, useEffect } from "react";
@@ -42,7 +43,10 @@ const CardMenu: React.FC<Props> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
 
-  const editURL = `/boardList/${boardId}/lists/${listId}/cards/${card.id}`;
+  // RUTAS: view vs edit
+  const basePath = `/boardList/${boardId}/lists/${listId}/cards/${card.id}`;
+  const viewURL = basePath; // /boardList/:boardId/lists/:listId/cards/:cardId
+  const editURL = `${basePath}/edit`; // /boardList/:boardId/lists/:listId/cards/:cardId/edit
 
   return (
     <Portal>
@@ -51,13 +55,24 @@ const CardMenu: React.FC<Props> = ({
         className="fixed z-[9999] w-[223px] h-[150px] rounded-md bg-[#272727] shadow-lg p-4 flex flex-col gap-2 animate-fade-in"
         style={{ top: position.top, left: position.left }}
       >
-        <button className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]">
+        {/* Ver tarjeta -> navega a viewURL */}
+        <button
+          onClick={() => {
+            onClose();
+            router.push(viewURL);
+          }}
+          className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]"
+        >
           <img src="/assets/icons/eyes.svg" alt="Ver" className="w-5 h-5" />
           <span className="text-white text-sm font-medium">Ver tarjeta</span>
         </button>
 
+ 
         <button
-          onClick={() => router.push(editURL)}
+          onClick={() => {
+            onClose();
+            router.push(editURL);
+          }}
           className="flex items-center gap-2 w-full h-[37px] px-4 rounded-md hover:bg-[#3A3A3A]"
         >
           <img src="/assets/icons/edit.png" alt="Editar" className="w-4 h-4" />
