@@ -137,41 +137,57 @@ const DraggableTarjeta: React.FC<Props> = ({
           <div className="flex -space-x-2">
             {card.assignees && card.assignees.length <= 2
               ? card.assignees.map((user, idx) => (
-                  <img
-                    key={idx}
-                    src={user.avatar_url}
-                    alt={user.name}
-                    className="w-6 h-6 rounded-full border-[0.5px] border-black"
-                  />
-                ))
+                <img
+                  key={idx}
+                  src={user.avatar_url}
+                  alt={user.name}
+                  className="w-6 h-6 rounded-full border-[0.5px] border-black"
+                />
+              ))
               : card.assignees && card.assignees.length > 2 && (
-                  <>
-                    {card.assignees.slice(0, 2).map((user, idx) => (
-                      <img
-                        key={idx}
-                        src={user.avatar_url}
-                        alt={user.name}
-                        className="w-6 h-6 rounded-full border-[0.5px] border-black"
-                      />
-                    ))}
-                    <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
-                      {card.assignees.length}
-                    </div>
-                  </>
-                )}
+                <>
+                  {card.assignees.slice(0, 2).map((user, idx) => (
+                    <img
+                      key={idx}
+                      src={user.avatar_url}
+                      alt={user.name}
+                      className="w-6 h-6 rounded-full border-[0.5px] border-black"
+                    />
+                  ))}
+                  <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
+                    {card.assignees.length}
+                  </div>
+                </>
+              )}
           </div>
 
           {/* Fecha */}
-          {endDate && (
-            <div>
-              <span
-                className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                  isOverdue ? "bg-red-100 text-red-600" : "bg-gray-200 text-gray-700"
-                }`}
+          {isOverdue && endDate && (
+            <span className="text-black text-xs px-2 py-1 rounded-xl bg-[#FFAEA6] flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {formatToDDMMYYYY(endDate)}
-              </span>
-            </div>
+                <path d="M8 2v4" />
+                <path d="M16 2v4" />
+                <rect width="18" height="18" x="3" y="4" rx="2" />
+                <path d="M3 10h18" />
+                <path d="M8 14h.01" />
+                <path d="M12 14h.01" />
+                <path d="M16 14h.01" />
+                <path d="M8 18h.01" />
+                <path d="M12 18h.01" />
+                <path d="M16 18h.01" />
+              </svg>
+              {formatToDDMMYYYY(endDate)}
+            </span>
           )}
 
           {/* Comentarios */}
