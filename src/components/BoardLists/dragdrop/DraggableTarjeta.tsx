@@ -192,7 +192,7 @@ const DraggableTarjeta: React.FC<Props> = ({
 
           {/* Comentarios */}
           <div className="flex items-center gap-1">
-            <span className="text-white mr-1 text-sm">0</span>
+            <span className="text-white mr-1 text-sm">{card.comentarios ?? 0}</span>
             <img src="/assets/icons/workflow.svg" alt="Comentarios" className="w-5 h-5" />
           </div>
         </div>
