@@ -212,90 +212,98 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       });
     });
   };
-const handleDragEnd = async (event: DragEndEvent) => {
-  const { active, over } = event;
-  if (!over) {
-    setActiveCard(null);
-    dragInfoRef.current = null;
-    return;
-  }
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) {
+      setActiveCard(null);
+      dragInfoRef.current = null;
+      return;
+    }
 
-  const activeId = typeof active.id === "string" ? Number(active.id) : active.id;
-  let targetListId: number | null = null;
-  let targetUiIndex = -1;
+    const activeId = typeof active.id === "string" ? Number(active.id) : active.id;
+    let targetListId: number | null = null;
+    let targetUiIndex = -1;
 
-  // Si se suelta sobre una lista vacía
-  if (typeof over.id === "string" && over.id.startsWith("list-")) {
-    targetListId = Number(over.id.replace("list-", ""));
-    const targetList = localLists.find(l => l.id === targetListId);
-    if (!targetList) return setActiveCard(null);
-    targetUiIndex = targetList.cards.length;
-  } else {
-    // Si se suelta sobre otra tarjeta
-    const overId = typeof over.id === "string" ? Number(over.id) : over.id;
-    for (const list of localLists) {
-      const idx = list.cards.findIndex(c => c.id === overId);
-      if (idx >= 0) {
-        targetListId = list.id;
-        targetUiIndex = idx;
-        break;
+    // 👉 Caso: suelta sobre una lista vacía
+    if (typeof over.id === "string" && over.id.startsWith("list-")) {
+      targetListId = Number(over.id.replace("list-", ""));
+      const targetList = localLists.find((l) => l.id === targetListId);
+      if (!targetList) return setActiveCard(null);
+      targetUiIndex = targetList.cards.length;
+    } else {
+      // 👉 Caso: suelta sobre otra tarjeta
+      const overId = typeof over.id === "string" ? Number(over.id) : over.id;
+      for (const list of localLists) {
+        const idx = list.cards.findIndex((c) => c.id === overId);
+        if (idx >= 0) {
+          targetListId = list.id;
+          targetUiIndex = idx;
+          break;
+        }
       }
     }
-  }
 
-  if (targetListId === null || targetUiIndex < 0) {
-    setActiveCard(null);
-    dragInfoRef.current = null;
-    return;
-  }
-
-  const original = dragInfoRef.current;
-  if (!original) {
-    setActiveCard(null);
-    return;
-  }
-
-  // Evita update si posición no cambió
-  if (original.sourceListId === targetListId && original.sourceIndex === targetUiIndex) {
-    setActiveCard(null);
-    dragInfoRef.current = null;
-    return;
-  }
-
-  // Actualiza UI local
-  setLocalLists(prev => {
-    let movingCard: Card | null = null;
-    return prev.map(list => {
-      if (list.id === original.sourceListId) {
-        movingCard = list.cards.find(c => c.id === activeId)!;
-        return { ...list, cards: list.cards.filter(c => c.id !== activeId) };
-      }
-      return list;
-    }).map(list => {
-      if (list.id === targetListId && movingCard) {
-        const newCards = [...list.cards];
-        newCards.splice(targetUiIndex, 0, movingCard);
-        return { ...list, cards: newCards };
-      }
-      return list;
+    // 🧪 LOG de depuración
+    console.log("🧪 DragEnd DEBUG", {
+      activeId,
+      overId: over?.id,
+      targetListId,
+      targetUiIndex,
+      listCards: localLists.find((l) => l.id === targetListId)?.cards.map((c) => c.id),
     });
-  });
 
-  // Backend
-  try {
-    const backendPosition = uiIndexToBackendPos(localLists.find(l => l.id === targetListId)!.cards.length, targetUiIndex);
-    const token = getToken();
-    if (!token) throw new Error("JWT token missing");
-    await updateCardPosition(boardId, targetListId, activeId, backendPosition, token);
-    getBoardLists();
-  } catch (err) {
-    console.error("Error actualizando posición:", err);
-  } finally {
+    if (targetListId === null || targetUiIndex < 0) {
+      setActiveCard(null);
+      dragInfoRef.current = null;
+      return;
+    }
+
+    // 👉 Actualizar en el estado local
+    setLocalLists((prevLists) => {
+      const sourceListIndex = prevLists.findIndex((l) =>
+        l.cards.some((c) => c.id === activeId)
+      );
+      const sourceList = prevLists[sourceListIndex];
+      const sourceIndex = sourceList.cards.findIndex((c) => c.id === activeId);
+
+      const targetListIndex = prevLists.findIndex((l) => l.id === targetListId);
+
+      if (sourceListIndex === -1 || targetListIndex === -1) return prevLists;
+
+      const newLists = [...prevLists];
+      const [movedCard] = newLists[sourceListIndex].cards.splice(sourceIndex, 1);
+      newLists[targetListIndex].cards.splice(targetUiIndex, 0, movedCard);
+
+      return newLists;
+    });
+
+    // 👉 Actualizar en el backend
+    const targetList = localLists.find((l) => l.id === targetListId);
+    if (targetList) {
+      // OJO: uiIndexToBackendPos espera (listLength, uiIndex)
+      const backendPosition = uiIndexToBackendPos(
+        targetList.cards.length,
+        targetUiIndex
+      );
+
+      try {
+        await updateCardPosition(
+          boardId,          // ✅ 1er arg
+          targetListId,     // ✅ 2do arg
+          activeId,         // ✅ 3er arg
+          backendPosition,  // ✅ 4to arg
+          getToken()!       // ✅ 5to arg (forzado a string)
+        );
+        getBoardLists();
+      } catch (error) {
+        console.error("❌ Error updating card:", error);
+        getBoardLists();
+      }
+    }
+
     setActiveCard(null);
     dragInfoRef.current = null;
-  }
-};
-
+  };
 
 
   if (loading) return <div>Cargando...</div>;
