@@ -133,62 +133,65 @@ const DraggableTarjeta: React.FC<Props> = ({
 
         {/* Avatars + fecha + comentarios */}
         <div className="flex justify-between items-center text-gray-400 text-sm">
-          {/* Avatars */}
-          <div className="flex -space-x-2">
-            {card.assignees && card.assignees.length <= 2
-              ? card.assignees.map((user, idx) => (
-                <img
-                  key={idx}
-                  src={user.avatar_url}
-                  alt={user.name}
-                  className="w-6 h-6 rounded-full border-[0.5px] border-black"
-                />
-              ))
-              : card.assignees && card.assignees.length > 2 && (
-                <>
-                  {card.assignees.slice(0, 2).map((user, idx) => (
-                    <img
-                      key={idx}
-                      src={user.avatar_url}
-                      alt={user.name}
-                      className="w-6 h-6 rounded-full border-[0.5px] border-black"
-                    />
-                  ))}
-                  <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
-                    {card.assignees.length}
-                  </div>
-                </>
-              )}
-          </div>
+          {/* Avatars + Fecha */}
+          <div className="flex items-center gap-2">
+            {/* Avatars */}
+            <div className="flex -space-x-2">
+              {card.assignees && card.assignees.length <= 2
+                ? card.assignees.map((user, idx) => (
+                  <img
+                    key={idx}
+                    src={user.avatar_url}
+                    alt={user.name}
+                    className="w-6 h-6 rounded-full border-[0.5px] border-black"
+                  />
+                ))
+                : card.assignees && card.assignees.length > 2 && (
+                  <>
+                    {card.assignees.slice(0, 2).map((user, idx) => (
+                      <img
+                        key={idx}
+                        src={user.avatar_url}
+                        alt={user.name}
+                        className="w-6 h-6 rounded-full border-[0.5px] border-black"
+                      />
+                    ))}
+                    <div className="w-6 h-6 flex items-center justify-center rounded-full border-[0.5px] border-gray-400 bg-[#3a3a3a] text-white text-xs leading-none font-medium">
+                      {card.assignees.length}
+                    </div>
+                  </>
+                )}
+            </div>
 
-          {/* Fecha */}
-          {isOverdue && endDate && (
-            <span className="text-black text-xs px-2 py-1 rounded-xl bg-[#FFAEA6] flex items-center gap-1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M8 2v4" />
-                <path d="M16 2v4" />
-                <rect width="18" height="18" x="3" y="4" rx="2" />
-                <path d="M3 10h18" />
-                <path d="M8 14h.01" />
-                <path d="M12 14h.01" />
-                <path d="M16 14h.01" />
-                <path d="M8 18h.01" />
-                <path d="M12 18h.01" />
-                <path d="M16 18h.01" />
-              </svg>
-              {formatToDDMMYYYY(endDate)}
-            </span>
-          )}
+            {/* Fecha */}
+            {isOverdue && endDate && (
+              <span className="text-black text-xs px-2 py-1 rounded-xl bg-[#FFAEA6] flex items-center gap-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M8 2v4" />
+                  <path d="M16 2v4" />
+                  <rect width="18" height="18" x="3" y="4" rx="2" />
+                  <path d="M3 10h18" />
+                  <path d="M8 14h.01" />
+                  <path d="M12 14h.01" />
+                  <path d="M16 14h.01" />
+                  <path d="M8 18h.01" />
+                  <path d="M12 18h.01" />
+                  <path d="M16 18h.01" />
+                </svg>
+                {formatToDDMMYYYY(endDate)}
+              </span>
+            )}
+          </div>
 
           {/* Comentarios */}
           <div className="flex items-center gap-1">
@@ -196,6 +199,7 @@ const DraggableTarjeta: React.FC<Props> = ({
             <img src="/assets/icons/workflow.svg" alt="Comentarios" className="w-5 h-5" />
           </div>
         </div>
+
       </div>
 
       {showMenu && menuPosition && (
