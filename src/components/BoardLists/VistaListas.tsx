@@ -212,6 +212,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       });
     });
   };
+  // Reemplaza la función handleDragEnd existente por esta implementación
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) {
@@ -220,19 +221,23 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return;
     }
 
-    const activeId = typeof active.id === "string" ? Number(active.id) : active.id;
+    const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
     let targetListId: number | null = null;
     let targetUiIndex = -1;
 
-    // 👉 Caso: suelta sobre una lista vacía
+    // Caso: suelta sobre una lista (zona)
     if (typeof over.id === "string" && over.id.startsWith("list-")) {
       targetListId = Number(over.id.replace("list-", ""));
       const targetList = localLists.find((l) => l.id === targetListId);
-      if (!targetList) return setActiveCard(null);
-      targetUiIndex = targetList.cards.length;
+      if (!targetList) {
+        setActiveCard(null);
+        dragInfoRef.current = null;
+        return;
+      }
+      targetUiIndex = targetList.cards.length; // append at end
     } else {
-      // 👉 Caso: suelta sobre otra tarjeta
-      const overId = typeof over.id === "string" ? Number(over.id) : over.id;
+      // Caso: suelta sobre otra tarjeta
+      const overId = typeof over.id === "string" ? Number(over.id) : (over.id as number);
       for (const list of localLists) {
         const idx = list.cards.findIndex((c) => c.id === overId);
         if (idx >= 0) {
@@ -243,66 +248,76 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       }
     }
 
-    // 🧪 LOG de depuración
-    console.log("🧪 DragEnd DEBUG", {
-      activeId,
-      overId: over?.id,
-      targetListId,
-      targetUiIndex,
-      listCards: localLists.find((l) => l.id === targetListId)?.cards.map((c) => c.id),
-    });
-
+    // Protección
     if (targetListId === null || targetUiIndex < 0) {
       setActiveCard(null);
       dragInfoRef.current = null;
       return;
     }
 
-    // 👉 Actualizar en el estado local
+    // Obtener source info (desde dragInfoRef si existe, sino buscar)
+    const dragInfo = dragInfoRef.current;
+    let sourceListId: number | null = dragInfo?.sourceListId ?? null;
+    if (sourceListId === null) {
+      for (const l of localLists) {
+        if (l.cards.some((c) => c.id === activeId)) {
+          sourceListId = l.id;
+          break;
+        }
+      }
+    }
+    if (sourceListId === null) {
+      setActiveCard(null);
+      dragInfoRef.current = null;
+      return;
+    }
+
+    // --- 1) Optimistic UI: actualizar estado local inmediatamente ---
     setLocalLists((prevLists) => {
-      const sourceListIndex = prevLists.findIndex((l) =>
-        l.cards.some((c) => c.id === activeId)
-      );
-      const sourceList = prevLists[sourceListIndex];
-      const sourceIndex = sourceList.cards.findIndex((c) => c.id === activeId);
-
+      const sourceListIndex = prevLists.findIndex((l) => l.id === sourceListId);
       const targetListIndex = prevLists.findIndex((l) => l.id === targetListId);
-
       if (sourceListIndex === -1 || targetListIndex === -1) return prevLists;
 
-      const newLists = [...prevLists];
-      const [movedCard] = newLists[sourceListIndex].cards.splice(sourceIndex, 1);
+      // clone shallow lists & cards arrays para evitar mutación del estado previo
+      const newLists = prevLists.map((l) => ({ ...l, cards: [...l.cards] }));
+
+      const sourceCardIndex = newLists[sourceListIndex].cards.findIndex((c) => c.id === activeId);
+      if (sourceCardIndex === -1) return prevLists;
+
+      const [movedCard] = newLists[sourceListIndex].cards.splice(sourceCardIndex, 1);
       newLists[targetListIndex].cards.splice(targetUiIndex, 0, movedCard);
 
       return newLists;
     });
 
-    // 👉 Actualizar en el backend
-    const targetList = localLists.find((l) => l.id === targetListId);
-    if (targetList) {
-      // OJO: uiIndexToBackendPos espera (listLength, uiIndex)
-      const backendPosition = uiIndexToBackendPos(
-        targetList.cards.length,
-        targetUiIndex
+    // --- 2) Calcular la posición que espera el backend sin depender del estado asíncrono ---
+    const targetListOld = localLists.find((l) => l.id === targetListId);
+    const oldTargetLength = targetListOld ? targetListOld.cards.length : 0;
+    const newTargetLength = oldTargetLength + (sourceListId !== targetListId ? 1 : 0);
+    const backendPosition = uiIndexToBackendPos(newTargetLength, targetUiIndex);
+
+    // --- 3) Llamar al backend; si falla hacemos rollback via getBoardLists() ---
+    try {
+      await updateCardPosition(
+        boardId,
+        targetListId,
+        activeId,
+        backendPosition,
+        getToken()!
       );
-
+      // Éxito: NO hacemos getBoardLists() (esto evita re-render completo / parpadeo).
+    } catch (error) {
+      console.error("❌ Error updating card (optimistic):", error);
+      // Rollback: re-sincronizamos con backend (único lugar donde volvemos a hacer full fetch)
       try {
-        await updateCardPosition(
-          boardId,          // ✅ 1er arg
-          targetListId,     // ✅ 2do arg
-          activeId,         // ✅ 3er arg
-          backendPosition,  // ✅ 4to arg
-          getToken()!       // ✅ 5to arg (forzado a string)
-        );
-        getBoardLists();
-      } catch (error) {
-        console.error("❌ Error updating card:", error);
-        getBoardLists();
+        await getBoardLists();
+      } catch (e) {
+        console.error("❌ Error refetching board after failed update:", e);
       }
+    } finally {
+      setActiveCard(null);
+      dragInfoRef.current = null;
     }
-
-    setActiveCard(null);
-    dragInfoRef.current = null;
   };
 
 

@@ -20,4 +20,4 @@ const DroppableList: React.FC<DroppableListProps> = ({ children, listId }) => {
   );
 };
 
-export default DroppableList;
+export default React.memo(DroppableList);

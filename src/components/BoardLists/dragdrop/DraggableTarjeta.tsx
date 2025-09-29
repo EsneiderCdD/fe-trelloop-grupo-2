@@ -223,4 +223,20 @@ const DraggableTarjeta: React.FC<Props> = ({
   );
 };
 
-export default DraggableTarjeta;
+// comparación superficial para evitar re-renders innecesarios
+function areEqual(prev: Props, next: Props) {
+  const a = prev.card;
+  const b = next.card;
+  if (a.id !== b.id) return false;
+  if (a.title !== b.title) return false;
+  if ((a.tags?.length ?? 0) !== (b.tags?.length ?? 0)) return false;
+  if ((a.assignees?.length ?? 0) !== (b.assignees?.length ?? 0)) return false;
+  if (a.priority !== b.priority) return false;
+  if (a.endDate !== b.endDate) return false;
+  if ((a.comentarios ?? 0) !== (b.comentarios ?? 0)) return false;
+  if (prev.isBoardOwner !== next.isBoardOwner) return false;
+  if (prev.isBoardMember !== next.isBoardMember) return false;
+  return true;
+}
+
+export default React.memo(DraggableTarjeta, areEqual);
