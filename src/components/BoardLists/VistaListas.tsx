@@ -21,11 +21,39 @@ import { updateListService } from "../../services/updateListService";
 import DeleteListButton from "./DeleteListButton";
 import DroppableList from "./dragdrop/DroppableList";
 import DraggableTarjeta from "./dragdrop/DraggableTarjeta";
-// import DragOverlayCard from "./dragdrop/DragOverlayCard";
 import { Card, List } from "./dragdrop/types";
 import { updateCardPosition } from "./services/cardService";
 import { getToken } from "../../store/authStore";
 
+const PALETTE = [
+  "#2E90FA",
+  "#12B76A",
+  "#F59E0B",
+  "#A855F7",
+  "#EF4444",
+  "#06B6D4",
+  "#F97316",
+  "#22C55E",
+  "#EAB308",
+  "#DB2777",
+];
+
+const hashIndex = (str: string, mod: number) => {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h << 5) - h + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h) % mod;
+};
+
+const contrastText = (hex: string) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 160 ? "#111" : "#fff";
+};
 
 const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMember?: boolean }> = ({
   boardId,
@@ -39,16 +67,11 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     return Math.max(0, listLength - 1 - uiIndex);
   };
 
-
   const [localLists, setLocalLists] = useState<List[]>([]);
   const [activeCard, setActiveCard] = useState<Card | null>(null);
   const [editandoListaId, setEditandoListaId] = useState<number | null>(null);
   const [nuevoTitulo, setNuevoTitulo] = useState("");
 
-  /**
-   * Inicializa / sincroniza localLists desde originalLists
-   * SOLO actualiza cuando hay una diferencia real para evitar re-renders infinitos.
-   */
   useEffect(() => {
     if (!originalLists || !Array.isArray(originalLists)) return;
 
@@ -65,7 +88,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
       return same ? prev : originalLists;
     });
-
   }, [originalLists]);
 
   const sensors = useSensors(
@@ -96,22 +118,18 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     const { active } = event;
     const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
 
-    // Encuentra lista origen e índice en el estado actual (antes de mover)
     for (const list of localLists) {
       const idx = list.cards.findIndex((c) => c.id === activeId);
       if (idx >= 0) {
-        // Guardamos info útil para comparar al terminar el drag
         dragInfoRef.current = { cardId: activeId, sourceListId: list.id, sourceIndex: idx };
-        setActiveCard(list.cards[idx]); // mantiene la carta arrastrada para el overlay
+        setActiveCard(list.cards[idx]);
         return;
       }
     }
 
-    // Fallback si no la encuentra
     dragInfoRef.current = null;
     setActiveCard(null);
   };
-
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
@@ -120,7 +138,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     const activeId = typeof active.id === "string" ? Number(active.id) : (active.id as number);
     const overIdRaw = over.id;
 
-    // Caso: está sobre la "zona" de la lista -> mover al final
     if (typeof overIdRaw === "string" && overIdRaw.startsWith("list-")) {
       const targetListId = Number(overIdRaw.replace("list-", ""));
       setLocalLists((currentLists) => {
@@ -155,7 +172,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return;
     }
 
-    // Caso: está sobre otra tarjeta
     const overId = typeof overIdRaw === "string" ? Number(overIdRaw) : (overIdRaw as number);
     if (isNaN(overId)) return;
 
@@ -185,7 +201,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
 
       if (!activeCardLocal || sourceListId === null || overListId === null) return currentLists;
 
-      // Reorden dentro de la misma lista
       if (sourceListId === overListId) {
         if (sourceIndex === overIndex) return currentLists;
         return currentLists.map((list) => {
@@ -194,7 +209,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         });
       }
 
-      // Mover entre listas distintas
       return currentLists.map((list) => {
         if (list.id === sourceListId) {
           return { ...list, cards: list.cards.filter((c) => c.id !== activeId) };
@@ -212,7 +226,7 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       });
     });
   };
-  // Reemplaza la función handleDragEnd existente por esta implementación
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) {
@@ -225,7 +239,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     let targetListId: number | null = null;
     let targetUiIndex = -1;
 
-    // Caso: suelta sobre una lista (zona)
     if (typeof over.id === "string" && over.id.startsWith("list-")) {
       targetListId = Number(over.id.replace("list-", ""));
       const targetList = localLists.find((l) => l.id === targetListId);
@@ -234,9 +247,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         dragInfoRef.current = null;
         return;
       }
-      targetUiIndex = targetList.cards.length; // append at end
+      targetUiIndex = targetList.cards.length;
     } else {
-      // Caso: suelta sobre otra tarjeta
       const overId = typeof over.id === "string" ? Number(over.id) : (over.id as number);
       for (const list of localLists) {
         const idx = list.cards.findIndex((c) => c.id === overId);
@@ -248,14 +260,12 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       }
     }
 
-    // Protección
     if (targetListId === null || targetUiIndex < 0) {
       setActiveCard(null);
       dragInfoRef.current = null;
       return;
     }
 
-    // Obtener source info (desde dragInfoRef si existe, sino buscar)
     const dragInfo = dragInfoRef.current;
     let sourceListId: number | null = dragInfo?.sourceListId ?? null;
     if (sourceListId === null) {
@@ -272,13 +282,11 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return;
     }
 
-    // --- 1) Optimistic UI: actualizar estado local inmediatamente ---
     setLocalLists((prevLists) => {
       const sourceListIndex = prevLists.findIndex((l) => l.id === sourceListId);
       const targetListIndex = prevLists.findIndex((l) => l.id === targetListId);
       if (sourceListIndex === -1 || targetListIndex === -1) return prevLists;
 
-      // clone shallow lists & cards arrays para evitar mutación del estado previo
       const newLists = prevLists.map((l) => ({ ...l, cards: [...l.cards] }));
 
       const sourceCardIndex = newLists[sourceListIndex].cards.findIndex((c) => c.id === activeId);
@@ -290,13 +298,11 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       return newLists;
     });
 
-    // --- 2) Calcular la posición que espera el backend sin depender del estado asíncrono ---
     const targetListOld = localLists.find((l) => l.id === targetListId);
     const oldTargetLength = targetListOld ? targetListOld.cards.length : 0;
     const newTargetLength = oldTargetLength + (sourceListId !== targetListId ? 1 : 0);
     const backendPosition = uiIndexToBackendPos(newTargetLength, targetUiIndex);
 
-    // --- 3) Llamar al backend; si falla hacemos rollback via getBoardLists() ---
     try {
       await updateCardPosition(
         boardId,
@@ -305,10 +311,8 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         backendPosition,
         getToken()!
       );
-      // Éxito: NO hacemos getBoardLists() (esto evita re-render completo / parpadeo).
     } catch (error) {
       console.error("❌ Error updating card (optimistic):", error);
-      // Rollback: re-sincronizamos con backend (único lugar donde volvemos a hacer full fetch)
       try {
         await getBoardLists();
       } catch (e) {
@@ -319,7 +323,6 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
       dragInfoRef.current = null;
     }
   };
-
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -339,58 +342,70 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
     >
       <div className="flex gap-4 p-4 pt-1 bg-[#1a1a1a] overflow-x-auto scrollbar-custom w-full h-full">
         {Array.isArray(localLists) && localLists.length > 0 ? (
-          localLists.map((list) => (
-            <DroppableList key={list.id} listId={list.id}>
-              <div className="w-[280px] bg-[#222] rounded-lg p-2  pt-0 flex flex-col flex-shrink-0">
-                {/* Encabezado */}
-                <div className="flex items-center px-3 py-1 rounded-t-md bg-neutral-600">
-                  <div className="flex-1 min-w-0">
-                    {editandoListaId === list.id ? (
-                      <input
-                        type="text"
-                        value={nuevoTitulo}
-                        onChange={(e) => setNuevoTitulo(e.target.value)}
-                        onBlur={() => guardarTitulo(list.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") guardarTitulo(list.id);
-                          if (e.key === "Escape") setEditandoListaId(null);
-                        }}
-                        className="bg-transparent border-b border-white text-white font-semibold focus:outline-none w-full"
-                        autoFocus
-                      />
-                    ) : (
-                      <h2 className="text-white font-semibold truncate">{list.name}</h2>
-                    )}
-                  </div>
+          localLists.map((list) => {
+            const listBg = list && list.name ? PALETTE[hashIndex(String(list.name), PALETTE.length)] : "#2B2B2B";
+            const listText = contrastText(listBg);
 
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-white">{list.cards.length}</span>
-                    <img
-                      src="/assets/icons/square-pen-white.svg"
-                      alt="Editar lista"
-                      className="w-4 h-4 cursor-pointer"
-                      onClick={() => iniciarEdicion(list.id, list.name)}
-                    />
-                    <DeleteListButton
-                      boardId={boardId}
-                      list={list}
-                      getBoardLists={getBoardLists}
-                      isBoardOwner={isBoardOwner}
-                    />
-                  </div>
-                </div>
-
-                {/* Lista de tareas */}
-                <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+            return (
+              <DroppableList key={list.id} listId={list.id}>
+                <div className="w-[280px] bg-[#222] rounded-lg p-2  pt-0 flex flex-col flex-shrink-0">
+                  {/* Encabezado con colores dinámicos */}
                   <div
-                    className="flex flex-col gap-3 bg-[#2b2b2b] p-1 rounded-b-md 
-                  min-h-[455px] max-h-[450px] 
-                  overflow-y-auto overflow-x-hidden scrollbar-custom"
+                    className="flex items-center px-3 py-1 rounded-t-md"
+                    style={{ backgroundColor: listBg }}
                   >
-                    {list.cards.length > 0 ? (
-                      list.cards.map((tarea) => {
-                        console.log("📌 Card renderizada:", tarea);
-                        return (
+                    <div className="flex-1 min-w-0">
+                      {editandoListaId === list.id ? (
+                        <input
+                          type="text"
+                          value={nuevoTitulo}
+                          onChange={(e) => setNuevoTitulo(e.target.value)}
+                          onBlur={() => guardarTitulo(list.id)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") guardarTitulo(list.id);
+                            if (e.key === "Escape") setEditandoListaId(null);
+                          }}
+                          className="bg-transparent border-b focus:outline-none w-full font-semibold"
+                          style={{ color: listText }}
+                          autoFocus
+                        />
+                      ) : (
+                        <h2
+                          className="truncate font-semibold"
+                          style={{ color: listText }}
+                          title={list.name}
+                        >
+                          {list.name}
+                        </h2>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span style={{ color: listText }}>{list.cards.length}</span>
+                      <img
+                        src="/assets/icons/square-pen-white.svg"
+                        alt="Editar lista"
+                        className="w-4 h-4 cursor-pointer"
+                        onClick={() => iniciarEdicion(list.id, list.name)}
+                      />
+                      <DeleteListButton
+                        boardId={boardId}
+                        list={list}
+                        getBoardLists={getBoardLists}
+                        isBoardOwner={isBoardOwner}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Lista de tareas */}
+                  <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+                    <div
+                      className="flex flex-col gap-3 bg-[#2b2b2b] p-1 rounded-b-md 
+                        min-h-[455px] max-h-[450px] 
+                        overflow-y-auto overflow-x-hidden scrollbar-custom"
+                    >
+                      {list.cards.length > 0 ? (
+                        list.cards.map((tarea) => (
                           <DraggableTarjeta
                             key={tarea.id}
                             card={tarea}
@@ -400,24 +415,23 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
                             isBoardMember={isBoardMember}
                             getBoardLists={getBoardLists}
                           />
-                        );
-                      })
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-gray-400 text-sm"></div>
-                    )}
+                        ))
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-gray-400 text-sm"></div>
+                      )}
+                    </div>
+                  </SortableContext>
 
-                  </div>
-                </SortableContext>
-
-                <button
-                  onClick={() => goToAddTask(list.id)}
-                  className="mt-2 py-2 px-3 w-full bg-[#6A5FFF] text-white rounded-xl"
-                >
-                  + Agregar tarea
-                </button>
-              </div>
-            </DroppableList>
-          ))
+                  <button
+                    onClick={() => goToAddTask(list.id)}
+                    className="mt-2 py-2 px-3 w-full bg-[#6A5FFF] text-white rounded-xl"
+                  >
+                    + Agregar tarea
+                  </button>
+                </div>
+              </DroppableList>
+            );
+          })
         ) : (
           <p className="text-white mt-2"> No hay listas creadas en este tablero. </p>
         )}
@@ -428,21 +442,19 @@ const VistaListas: React.FC<{ boardId: string; isBoardOwner?: boolean; isBoardMe
         </div>
       </div>
 
-      {/* Overlay para mostrar la tarjeta siendo arrastrada */}
+      {/* Overlay para la tarjeta arrastrada */}
       <DragOverlay>
         {activeCard ? (
           <DraggableTarjeta
             card={activeCard}
             boardId={boardId}
-            listId={"overlay"} // valor dummy
+            listId={"overlay"}
             isBoardOwner={isBoardOwner}
             isBoardMember={isBoardMember}
             getBoardLists={getBoardLists}
-          // isOverlay={true}
           />
         ) : null}
       </DragOverlay>
-
     </DndContext>
   );
 };

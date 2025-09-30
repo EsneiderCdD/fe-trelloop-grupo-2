@@ -7,7 +7,8 @@ interface BacklogItem {
   descripcion: string;
   responsables: string;
   prioridad: "Alta" | "Media" | "Baja";
-  estado: "Por hacer" | "En progreso" | "Hecho";
+  estado: string; // nombre de la lista
+  estadoColor: string; // color dinámico de la lista
   miembros: {
     avatar_url: string;
     email: string;
@@ -17,6 +18,28 @@ interface BacklogItem {
   }[];
   fecha: string;
 }
+
+const PALETTE = [
+  "#2E90FA",
+  "#12B76A",
+  "#F59E0B",
+  "#A855F7",
+  "#EF4444",
+  "#06B6D4",
+  "#F97316",
+  "#22C55E",
+  "#EAB308",
+  "#DB2777",
+];
+
+const hashIndex = (str: string, mod: number) => {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h << 5) - h + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h) % mod;
+};
 
 const VistaBacklog: React.FC = () => {
   const [backlog, setBacklog] = useState<BacklogItem[]>([]);
@@ -29,8 +52,11 @@ const VistaBacklog: React.FC = () => {
       try {
         const boardDetails = await getBoardDetails(boardId);
         console.log("Board Details:", boardDetails);
-        const backlogItems = boardDetails.lists.flatMap((list: any) =>
-          list.cards.map((card: any) => ({
+
+        const backlogItems = boardDetails.lists.flatMap((list: any) => {
+          const listColor = PALETTE[hashIndex(String(list.name), PALETTE.length)];
+
+          return list.cards.map((card: any) => ({
             id: card.id,
             descripcion: card.description,
             responsables:
@@ -39,10 +65,12 @@ const VistaBacklog: React.FC = () => {
                 : "N/A",
             prioridad: card.priority,
             estado: list.name,
+            estadoColor: listColor,
             miembros: card.assignees ? card.assignees : [],
             fecha: formatFecha(card.start_date),
-          }))
-        );
+          }));
+        });
+
         setBacklog(backlogItems);
         console.log("Backlog Items:", backlogItems);
       } catch (error) {
@@ -66,26 +94,14 @@ const VistaBacklog: React.FC = () => {
     }
   };
 
-  const getEstadoColor = (estado: string) => {
-    switch (estado) {
-      case "Hecho":
-        return "bg-green-500";
-      case "En progreso":
-        return "bg-blue-500";
-      case "Por hacer":
-        return "bg-gray-600";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
   const agregarNuevoItem = () => {
     const nuevoItem: BacklogItem = {
       id: backlog.length + 1,
       descripcion: "Nueva tarea",
       responsables: "Usuario",
       prioridad: "Media",
-      estado: "Por hacer",
+      estado: "Nueva lista",
+      estadoColor: "#6A5FFF",
       miembros: [],
       fecha: formatFecha(new Date().toISOString()),
     };
@@ -100,11 +116,10 @@ const VistaBacklog: React.FC = () => {
       year: "numeric",
     };
     const formato = new Intl.DateTimeFormat("es-ES", opciones).format(fecha);
-
-    // formato devuelve "15 de julio de 2025"
     const [dia, , mes, , año] = formato.split(" ");
     return `${mes.charAt(0).toUpperCase() + mes.slice(1)} ${dia} de ${año}`;
   };
+
   return (
     <div className="p-6 bg-[#1a1a1a] w-full overflow-y-auto text-white">
       <div className="overflow-x-auto w-full">
@@ -153,14 +168,14 @@ const VistaBacklog: React.FC = () => {
                   />
                 </td>
 
-                <td className="p-4  border-y border-[rgba(60,60,60,0.7)]">
+                <td className="p-4 border-y border-[rgba(60,60,60,0.7)]">
                   {item.descripcion}
                 </td>
-                <td className="p-4  border-y border-[rgba(60,60,60,0.7)]">
+                <td className="p-4 border-y border-[rgba(60,60,60,0.7)]">
                   {item.responsables}
                 </td>
 
-                <td className="p-4  border-y border-[rgba(60,60,60,0.7)]">
+                <td className="p-4 border-y border-[rgba(60,60,60,0.7)]">
                   <span
                     className={`${getPrioridadColor(
                       item.prioridad
@@ -170,17 +185,17 @@ const VistaBacklog: React.FC = () => {
                   </span>
                 </td>
 
-                <td className="p-4  border-y border-[rgba(60,60,60,0.7)] whitespace-nowrap">
+                {/* Estado con color de lista */}
+                <td className="p-4 border-y border-[rgba(60,60,60,0.7)] whitespace-nowrap">
                   <span
-                    className={`${getEstadoColor(
-                      item.estado
-                    )} text-white text-xs px-2 py-1 rounded-md`}
+                    className="text-white text-xs px-2 py-1 rounded-md"
+                    style={{ backgroundColor: item.estadoColor }}
                   >
                     {item.estado}
                   </span>
                 </td>
 
-                <td className="p-4  border-y border-[rgba(60,60,60,0.7)]">
+                <td className="p-4 border-y border-[rgba(60,60,60,0.7)]">
                   <div className="flex items-center space-x-1">
                     <div className="flex space-x-[-8px]">
                       {item.miembros.slice(0, 4).map((member) => (
@@ -200,7 +215,7 @@ const VistaBacklog: React.FC = () => {
                   </div>
                 </td>
 
-                <td className="p-4  border-y border-[rgba(60,60,60,0.7)] text-sm">
+                <td className="p-4 border-y border-[rgba(60,60,60,0.7)] text-sm">
                   {item.fecha}
                 </td>
 
@@ -244,7 +259,7 @@ const VistaBacklog: React.FC = () => {
         </table>
       </div>
 
-      {/* Botón flotante para agregar */}
+      {/* Botón flotante */}
       <button
         onClick={agregarNuevoItem}
         className="fixed bottom-6 right-6 w-14 h-14 bg-[#6A5FFF] text-white rounded-full flex items-center justify-center text-2xl hover:bg-purple-700 transition-colors shadow-lg"

@@ -130,7 +130,6 @@ function CommentsPanel({
           })
         );
       } catch {
-        
       } finally {
         if (!mounted) return;
         setLoading(false);
@@ -185,7 +184,6 @@ function CommentsPanel({
             />
           </div>
 
-          {/* Input */}
           <textarea
             placeholder="Escribe aquí..."
             value={newComment}
@@ -208,7 +206,6 @@ function CommentsPanel({
           />
         </div>
 
-        {/* Botón Enviar*/}
         <div className="flex justify-end mt-2 pl-11">
           <button
             type="button"
@@ -235,7 +232,6 @@ function CommentsPanel({
         </div>
       </div>
 
-      {/* Lista de comentarios — SOLO este bloque scrollea */}
       <div className="mt-4 relative">
         <div
           className="commentsScroll pr-2 flex flex-col gap-5 max-h-[420px] overflow-y-auto touch-pan-y pointer-events-auto"
@@ -253,7 +249,6 @@ function CommentsPanel({
           ) : (
             comments.map((c) => (
               <div key={c.id} className="flex gap-3 items-start">
-                {/* Avatar */}
                 <div className="w-8 h-8 rounded-full overflow-hidden bg-[#1f1f1f] flex-shrink-0">
                   <img
                     src={c.avatar || "/assets/icons/avatar3.png"}
@@ -263,7 +258,6 @@ function CommentsPanel({
                   />
                 </div>
 
-                {/* Contenido */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
@@ -279,7 +273,6 @@ function CommentsPanel({
                     </button>
                   </div>
 
-                  {/* Texto del comentario*/}
                   <p className="mt-1 text-[13px] leading-[1.4] opacity-90 whitespace-pre-wrap break-words">
                     {c.body}
                   </p>
@@ -293,9 +286,7 @@ function CommentsPanel({
           )}
         </div>
 
-        {/* Estilos del scrollbar SOLO para la sección de comentarios */}
         <style jsx global>{`
-          /* Forzamos visibilidad por si hay reglas globales que lo ocultan */
           .commentsScroll::-webkit-scrollbar { width: 8px !important; }
           .commentsScroll::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.06) !important; border-radius: 8px;
@@ -304,7 +295,6 @@ function CommentsPanel({
             background-color: rgba(106, 95, 255, 0.9) !important; border-radius: 8px;
           }
 
-          /* Firefox */
           .commentsScroll {
             scrollbar-width: thin !important;
             scrollbar-color: rgba(106, 95, 255, 0.9) rgba(255, 255, 255, 0.06) !important;
@@ -324,26 +314,22 @@ export default function CardDetail() {
   const cardId = Number(params.cardId);
 
   const { form, loading, error, handleFormChange, handleDateChange, handleSubmit } = useCardForm();
+  const [isPageLoading, setIsPageLoading] = useState(true); // Nuevo estado para la carga de la página
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showMoveArea, setShowMoveArea] = useState(true); // área del select visible por defecto
+  const [showMoveArea, setShowMoveArea] = useState(true);
   const [lists, setLists] = useState<{ id: number; name: string }[]>([]);
   const [moving, setMoving] = useState(false);
   const [targetList, setTargetList] = useState<number | null>(null);
 
-  // confirmación de eliminación
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Tabs locales
   const [activeTab, setActiveTab] = useState<"detallada" | "secciones">("detallada");
-
-  // subtareas locales
   const [subtasks, setSubtasks] = useState(MOCK_SUBTASKS);
   const completed = subtasks.filter((t) => t.done).length;
   const progressPct = subtasks.length ? Math.round((completed / subtasks.length) * 100) : 0;
 
-  // Fecha – helpers para DD-MM-YYYY + date picker anclado
   const datePickerRef = useRef<HTMLInputElement | null>(null);
   const formatDDMMYYYY = (d: Date | null) => {
     if (!d) return "";
@@ -355,9 +341,7 @@ export default function CardDetail() {
   const parseDDMMYYYY = (str: string): Date | null => {
     const m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(str.trim());
     if (!m) return null;
-    const dd = Number(m[1]),
-      mm = Number(m[2]),
-      yyyy = Number(m[3]);
+    const dd = Number(m[1]), mm = Number(m[2]), yyyy = Number(m[3]);
     const d = new Date(yyyy, mm - 1, dd);
     return d && d.getFullYear() === yyyy && d.getMonth() === mm - 1 && d.getDate() === dd ? d : null;
   };
@@ -368,18 +352,15 @@ export default function CardDetail() {
         const data = await getBoardListsService(String(boardId));
         setLists((data || []).map((l: any) => ({ id: l.id, name: l.name })));
       } catch {}
+      setIsPageLoading(false); // Marcar como cargada después de obtener las listas
     })();
   }, [boardId]);
 
   const priorityChip = useMemo(() => getPriorityChip(form.priority), [form.priority]);
   const currentListName = lists.find((l) => l.id === listId)?.name || "";
-  const listBg = useMemo(
-    () => (currentListName ? PALETTE[hashIndex(currentListName, PALETTE.length)] : "#2B2B2B"),
-    [currentListName]
-  );
+  const listBg = useMemo(() => (currentListName ? PALETTE[hashIndex(currentListName, PALETTE.length)] : "#2B2B2B"), [currentListName]);
   const listText = useMemo(() => contrastText(listBg), [listBg]);
 
-  // ---- Mover tarjeta
   const onMove = async () => {
     if (!targetList) return;
     try {
@@ -394,7 +375,6 @@ export default function CardDetail() {
     }
   };
 
-  // ---- Eliminar (confirm modal)
   const openDeleteConfirm = () => {
     setMenuOpen(false);
     setShowDeleteModal(true);
@@ -412,7 +392,6 @@ export default function CardDetail() {
     }
   };
 
-  // cerrar menú al hacer click fuera o ESC
   const menuRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
@@ -434,28 +413,28 @@ export default function CardDetail() {
     };
   }, [menuOpen]);
 
-  if (loading) return <div className="p-6 text-white">Cargando tarjeta...</div>;
+  if (isPageLoading || loading) return (
+    <div className="flex items-center justify-center min-h-screen w-full bg-[#191919]">
+      <div className="text-white">Cargando tarjeta...</div>
+    </div>
+  );
   if (error) return <div className="p-6 text-red-300">{error}</div>;
 
   return (
     <div className="flex min-h-screen w-full bg-[#191919]">
-      {/* Sidebar */}
       <div
-        className="shrink-0 minh-screen min-h-screen"
+        className="shrink-0 min-h-screen"
         style={{ background: "rgba(0, 0, 0, 0.07)", borderRight: "1px solid rgba(43, 43, 43, 1)" }}
       >
         <DashboardSidebar />
       </div>
 
-      {/* Contenido */}
       <div className="min-w-0 w-full text-white">
         <UserNavbar showCreateBoardButton={false} />
 
         <div className="px-6 pb-10">
-          {/* Barra superior */}
           <div className="w-[1124px] max-w-full mx-auto">
             <div className="flex items-center justify-between h-[40px] rounded-lg border border-[rgba(60,60,60,0.7)] bg-[#272727] px-4">
-              {/* Izquierda: volver */}
               <div className="flex items-center gap-3">
                 <button onClick={() => router.push(`/boardList/${boardId}`)} className="p-1 rounded hover:bg-[#333]" aria-label="Volver">
                   <img src="/assets/icons/arrow-left.png" alt="Volver" className="w-5 h-5" />
@@ -463,7 +442,6 @@ export default function CardDetail() {
                 <span className="opacity-70">Volver</span>
               </div>
 
-              {/* Derecha: menú + cerrar */}
               <div className="relative flex items-center gap-1" ref={menuRef}>
                 <button onClick={() => setMenuOpen((v) => !v)} className="p-1 rounded hover:bg-[#333]" aria-label="Opciones">
                   <img src="/assets/icons/ellipsis.svg" className="w-6 h-6 rotate-90" alt="opciones" />
@@ -473,13 +451,11 @@ export default function CardDetail() {
                   <img src="/assets/icons/x.png" className="w-4 h-4" alt="Cerrar" />
                 </button>
 
-                {/* Modal de opciones (tres puntos) */}
                 {menuOpen && (
                   <div
                     className="absolute right-0 top-full mt-2 z-20 rounded-[8px]"
                     style={{ width: 249, background: "rgba(0,0,0,1)", padding: "16px 20px 16px 16px" }}
                   >
-                    {/* Item: Mover tarjeta de lista */}
                     <button
                       type="button"
                       onClick={() => setShowMoveArea((v) => !v)}
@@ -490,7 +466,6 @@ export default function CardDetail() {
                       <span style={{ fontFamily: "Poppins", fontWeight: 500, fontSize: 14, lineHeight: "100%" }}>Mover tarjeta de lista</span>
                     </button>
 
-                    {/* Área con select + botón */}
                     {showMoveArea && (
                       <div className="mt-2 px-4 w-full">
                         <div className="flex items-center gap-2 w-full">
@@ -519,7 +494,6 @@ export default function CardDetail() {
                       </div>
                     )}
 
-                    {/* Item: Eliminar tarjeta */}
                     <button
                       type="button"
                       onClick={openDeleteConfirm}
@@ -535,9 +509,7 @@ export default function CardDetail() {
             </div>
           </div>
 
-          {/* Cuerpo principal */}
           <div className="mt-4 w-[1124px] max-w-full mx-auto grid grid-cols-[1fr_360px] gap-4 items-start">
-            {/* Fila 1, Col 1: Chips + título */}
             <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
               <div className="flex items-center gap-2 mb-3">
                 {priorityChip && <Pill style={priorityChip.style}>{priorityChip.label}</Pill>}
@@ -551,12 +523,9 @@ export default function CardDetail() {
               />
             </div>
 
-            {/* Fila 1, Col 2: vacío a propósito para que la columna de comentarios arranque en la fila 2 */}
             <div />
 
-            {/* Fila 2, Col 1: resto del contenido izquierdo */}
             <div className="flex flex-col gap-4">
-              {/* Descripción */}
               <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
                 <label className="block mb-2 opacity-70">Descripción</label>
                 <textarea
@@ -567,10 +536,8 @@ export default function CardDetail() {
                 />
               </div>
 
-              {/* Responsable / Miembros / Fecha */}
               <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
                 <div className="grid grid-cols-3 gap-4">
-                  {/* Responsables */}
                   <div>
                     <div className="text-sm opacity-70 mb-1">Responsable</div>
                     <div className="flex -space-x-2">
@@ -586,7 +553,6 @@ export default function CardDetail() {
                     </div>
                   </div>
 
-                  {/* Miembros */}
                   <div>
                     <div className="text-sm opacity-70 mb-1">Miembros</div>
                     <div className="flex -space-x-2">
@@ -603,7 +569,6 @@ export default function CardDetail() {
                     </div>
                   </div>
 
-                  {/* Fecha de tarjeta — estilos + picker anclado */}
                   <div>
                     <div className="text-sm opacity-70 mb-1">Fecha de tarjeta</div>
                     <div
@@ -617,7 +582,6 @@ export default function CardDetail() {
                         padding: "0 16px",
                       }}
                     >
-                      {/* Input ocupa todo y deja espacio a la derecha para el icono */}
                       <input
                         type="text"
                         inputMode="numeric"
@@ -631,7 +595,6 @@ export default function CardDetail() {
                         style={{ fontFamily: "Roboto", fontWeight: 400, lineHeight: "100%", color: "rgba(113,113,113,1)" }}
                       />
 
-                      {/* Icono POSICIONADO ABSOLUTO dentro del contenedor */}
                       <button
                         type="button"
                         onClick={() => datePickerRef.current?.showPicker?.() || datePickerRef.current?.click()}
@@ -641,7 +604,6 @@ export default function CardDetail() {
                         <img src="/assets/icons/calendar-days.png" alt="calendar" width={20} height={20} />
                       </button>
 
-                      {/* input date oculto para lanzar el picker (anclado al mismo sitio) */}
                       <input
                         ref={datePickerRef}
                         type="date"
@@ -649,7 +611,7 @@ export default function CardDetail() {
                         style={{ width: 1, height: 1, pointerEvents: "none" }}
                         value={form.endDate ? new Date(form.endDate).toISOString().slice(0, 10) : ""}
                         onChange={(e) => {
-                          const v = e.target.value; // YYYY-MM-DD
+                          const v = e.target.value;
                           const d = v ? new Date(v) : null;
                           handleDateChange([form.startDate ? new Date(form.startDate) : null, d]);
                         }}
@@ -659,7 +621,6 @@ export default function CardDetail() {
                 </div>
               </div>
 
-              {/* Vista: Detallada / Secciones */}
               <div className="flex items-center gap-2">
                 <span
                   className="select-none"
@@ -729,7 +690,6 @@ export default function CardDetail() {
                 </div>
               </div>
 
-              {/* Subtareas */}
               <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
                 <div className="mb-2 font-semibold">Subtareas</div>
 
@@ -769,7 +729,6 @@ export default function CardDetail() {
                             }
                             className="w-[16px] h-[16px] rounded-[3px] appearance-none cursor-pointer"
                             style={{
-                              // desmarcado: borde gris exacto
                               border: t.done ? "1px solid #6A5FFF" : "1px solid rgba(116, 113, 113, 1)",
                               backgroundColor: t.done ? "#6A5FFF" : "transparent",
                               backgroundImage: t.done
@@ -827,7 +786,6 @@ export default function CardDetail() {
                 </div>
               </div>
 
-              {/* Seguimiento (mock) */}
               <div className="rounded-lg bg-[#272727] p-4 border border-[rgba(60,60,60,0.7)]">
                 <div className="mb-3 font-semibold">Seguimiento</div>
                 <div className="grid grid-cols-3 gap-3">
@@ -847,8 +805,7 @@ export default function CardDetail() {
               </div>
             </div>
 
-            {/* Fila 2, Col 2: Comentarios */}
-            <div className="">
+            <div>
               <CommentsPanel
                 boardId={boardId}
                 listId={listId}
@@ -858,7 +815,6 @@ export default function CardDetail() {
             </div>
           </div>
 
-          {/* Botones al final */}
           <div className="mt-6 w-[1124px] max-w-full mx-auto flex justify-end gap-4">
             <button
               onClick={() => router.push(`/boardList/${boardId}`)}
@@ -876,7 +832,6 @@ export default function CardDetail() {
         </div>
       </div>
 
-      {/* Modal confirmación eliminar */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-60">
           <div className="w-[460px] h-[274px] bg-[#222222] rounded-[16px] flex flex-col items-center px-6 py-4 relative">
